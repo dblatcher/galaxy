@@ -1,9 +1,9 @@
-import { GalaxyMap } from './GalaxyMap'
+import { useGameState } from '../hooks/useGameState'
 import type { Galaxy, Line, Star } from '../lib/model'
-import { useState } from 'react'
+import { GalaxyMap } from './GalaxyMap'
 
 
-const galaxy: Galaxy = {
+const initialGalaxy: Galaxy = {
     stars: [
         { x: 10, y: 15, id: 1, name: 'Arcturus' },
         { x: 30, y: 45, id: 2, name: 'Kunitio' },
@@ -15,19 +15,22 @@ const galaxy: Galaxy = {
 }
 
 export const GameContainer = () => {
-    const [startStarId, setStartStarId] = useState<number>()
-    const [endStarId, setEndStarId] = useState<number>()
+
+    const [gameState, dispatch] = useGameState({
+        galaxy: initialGalaxy
+    })
+    const { galaxy, startStarId, endStarId } = gameState
+
     const handleStarClick = (star: Star) => {
         if (star.id === startStarId) {
-            setEndStarId(undefined)
-            setStartStarId(undefined)
+            dispatch({ type: 'clear-line' })
             return
         }
         if (!startStarId) {
-            setStartStarId(star.id)
+            dispatch({ type: 'pick-start', target: star })
             return
         }
-        setEndStarId(star.id)
+        dispatch({ type: 'pick-destination', target: star })
     }
 
     const startStar = galaxy.stars.find(star => star.id === startStarId);
