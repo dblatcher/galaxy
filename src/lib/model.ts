@@ -18,3 +18,20 @@ export type Galaxy = {
 export type Line = {
     points: [XY, XY],
 }
+
+
+export type GameState = {
+    galaxy: Galaxy
+    startStarId?: number
+    endStarId?: number
+}
+
+export type Action = {
+    type: 'clear-line'
+} | {
+    type: 'pick-start',
+    target: Star,
+} | {
+    type: 'pick-destination',
+    target: Star,
+}

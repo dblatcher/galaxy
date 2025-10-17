@@ -1,36 +1,34 @@
-import type { Galaxy, Line, Star } from "../lib/model"
+import { useGameStateContext } from "../hooks/useGameStateContext"
+import { handleStarClickFunction } from "../lib/ui-interactions"
 import { LineTo } from "./LineTo"
 import { StarPlot } from "./StarPlot"
 
 interface Props {
-    galaxy: Galaxy
-    activeStarId?: number
     scale: number
-    handleStarClick: { (star: Star): void };
-    lines: Line[]
 }
 
 const mapMargin = 10
 
 
-export const GalaxyMap = ({ galaxy, scale, handleStarClick, lines, activeStarId }: Props) => {
-    const { stars, width, height } = galaxy
+export const GalaxyMap = ({ scale }: Props) => {
+    const { dispatch, gameState, line, activeStarId } = useGameStateContext()
+    const { stars, width, height } = gameState.galaxy
+
+    const lines = [line ?? []].flat()
 
     return (
         <svg viewBox={`${-mapMargin} ${-mapMargin} ${width + 2 * mapMargin} ${height + 2 * mapMargin}`} style={{
             width: width * scale,
             height: height * scale,
-            border: '1px solid red'
-        }}>
+            border: '1px solid red',
+        }} onClick={() => dispatch({ type: 'clear-line' })}>
             {stars.map((star, index) => (
                 <StarPlot key={index}
                     isActive={activeStarId === star.id}
                     star={star}
-                    onClick={handleStarClick} />
+                    onClick={handleStarClickFunction(gameState, dispatch)} />
             ))}
-
             {lines.map((line, index) => <LineTo key={index} line={line} />)}
-
         </svg>
     )
 

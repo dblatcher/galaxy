@@ -1,5 +1,6 @@
-import { useGameState } from '../hooks/useGameState'
-import type { Galaxy, Line, Star } from '../lib/model'
+import { GameStateContext } from '../context/gameStateContext'
+import { useGameStateReducer } from '../hooks/useGameStateReducer'
+import type { Galaxy } from '../lib/model'
 import { GalaxyMap } from './GalaxyMap'
 
 
@@ -15,39 +16,17 @@ const initialGalaxy: Galaxy = {
 }
 
 export const GameContainer = () => {
-
-    const [gameState, dispatch] = useGameState({
+    const [gameState, dispatch] = useGameStateReducer({
         galaxy: initialGalaxy
     })
-    const { galaxy, startStarId, endStarId } = gameState
-
-    const handleStarClick = (star: Star) => {
-        if (star.id === startStarId) {
-            dispatch({ type: 'clear-line' })
-            return
-        }
-        if (!startStarId) {
-            dispatch({ type: 'pick-start', target: star })
-            return
-        }
-        dispatch({ type: 'pick-destination', target: star })
-    }
-
-    const startStar = galaxy.stars.find(star => star.id === startStarId);
-    const endStar = galaxy.stars.find(star => star.id === endStarId);
-    const line: Line | undefined = startStar && endStar ? { points: [startStar, endStar] } : undefined;
 
     return (
-        <div>
-            <h2>game</h2>
-            <GalaxyMap
-                galaxy={galaxy}
-                scale={4}
-                handleStarClick={handleStarClick}
-                activeStarId={startStarId}
-                lines={line ? [line] : []}
-            />
-        </div>
+        <GameStateContext.Provider value={{ gameState, dispatch }}>
+            <div>
+                <h2>game</h2>
+                <GalaxyMap scale={4} />
+            </div>
+        </GameStateContext.Provider>
     )
 }
 

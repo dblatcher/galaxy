@@ -12,7 +12,10 @@ export const StarPlot = ({ star, onClick, isActive }: Props) => {
 
    return (
       <g
-         onClick={() => onClick?.(star)}
+         onClick={(event) => {
+            event.stopPropagation()
+            onClick?.(star)
+         }}
       >
          <text className="star-label"
             pointerEvents={'none'}
