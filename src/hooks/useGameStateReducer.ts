@@ -9,6 +9,8 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             return { ...state, endStarId: action.target.id }
         case "clear-line":
             return { ...state, startStarId: undefined, endStarId: undefined }
+        case "select-fleet":
+            return { ...state, selectedFleetId: action.target?.id }
     }
 
 }

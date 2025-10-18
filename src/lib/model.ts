@@ -25,6 +25,7 @@ export type Line = {
 }
 
 export type Fleet = {
+    id: number;
     orbitingStarId?: number
     destinationStarId?: number
     location: XY
@@ -35,8 +36,10 @@ export type Fleet = {
 export type GameState = {
     galaxy: Galaxy
     fleets: Fleet[]
+    factions: Faction[]
     startStarId?: number
     endStarId?: number
+    selectedFleetId?: number
 }
 
 export type Action = {
@@ -47,4 +50,7 @@ export type Action = {
 } | {
     type: 'pick-destination',
     target: Star,
+} | {
+    type: 'select-fleet'
+    target?: Fleet   
 }

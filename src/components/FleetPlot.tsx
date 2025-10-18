@@ -4,7 +4,6 @@ import { LineTo } from "./LineTo"
 
 interface Props {
     fleet: Fleet
-    fleetIndex: number;
 }
 
 const getPoints = (x: number, y: number) => `${x},${y - 3} ${x + 3},${y + 3} ${x},${y + 2} ${x - 3},${y + 3}`

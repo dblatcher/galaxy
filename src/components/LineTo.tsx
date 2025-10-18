@@ -6,13 +6,11 @@ interface Props {
 }
 
 export const LineTo = ({ line, priority }: Props) => {
-
     const [start, end] = line.points;
-
     const stroke = priority === 'subdued' ? 'grey' : 'white'
-
     return <g>
         <line className="animated-line"
+            pointerEvents={'none'}
             x1={start.x} y1={start.y}
             x2={end.x} y2={end.y}
             stroke={stroke}

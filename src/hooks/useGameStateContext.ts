@@ -10,7 +10,7 @@ const getDerivedState = (gameState: GameState) => {
 
     const activeStarId = startStarId;
 
-    return { line, activeStarId }
+    return { line, activeStarId, startStar, endStar }
 }
 
 export const useGameStateContext = () => {

@@ -1,6 +1,7 @@
 import { GameStateContext } from '../context/gameStateContext'
 import { useGameStateReducer } from '../hooks/useGameStateReducer'
-import type { Fleet, Galaxy } from '../lib/model'
+import type { Faction, Fleet, Galaxy } from '../lib/model'
+import { FocusWindow } from './FocusWindow'
 import { GalaxyMap } from './GalaxyMap'
 
 
@@ -17,6 +18,7 @@ const initialGalaxy: Galaxy = {
 
 const initialFleets: Fleet[] = [
     {
+        id: 0,
         location: {
             x: 50,
             y: 50
@@ -25,6 +27,7 @@ const initialFleets: Fleet[] = [
         factionId: 0
     },
     {
+        id: 1,
         orbitingStarId: 1,
         destinationStarId: undefined,
         location: {
@@ -35,17 +38,26 @@ const initialFleets: Fleet[] = [
     },
 ]
 
+const initialFactions: Faction[] = [
+    { id: 0, name: 'Zorblaxian' },
+    { id: 1, name: 'Magrathian' },
+]
+
 export const GameContainer = () => {
     const [gameState, dispatch] = useGameStateReducer({
         galaxy: initialGalaxy,
         fleets: initialFleets,
+        factions: initialFactions,
     })
 
     return (
         <GameStateContext.Provider value={{ gameState, dispatch }}>
-            <div>
-                <h2>game</h2>
+            <h2>game</h2>
+            <div style={{
+                display: 'flex'
+            }}>
                 <GalaxyMap scale={4} />
+                <FocusWindow />
             </div>
         </GameStateContext.Provider>
     )

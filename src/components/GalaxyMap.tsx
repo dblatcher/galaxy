@@ -31,7 +31,7 @@ export const GalaxyMap = ({ scale }: Props) => {
                     onClick={handleStarClickFunction(gameState, dispatch)} />
             ))}
             {lines.map((line, index) => <LineTo key={index} line={line} />)}
-            {fleets.map((fleet, index) => <FleetPlot key={index} fleet={fleet} fleetIndex={index} />)}
+            {fleets.map((fleet) => <FleetPlot key={fleet.id} fleet={fleet} />)}
 
         </svg>
     )
