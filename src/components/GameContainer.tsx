@@ -1,6 +1,6 @@
 import { GameStateContext } from '../context/gameStateContext'
 import { useGameStateReducer } from '../hooks/useGameStateReducer'
-import type { Galaxy } from '../lib/model'
+import type { Fleet, Galaxy } from '../lib/model'
 import { GalaxyMap } from './GalaxyMap'
 
 
@@ -15,9 +15,30 @@ const initialGalaxy: Galaxy = {
     height: 100,
 }
 
+const initialFleets: Fleet[] = [
+    {
+        location: {
+            x: 50,
+            y: 50
+        },
+        destinationStarId: 3,
+        factionId: 0
+    },
+    {
+        orbitingStarId: 1,
+        destinationStarId: undefined,
+        location: {
+            x: 10,
+            y: 15
+        },
+        factionId: 0
+    },
+]
+
 export const GameContainer = () => {
     const [gameState, dispatch] = useGameStateReducer({
-        galaxy: initialGalaxy
+        galaxy: initialGalaxy,
+        fleets: initialFleets,
     })
 
     return (

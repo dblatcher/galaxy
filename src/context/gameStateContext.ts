@@ -7,7 +7,8 @@ export const GameStateContext = createContext<{ gameState: GameState, dispatch: 
             stars: [],
             width: 100,
             height: 100
-        }
+        },
+        fleets: []
     },
     dispatch() { },
 });

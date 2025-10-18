@@ -9,6 +9,11 @@ export type Star = XY & {
     name: string;
 }
 
+export type Faction = {
+    id: number;
+    name: string;
+}
+
 export type Galaxy = {
     stars: Star[];
     width: number;
@@ -19,9 +24,17 @@ export type Line = {
     points: [XY, XY],
 }
 
+export type Fleet = {
+    orbitingStarId?: number
+    destinationStarId?: number
+    location: XY
+    factionId: number
+}
+
 
 export type GameState = {
     galaxy: Galaxy
+    fleets: Fleet[]
     startStarId?: number
     endStarId?: number
 }

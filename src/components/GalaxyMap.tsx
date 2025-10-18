@@ -1,5 +1,6 @@
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import { handleStarClickFunction } from "../lib/ui-interactions"
+import { FleetPlot } from "./FleetPlot"
 import { LineTo } from "./LineTo"
 import { StarPlot } from "./StarPlot"
 
@@ -12,6 +13,7 @@ const mapMargin = 10
 
 export const GalaxyMap = ({ scale }: Props) => {
     const { dispatch, gameState, line, activeStarId } = useGameStateContext()
+    const { fleets } = gameState
     const { stars, width, height } = gameState.galaxy
 
     const lines = [line ?? []].flat()
@@ -29,6 +31,8 @@ export const GalaxyMap = ({ scale }: Props) => {
                     onClick={handleStarClickFunction(gameState, dispatch)} />
             ))}
             {lines.map((line, index) => <LineTo key={index} line={line} />)}
+            {fleets.map((fleet, index) => <FleetPlot key={index} fleet={fleet} fleetIndex={index} />)}
+
         </svg>
     )
 
