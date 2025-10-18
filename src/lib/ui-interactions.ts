@@ -1,14 +1,16 @@
 import type { ActionDispatch } from "react";
 import type { Action, GameState, Star } from "./model";
+import { isSet } from "./util";
 
-export const handleStarClickFunction = ({ startStarId }: GameState, dispatch: ActionDispatch<[action: Action]>) => (star: Star) => {
-    if (star.id === startStarId) {
-        dispatch({ type: 'clear-line' })
+export const handleStarClickFunction = ({ focusedStarId, selectedFleetId }: GameState, dispatch: ActionDispatch<[action: Action]>) => (star: Star) => {
+
+    if (isSet(selectedFleetId) && isSet(focusedStarId) && star.id !== focusedStarId) {
+        dispatch({ type: 'pick-destination', target: star })
         return
     }
-    if (!startStarId) {
-        dispatch({ type: 'pick-start', target: star })
+    if (star.id === focusedStarId) {
+        dispatch({ type: 'focus-star' });
         return
     }
-    dispatch({ type: 'pick-destination', target: star })
+    dispatch({ type: 'focus-star', target: star })
 }

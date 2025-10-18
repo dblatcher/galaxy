@@ -1,16 +1,13 @@
 import { useContext } from "react";
 import { GameStateContext } from "../context/gameStateContext";
-import type { GameState, Line } from "../lib/model";
+import type { GameState } from "../lib/model";
 
 const getDerivedState = (gameState: GameState) => {
-    const { galaxy, startStarId, endStarId } = gameState;
-    const startStar = galaxy.stars.find(star => star.id === startStarId);
-    const endStar = galaxy.stars.find(star => star.id === endStarId);
-    const line: Line | undefined = startStar && endStar ? { points: [startStar, endStar] } : undefined;
+    const { galaxy, focusedStarId } = gameState;
+    const startStar = galaxy.stars.find(star => star.id === focusedStarId);
+    const activeStarId = focusedStarId;
 
-    const activeStarId = startStarId;
-
-    return { line, activeStarId, startStar, endStar }
+    return { activeStarId, startStar }
 }
 
 export const useGameStateContext = () => {

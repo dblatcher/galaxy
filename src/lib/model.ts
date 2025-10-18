@@ -37,20 +37,17 @@ export type GameState = {
     galaxy: Galaxy
     fleets: Fleet[]
     factions: Faction[]
-    startStarId?: number
-    endStarId?: number
+    focusedStarId?: number
     selectedFleetId?: number
 }
 
 export type Action = {
-    type: 'clear-line'
-} | {
-    type: 'pick-start',
-    target: Star,
+    type: 'focus-star',
+    target?: Star,
 } | {
     type: 'pick-destination',
     target: Star,
 } | {
     type: 'select-fleet'
-    target?: Fleet   
+    target?: Fleet
 }
