@@ -7,7 +7,7 @@ import { GalaxyMap } from './GalaxyMap'
 
 const initialGalaxy: Galaxy = {
     stars: [
-        { x: 10, y: 15, id: 1, name: 'Arcturus' },
+        { x: 100, y: 75, id: 1, name: 'Arcturus' },
         { x: 30, y: 45, id: 2, name: 'Kunitio' },
         { x: 130, y: 35, id: 3, name: 'Junke' },
         { x: 120, y: 45, id: 4, name: 'Maddow' },
@@ -36,6 +36,15 @@ const initialFleets: Fleet[] = [
         },
         factionId: 0
     },
+    {
+        id: 2,
+        location: {
+            x: 80,
+            y: 20
+        },
+        destinationStarId: 3,
+        factionId: 0
+    },
 ]
 
 const initialFactions: Faction[] = [
@@ -45,6 +54,7 @@ const initialFactions: Faction[] = [
 
 export const GameContainer = () => {
     const [gameState, dispatch] = useGameStateReducer({
+        turnNumber: 1,
         galaxy: initialGalaxy,
         fleets: initialFleets,
         factions: initialFactions,
@@ -52,13 +62,14 @@ export const GameContainer = () => {
 
     return (
         <GameStateContext.Provider value={{ gameState, dispatch }}>
-            <h2>game</h2>
+            <h2>game: turn {gameState.turnNumber}</h2>
             <div style={{
                 display: 'flex'
             }}>
                 <GalaxyMap scale={4} />
                 <FocusWindow />
             </div>
+            <button onClick={() => dispatch({ type: 'next-turn' })}>next turn</button>
         </GameStateContext.Provider>
     )
 }

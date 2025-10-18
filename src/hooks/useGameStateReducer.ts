@@ -1,6 +1,20 @@
 import { useReducer } from "react"
-import type { Action, GameState } from "../lib/model"
+import type { Fleet, GameState, Star } from "../lib/model"
 import { findById } from "../lib/util"
+import { progressTurn } from "../lib/progress-turn"
+
+export type Action = {
+    type: 'focus-star',
+    target?: Star,
+} | {
+    type: 'pick-destination',
+    target: Star,
+} | {
+    type: 'select-fleet'
+    target?: Fleet
+} | {
+    type: 'next-turn'
+}
 
 const gameStateReducer = (state: GameState, action: Action): GameState => {
     switch (action.type) {
@@ -16,6 +30,8 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             return { ...state }
         case "select-fleet":
             return { ...state, selectedFleetId: action.target?.id }
+        case "next-turn":
+            return progressTurn(state);
     }
 
 }

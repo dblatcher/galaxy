@@ -34,6 +34,7 @@ export type Fleet = {
 
 
 export type GameState = {
+    turnNumber: number
     galaxy: Galaxy
     fleets: Fleet[]
     factions: Faction[]
@@ -41,13 +42,3 @@ export type GameState = {
     selectedFleetId?: number
 }
 
-export type Action = {
-    type: 'focus-star',
-    target?: Star,
-} | {
-    type: 'pick-destination',
-    target: Star,
-} | {
-    type: 'select-fleet'
-    target?: Fleet
-}

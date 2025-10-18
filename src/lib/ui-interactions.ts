@@ -1,6 +1,7 @@
 import type { ActionDispatch } from "react";
-import type { Action, GameState, Star } from "./model";
+import type { GameState, Star } from "./model";
 import { isSet } from "./util";
+import type { Action } from "../hooks/useGameStateReducer";
 
 export const handleStarClickFunction = ({ focusedStarId, selectedFleetId }: GameState, dispatch: ActionDispatch<[action: Action]>) => (star: Star) => {
 

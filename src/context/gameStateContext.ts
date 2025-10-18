@@ -1,8 +1,10 @@
 import { createContext } from "react";
-import type { Action, GameState } from "../lib/model";
+import type { GameState } from "../lib/model";
+import type { Action } from "../hooks/useGameStateReducer";
 
 export const GameStateContext = createContext<{ gameState: GameState, dispatch: { (action: Action): void } }>({
     gameState: {
+        turnNumber: 0,
         galaxy: {
             stars: [],
             width: 100,
