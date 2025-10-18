@@ -7,11 +7,13 @@ export type XY = {
 export type Star = XY & {
     id: number;
     name: string;
+    factionId?: number;
 }
 
 export type Faction = {
     id: number;
     name: string;
+    color: string;
 }
 
 export type Galaxy = {

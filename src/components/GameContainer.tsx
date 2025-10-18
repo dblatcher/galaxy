@@ -7,10 +7,11 @@ import { GalaxyMap } from './GalaxyMap'
 
 const initialGalaxy: Galaxy = {
     stars: [
-        { x: 100, y: 75, id: 1, name: 'Arcturus' },
+        { x: 100, y: 75, id: 1, name: 'Arcturus', factionId: 1 },
         { x: 30, y: 45, id: 2, name: 'Kunitio' },
         { x: 130, y: 35, id: 3, name: 'Junke' },
         { x: 120, y: 45, id: 4, name: 'Maddow' },
+        { x: 60, y: 25, id: 5, name: 'Zorblax', factionId: 0 },
     ],
     width: 150,
     height: 100,
@@ -24,7 +25,7 @@ const initialFleets: Fleet[] = [
             y: 50
         },
         destinationStarId: 3,
-        factionId: 0
+        factionId: 1
     },
     {
         id: 1,
@@ -48,8 +49,8 @@ const initialFleets: Fleet[] = [
 ]
 
 const initialFactions: Faction[] = [
-    { id: 0, name: 'Zorblaxian' },
-    { id: 1, name: 'Magrathian' },
+    { id: 0, name: 'Zorblaxian', color: 'lime' },
+    { id: 1, name: 'Magrathian', color: 'crimson' },
 ]
 
 export const GameContainer = () => {
