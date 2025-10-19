@@ -1,7 +1,6 @@
 import { useGameStateContext } from "../hooks/useGameStateContext";
-import type { Star } from "../lib/model";
+import type { Fleet, Star } from "../lib/model";
 import { findById } from "../lib/util";
-import { FleetPlot } from "./FleetPlot";
 
 interface Props {
    star: Star;
@@ -9,30 +8,55 @@ interface Props {
    isActive?: boolean;
 }
 
+const getFleetBreakdown = (fleets: Fleet[]) => {
+   const map: Record<number, number> = {}
+   fleets.forEach(fleet => {
+      if (!map[fleet.factionId]) {
+         map[fleet.factionId] = 1
+      } else {
+         map[fleet.factionId]++
+      }
+   })
+   return map
+}
+
+const FleetCounts = ({ star }: { star: Star }) => {
+   const { gameState: { fleets, factions } } = useGameStateContext()
+   const fleetsHere = fleets.filter(fleet => fleet.orbitingStarId === star.id)
+   const fleetsBreakdown = getFleetBreakdown(fleetsHere)
+
+   return <>
+      {Object.entries(fleetsBreakdown).map(([factionId, count], index) => (
+         <text pointerEvents={'none'}
+            key={index} dx={6 * index}
+            x={star.x - 4} y={star.y - 4}
+            fill={findById(Number(factionId), factions)?.color} fontSize={5}>{count}</text>
+      )
+      )}
+   </>
+}
 
 export const StarPlot = ({ star, onClick, isActive }: Props) => {
-   const { gameState: { fleets, factions } } = useGameStateContext()
+   const { gameState: { factions } } = useGameStateContext()
    const faction = findById(star.factionId, factions)
-   const fleetsHere = fleets.filter(fleet => fleet.orbitingStarId === star.id)
    const color = faction?.color ?? 'grey'
    return (
-      <g
-         onClick={(event) => {
-            event.stopPropagation()
-            onClick?.(star)
-         }}
-      >
-         <text className="star-label"
-            pointerEvents={'none'}
+      <>
+         <g
+            onClick={(event) => {
+               event.stopPropagation()
+               onClick?.(star)
+            }}
+         >
+            <circle className="star" cx={star.x} cy={star.y} r={4} fill={color} />
+            {isActive && (
+               <circle cx={star.x} cy={star.y} r={6} stroke={'white'} fill="none" strokeWidth={.5} />
+            )}
+         </g>
+         <text className="star-label" pointerEvents={'none'}
             x={star.x} y={star.y}
-            fill={'yellow'}>{star.name}</text>
-         <circle className="star" cx={star.x} cy={star.y} r={4} fill={color} />
-         {isActive && (
-            <circle cx={star.x} cy={star.y} r={6} stroke={'white'} fill="none" strokeWidth={.5} />
-         )}
-         {fleetsHere.length > 0 && (
-            <text x={star.x + 3} y={star.y - 4} fill="white" fontSize={5}>{fleetsHere.length}</text>
-         )}
-      </g>
+            fill={'white'}>{star.name}</text>
+         <FleetCounts star={star} />
+      </>
    )
 }
