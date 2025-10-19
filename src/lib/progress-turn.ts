@@ -1,6 +1,6 @@
 import { getHeadingFrom, getXYVector, getDistance, translate } from "typed-geometry";
 import type { Fleet, Galaxy, GameState } from "./model";
-import { findById, isSet } from "./util";
+import { findById, isSet, nextId } from "./util";
 
 const SPEED = 2;
 const CLOSE_ENOUGH = 4
@@ -26,12 +26,36 @@ const moveFleetInGalaxy = (galaxy: Galaxy) => (fleet: Fleet) => {
         const displacement = getXYVector(SPEED, getHeadingFrom(fleet.location, destination))
         fleet.location = translate(fleet.location, displacement)
     }
+    return fleet
+}
+
+const appendFleet = (newFleet: Omit<Fleet, 'id'>, fleets: Fleet[]) => {
+    fleets.push({ ...newFleet, id: nextId(fleets) })
+    return fleets
+}
+
+const addNewFleets = (galaxy:Galaxy) => (fleets:Fleet[]) => {
+    galaxy.stars.forEach(star => {
+        // to do - build queue - not every star produces a new fleet each turn
+        if (isSet(star.factionId)) {
+            appendFleet({
+                factionId: star.factionId,
+                orbitingStarId: star.id,
+                location: {
+                    x: star.x,
+                    y: star.y
+                }
+            }, fleets)
+        }
+    })
+    return fleets
 }
 
 export const progressTurn = (gameState: GameState): GameState => {
-    const { galaxy, fleets, factions, turnNumber } = gameState;
-    fleets.forEach(moveFleetInGalaxy(galaxy))
-
+    const state = structuredClone(gameState)
+    const { galaxy, fleets: existingFleets, factions, turnNumber } = state;
+    existingFleets.forEach(moveFleetInGalaxy(galaxy))
+    const fleets = addNewFleets(galaxy)(existingFleets)
     return {
         galaxy,
         fleets,

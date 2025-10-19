@@ -7,4 +7,8 @@ export function lookUpName<T extends { id: number, name: string }>(id: number | 
     return findById(id, list)?.name ?? fallback
 }
 
-export const isSet = (id?:number):id is number => typeof id !== 'undefined'
+export const isSet = (id?: number): id is number => typeof id !== 'undefined'
+
+export const nextId = (list: { id: number }[]): number => {
+    return Math.max(...list.map(item => item.id)) + 1
+}
