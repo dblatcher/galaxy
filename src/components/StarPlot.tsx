@@ -43,6 +43,9 @@ export const StarPlot = ({ star, onClick, isActive }: Props) => {
    return (
       <>
          <g
+            style={{
+               cursor: onClick ? 'pointer' : undefined,
+            }}
             onClick={(event) => {
                event.stopPropagation()
                onClick?.(star)
