@@ -2,8 +2,8 @@ import { getHeadingFrom, getXYVector, getDistance, translate } from "typed-geome
 import type { Fleet, Galaxy, GameState } from "./model";
 import { findById, isSet, nextId } from "./util";
 
-const SPEED = 2;
-const CLOSE_ENOUGH = 4
+const SPEED = 4;
+const CLOSE_ENOUGH = 5
 
 const moveFleetInGalaxy = (galaxy: Galaxy) => (fleet: Fleet) => {
     const destination = findById(fleet.destinationStarId, galaxy.stars);
@@ -13,7 +13,10 @@ const moveFleetInGalaxy = (galaxy: Galaxy) => (fleet: Fleet) => {
     if (isSet(fleet.orbitingStarId)) {
         const starleavingFrom = findById(fleet.orbitingStarId, galaxy.stars);
         if (starleavingFrom) {
-            fleet.location = { x: starleavingFrom.x, y: starleavingFrom.y }
+            fleet.location = translate(
+                getXYVector(CLOSE_ENOUGH, getHeadingFrom(starleavingFrom, destination)),
+                starleavingFrom
+            )
         }
         fleet.orbitingStarId = undefined
     }
@@ -34,7 +37,7 @@ const appendFleet = (newFleet: Omit<Fleet, 'id'>, fleets: Fleet[]) => {
     return fleets
 }
 
-const addNewFleets = (galaxy:Galaxy) => (fleets:Fleet[]) => {
+const addNewFleets = (galaxy: Galaxy) => (fleets: Fleet[]) => {
     galaxy.stars.forEach(star => {
         // to do - build queue - not every star produces a new fleet each turn
         if (isSet(star.factionId)) {
