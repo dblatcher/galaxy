@@ -1,38 +1,41 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
-import { isSet, lookUpName } from "../lib/util"
-import { FleetCheckButton } from "./FleetCheckButton"
+import type { CSSProperties } from "react";
+import { useGameStateContext } from "../hooks/useGameStateContext";
+import { findById, splitArray } from "../lib/util";
+import { FleetList } from "./FleetList";
 
+const sectionStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    flexBasis: 150,
+    flexShrink: 0,
+    border: '1px solid red',
+}
+
+const headerStyle: CSSProperties = {
+    borderBottom: '1px solid red',
+}
 
 export const FocusWindow = () => {
-
     const { gameState, startStar } = useGameStateContext()
-    const { fleets, factions } = gameState
-    const fleetsHere = startStar && fleets.filter(fleet => fleet.orbitingStarId === startStar?.id)
+    const { fleets, factions, activeFactionId } = gameState
+    const fleetsHere = startStar ? fleets.filter(fleet => fleet.orbitingStarId === startStar?.id) : []
+    const [playersFleets, othersFleets] = splitArray(fleetsHere, (fleet) => fleet.factionId === activeFactionId)
+    const faction = findById(startStar?.factionId, factions)
 
-    return <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        flexBasis: 150,
-        flexShrink: 0,
-        border: '1px solid red',
-    }}>
+    return <section style={sectionStyle}>
         {startStar && (
-            <div>{startStar.name}</div>
-        )}
-        {isSet(startStar?.factionId) && (
-            <div>{lookUpName(startStar.factionId, factions)}</div>
-        )}
-        <ul style={{
-            listStyle: "none",
-            margin: 0,
-            padding: 0,
-            textAlign: 'left'
-        }}>
-            {fleetsHere?.map((fleet, index) => (
-                <li key={index} style={{ paddingBottom: 2, paddingLeft: 3, paddingRight: 3 }}>
-                    <FleetCheckButton fleet={fleet} />
-                </li>
-            ))}
-        </ul>
-    </div>
+            <>
+                <header style={headerStyle}>
+                    {startStar && (
+                        <div>{startStar.name}</div>
+                    )}
+                    <div style={{ color: faction?.color }}>
+                        {faction?.name ?? 'unpopulated'}
+                    </div>
+                </header>
+
+                <FleetList title="Your fleets" list={playersFleets} />
+                <FleetList title="Other fleets" list={othersFleets} />
+            </>)}
+    </section>
 }

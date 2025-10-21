@@ -48,6 +48,16 @@ const initialFleets: Fleet[] = [
         destinationStarId: 3,
         factionId: 0
     },
+        {
+        id: 3,
+        orbitingStarId: 1,
+        destinationStarId: undefined,
+        location: {
+            x: 10,
+            y: 15
+        },
+        factionId: 2
+    },
 ]
 
 const initialFactions: [Faction, ...Faction[]] = [

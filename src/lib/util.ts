@@ -12,3 +12,10 @@ export const isSet = (id?: number): id is number => typeof id !== 'undefined'
 export const nextId = (list: { id: number }[]): number => {
     return Math.max(...list.map(item => item.id)) + 1
 }
+
+export function splitArray<T>(list: T[], predicate: { (item: T): boolean }): [T[], T[]] {
+    return [
+        list.filter(predicate),
+        list.filter((t) => !predicate(t))
+    ]
+}
