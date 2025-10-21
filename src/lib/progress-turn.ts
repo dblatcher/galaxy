@@ -1,11 +1,11 @@
-import { getHeadingFrom, getXYVector, getDistance, translate } from "typed-geometry";
-import type { Fleet, Galaxy, GameState } from "./model";
+import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
+import type { Faction, Fleet, GameState } from "./model";
 import { findById, isSet, nextId } from "./util";
 
 const SPEED = 4;
 const CLOSE_ENOUGH = 5
 
-const moveFleetInGalaxy = (galaxy: Galaxy) => (fleet: Fleet) => {
+const moveFleetInGalaxy = ({ galaxy }: GameState) => (fleet: Fleet) => {
     const destination = findById(fleet.destinationStarId, galaxy.stars);
     if (!destination) {
         return
@@ -37,32 +37,70 @@ const appendFleet = (newFleet: Omit<Fleet, 'id'>, fleets: Fleet[]) => {
     return fleets
 }
 
-const addNewFleets = (galaxy: Galaxy) => (fleets: Fleet[]) => {
+const addNewFleets = ({ galaxy, turnNumber }: GameState) => (fleets: Fleet[]) => {
     galaxy.stars.forEach(star => {
         // to do - build queue - not every star produces a new fleet each turn
         if (isSet(star.factionId)) {
-            appendFleet({
-                factionId: star.factionId,
-                orbitingStarId: star.id,
-                location: {
-                    x: star.x,
-                    y: star.y
-                }
-            }, fleets)
+            if (turnNumber % 4 === 0) {
+                appendFleet({
+                    factionId: star.factionId,
+                    orbitingStarId: star.id,
+                    location: {
+                        x: star.x,
+                        y: star.y
+                    }
+                }, fleets)
+            }
         }
     })
     return fleets
 }
 
-export const progressTurn = (gameState: GameState): GameState => {
-    const state = structuredClone(gameState)
-    const { galaxy, fleets: existingFleets, factions, turnNumber } = state;
-    existingFleets.forEach(moveFleetInGalaxy(galaxy))
-    const fleets = addNewFleets(galaxy)(existingFleets)
+const startNewTurn = (gameState: GameState): GameState => {
+    const { galaxy, fleets: existingFleets, factions, turnNumber } = gameState;
+    existingFleets.forEach(moveFleetInGalaxy(gameState))
+    const fleets = addNewFleets(gameState)(existingFleets)
     return {
+        activeFactionId: factions[0].id,
         galaxy,
         fleets,
         factions,
         turnNumber: turnNumber + 1
     }
+}
+
+const takeCpuTurn = (faction: Faction, gameState: GameState): GameState => {
+    console.log(faction.name)
+    return gameState
+}
+
+export const progressTurn = (oldGameState: GameState): GameState => {
+    const gameState = structuredClone(oldGameState)
+
+    const cycleThroughFactions = (factionIndex: number) => {
+        const nextFaction: Faction | undefined = gameState.factions[factionIndex + 1]
+        // last faction has gone, starting next turn
+        if (!nextFaction) {
+            return startNewTurn(gameState);
+        }
+
+        switch (nextFaction.playerType) {
+            case "LOCAL":
+                return {
+                    ...gameState,
+                    activeFactionId: nextFaction.id,
+                }
+            case "CPU":
+                takeCpuTurn(nextFaction, gameState);
+                return cycleThroughFactions(factionIndex + 1)
+            case "REMOTE":
+                return {
+                    ...gameState,
+                    activeFactionId: nextFaction.id,
+                }
+        }
+    }
+
+    const currentFactionIndex = gameState.factions.findIndex(faction => faction.id === gameState.activeFactionId);
+    return cycleThroughFactions(currentFactionIndex)
 }

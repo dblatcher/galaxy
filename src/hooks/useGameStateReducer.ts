@@ -1,7 +1,7 @@
 import { useReducer } from "react"
 import type { Fleet, GameState, Star } from "../lib/model"
-import { findById } from "../lib/util"
 import { progressTurn } from "../lib/progress-turn"
+import { findById } from "../lib/util"
 
 export type Action = {
     type: 'focus-star',

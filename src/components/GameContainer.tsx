@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { GameStateContext } from '../context/gameStateContext'
 import { useGameStateReducer } from '../hooks/useGameStateReducer'
 import type { Faction, Fleet, Galaxy } from '../lib/model'
+import { findById } from '../lib/util'
 import { FocusWindow } from './FocusWindow'
 import { GalaxyMap } from './GalaxyMap'
 
@@ -48,22 +50,37 @@ const initialFleets: Fleet[] = [
     },
 ]
 
-const initialFactions: Faction[] = [
-    { id: 0, name: 'Zorblaxian', color: 'lime' },
-    { id: 1, name: 'Magrathian', color: 'crimson' },
+const initialFactions: [Faction, ...Faction[]] = [
+    { id: 0, name: 'Zorblaxian', color: 'lime', playerType: 'LOCAL' },
+    { id: 1, name: 'Magrathian', color: 'crimson', playerType: 'CPU' },
+    { id: 2, name: 'Martian', color: 'pink', playerType: 'CPU' },
+    { id: 3, name: 'Jovioid', color: 'pink', playerType: 'CPU' },
+    { id: 4, name: 'Saturnine', color: 'pink', playerType: 'REMOTE' },
+    { id: 5, name: 'Uraninian', color: 'pink', playerType: 'CPU' },
 ]
 
 export const GameContainer = () => {
     const [gameState, dispatch] = useGameStateReducer({
         turnNumber: 1,
+        activeFactionId: initialFactions[0].id,
         galaxy: initialGalaxy,
         fleets: initialFleets,
         factions: initialFactions,
     })
+    const activeFaction = findById(gameState.activeFactionId, gameState.factions);
+
+    useEffect(() => {
+        if (activeFaction?.playerType === 'CPU') {
+            dispatch({ type: 'next-turn' })
+        }
+        if (activeFaction?.playerType === 'REMOTE') {
+            console.warn('remote player are not implemented', activeFaction)
+        }
+    }, [activeFaction])
 
     return (
         <GameStateContext.Provider value={{ gameState, dispatch }}>
-            <h2>game: turn {gameState.turnNumber}</h2>
+            <h2>game: <span style={{ color: activeFaction?.color }}>{activeFaction?.name}</span> turn {gameState.turnNumber}</h2>
             <div style={{
                 display: 'flex'
             }}>

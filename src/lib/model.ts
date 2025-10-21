@@ -14,6 +14,7 @@ export type Faction = {
     id: number;
     name: string;
     color: string;
+    playerType: 'LOCAL' | 'CPU' | 'REMOTE'
 }
 
 export type Galaxy = {
@@ -37,9 +38,10 @@ export type Fleet = {
 
 export type GameState = {
     turnNumber: number
+    activeFactionId: number
     galaxy: Galaxy
     fleets: Fleet[]
-    factions: Faction[]
+    factions: [Faction, ...Faction[]]
     focusedStarId?: number
     selectedFleetId?: number
 }
