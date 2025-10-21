@@ -11,7 +11,7 @@ const initialGalaxy: Galaxy = {
     stars: [
         { x: 100, y: 75, id: 1, name: 'Arcturus', factionId: 1 },
         { x: 30, y: 45, id: 2, name: 'Kunitio' },
-        { x: 130, y: 35, id: 3, name: 'Junke' },
+        { x: 130, y: 35, id: 3, name: 'Junke', factionId: 2 },
         { x: 120, y: 45, id: 4, name: 'Maddow' },
         { x: 60, y: 25, id: 5, name: 'Zorblax', factionId: 0 },
     ],
@@ -54,9 +54,7 @@ const initialFactions: [Faction, ...Faction[]] = [
     { id: 0, name: 'Zorblaxian', color: 'lime', playerType: 'LOCAL' },
     { id: 1, name: 'Magrathian', color: 'crimson', playerType: 'CPU' },
     { id: 2, name: 'Martian', color: 'pink', playerType: 'CPU' },
-    { id: 3, name: 'Jovioid', color: 'pink', playerType: 'CPU' },
-    { id: 4, name: 'Saturnine', color: 'pink', playerType: 'REMOTE' },
-    { id: 5, name: 'Uraninian', color: 'pink', playerType: 'CPU' },
+    { id: 3, name: 'Uraninian', color: 'blue', playerType: 'CPU' },
 ]
 
 export const GameContainer = () => {

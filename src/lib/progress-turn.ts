@@ -69,8 +69,7 @@ const startNewTurn = (gameState: GameState): GameState => {
     }
 }
 
-const takeCpuTurn = (faction: Faction, gameState: GameState): GameState => {
-    console.log(faction.name)
+const takeCpuTurn = (_faction: Faction, gameState: GameState): GameState => {
     return gameState
 }
 
