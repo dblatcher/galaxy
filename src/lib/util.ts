@@ -19,3 +19,7 @@ export function splitArray<T>(list: T[], predicate: { (item: T): boolean }): [T[
         list.filter((t) => !predicate(t))
     ]
 }
+
+export function removeDuplicates(list: number[]): number[] {
+    return list.reduce<number[]>((acc, next) => (acc.includes(next)) ? acc : [...acc, next], [])
+}

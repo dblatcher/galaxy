@@ -35,6 +35,22 @@ export type Fleet = {
     factionId: number
 }
 
+export type Battle = {
+    star: number;
+    sides: {
+        faction: number,
+        fleets: number[]
+    }[]
+}
+
+export type PopulatedBattle = {
+    star: Star;
+    sides: {
+        faction: Faction,
+        fleets: Fleet[]
+    }[]
+}
+
 
 export type GameState = {
     turnNumber: number
@@ -44,5 +60,6 @@ export type GameState = {
     factions: [Faction, ...Faction[]]
     focusedStarId?: number
     selectedFleetId?: number
+    battles: Battle[]
 }
 

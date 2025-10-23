@@ -5,6 +5,7 @@ import type { Faction, Fleet, Galaxy } from '../lib/model'
 import { findById } from '../lib/util'
 import { FocusWindow } from './FocusWindow'
 import { GalaxyMap } from './GalaxyMap'
+import { BattleList } from './BattleList'
 
 
 const initialGalaxy: Galaxy = {
@@ -37,7 +38,7 @@ const initialFleets: Fleet[] = [
             x: 10,
             y: 15
         },
-        factionId: 0
+        factionId: 3
     },
     {
         id: 2,
@@ -48,7 +49,7 @@ const initialFleets: Fleet[] = [
         destinationStarId: 3,
         factionId: 0
     },
-        {
+    {
         id: 3,
         orbitingStarId: 1,
         destinationStarId: undefined,
@@ -74,6 +75,7 @@ export const GameContainer = () => {
         galaxy: initialGalaxy,
         fleets: initialFleets,
         factions: initialFactions,
+        battles: [],
     })
     const activeFaction = findById(gameState.activeFactionId, gameState.factions);
 
@@ -92,6 +94,7 @@ export const GameContainer = () => {
             <div style={{
                 display: 'flex'
             }}>
+                <BattleList />
                 <GalaxyMap scale={4} />
                 <FocusWindow />
             </div>
