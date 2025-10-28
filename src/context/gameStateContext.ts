@@ -11,7 +11,15 @@ export const GameStateContext = createContext<{ gameState: GameState, dispatch: 
             height: 100
         },
         fleets: [],
-        factions: [],
+        factions: [
+            {
+                id: 0,
+                name: "",
+                color: "",
+                playerType: "LOCAL"
+            }
+        ],
+        activeFactionId: 0,
     },
     dispatch() { },
 });

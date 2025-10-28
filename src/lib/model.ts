@@ -60,6 +60,5 @@ export type GameState = {
     factions: [Faction, ...Faction[]]
     focusedStarId?: number
     selectedFleetId?: number
-    battles: Battle[]
 }
 

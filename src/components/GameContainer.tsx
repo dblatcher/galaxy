@@ -5,7 +5,8 @@ import type { Faction, Fleet, Galaxy } from '../lib/model'
 import { findById } from '../lib/util'
 import { FocusWindow } from './FocusWindow'
 import { GalaxyMap } from './GalaxyMap'
-import { BattleList } from './BattleList'
+import { BattleListings } from './BattleListings'
+import { TurnEndControls } from './TurnEndControls'
 
 
 const initialGalaxy: Galaxy = {
@@ -27,8 +28,8 @@ const initialFleets: Fleet[] = [
             x: 50,
             y: 50
         },
-        destinationStarId: 3,
-        factionId: 1
+        destinationStarId: 1,
+        factionId: 2
     },
     {
         id: 1,
@@ -43,8 +44,8 @@ const initialFleets: Fleet[] = [
     {
         id: 2,
         location: {
-            x: 80,
-            y: 20
+            x: 120,
+            y: 30
         },
         destinationStarId: 3,
         factionId: 0
@@ -65,7 +66,7 @@ const initialFactions: [Faction, ...Faction[]] = [
     { id: 0, name: 'Zorblaxian', color: 'lime', playerType: 'LOCAL' },
     { id: 1, name: 'Magrathian', color: 'crimson', playerType: 'CPU' },
     { id: 2, name: 'Martian', color: 'pink', playerType: 'CPU' },
-    { id: 3, name: 'Uraninian', color: 'blue', playerType: 'CPU' },
+    { id: 3, name: 'Uraninian', color: 'skyblue', playerType: 'CPU' },
 ]
 
 export const GameContainer = () => {
@@ -75,7 +76,6 @@ export const GameContainer = () => {
         galaxy: initialGalaxy,
         fleets: initialFleets,
         factions: initialFactions,
-        battles: [],
     })
     const activeFaction = findById(gameState.activeFactionId, gameState.factions);
 
@@ -94,11 +94,11 @@ export const GameContainer = () => {
             <div style={{
                 display: 'flex'
             }}>
-                <BattleList />
+                <BattleListings />
                 <GalaxyMap scale={4} />
                 <FocusWindow />
             </div>
-            <button onClick={() => dispatch({ type: 'next-turn' })}>next turn</button>
+            <TurnEndControls />
         </GameStateContext.Provider>
     )
 }
