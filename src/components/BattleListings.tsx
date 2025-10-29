@@ -1,6 +1,7 @@
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { Battle } from "../lib/model"
 import { lookUpName } from "../lib/util"
+import { ReportsPanel } from "./ReportsPanel"
 
 const BattleList = ({ title, battles, forActivePlayer }: { title: string, battles: Battle[], forActivePlayer?: boolean }) => {
 
@@ -38,6 +39,7 @@ export const BattleListings = () => {
     return <div>
         <BattleList title="Your Battles" battles={activeFactionBattles} forActivePlayer />
         <BattleList title="Other Battles" battles={battlesWithoutActiveFaction} />
+        <ReportsPanel />
     </div>
 
 }

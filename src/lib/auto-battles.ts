@@ -1,5 +1,6 @@
 import { getAllBattles } from "./derived-state";
-import type { Battle, GameState } from "./model";
+import type { Battle, BattleReport, GameState } from "./model";
+import { findById } from "./util";
 
 // TO DO - should this be mutating rather than returning a new GameState?
 export const autoResolveBattle = (battle: Battle, oldGameState: GameState): GameState => {
@@ -9,8 +10,26 @@ export const autoResolveBattle = (battle: Battle, oldGameState: GameState): Game
     const idsOfAllShipInBattle = battle.sides.flatMap(side => side.fleets)
     const fleetsIfAllShipsDieInBattle = gameState.fleets.filter(fleet => !idsOfAllShipInBattle.includes(fleet.id))
 
+    
+    const report: BattleReport = {
+        reportType: 'battle',
+        turnNumber: gameState.turnNumber,
+        star: battle.star,
+        sides: battle.sides.map(side => {
+            return {
+                faction: side.faction,
+                losses: side.fleets.flatMap(fleetId => findById(fleetId, oldGameState.fleets) ?? []),
+                survivors: []
+            }
+        })
+    }
+
     // TO DO - more state for reports on the battle outcomes to show the player
-    return { ...gameState, fleets: fleetsIfAllShipsDieInBattle }
+    return {
+        ...gameState,
+        fleets: fleetsIfAllShipsDieInBattle,
+        reports: [...gameState.reports, report]
+    }
 }
 
 export const autoResolveAllBattles = (oldGameState: GameState): GameState => {

@@ -59,9 +59,9 @@ const addNewFleets = ({ galaxy, turnNumber }: GameState) => (fleets: Fleet[]) =>
 
 
 const startNewTurn = (oldGameState: GameState): GameState => {
-    const gameState = autoResolveAllBattles(oldGameState);
+    const gameState = autoResolveAllBattles({...oldGameState, reports:[]});
 
-    const { galaxy, fleets: existingFleets, factions, turnNumber } = gameState
+    const { galaxy, fleets: existingFleets, factions, turnNumber, reports } = gameState
     existingFleets.forEach(moveFleetInGalaxy(gameState))
     const fleets = addNewFleets(gameState)(existingFleets)
 
@@ -70,7 +70,8 @@ const startNewTurn = (oldGameState: GameState): GameState => {
         galaxy,
         fleets,
         factions,
-        turnNumber: turnNumber + 1
+        turnNumber: turnNumber + 1,
+        reports,
     }
 }
 

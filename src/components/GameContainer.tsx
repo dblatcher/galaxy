@@ -7,6 +7,7 @@ import { FocusWindow } from './FocusWindow'
 import { GalaxyMap } from './GalaxyMap'
 import { BattleListings } from './BattleListings'
 import { TurnEndControls } from './TurnEndControls'
+import { ReportsPanel } from './ReportsPanel'
 
 
 const initialGalaxy: Galaxy = {
@@ -76,6 +77,7 @@ export const GameContainer = () => {
         galaxy: initialGalaxy,
         fleets: initialFleets,
         factions: initialFactions,
+        reports: [],
     })
     const activeFaction = findById(gameState.activeFactionId, gameState.factions);
 

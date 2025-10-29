@@ -19,6 +19,7 @@ export const GameStateContext = createContext<{ gameState: GameState, dispatch: 
                 playerType: "LOCAL"
             }
         ],
+        reports: [],
         activeFactionId: 0,
     },
     dispatch() { },

@@ -43,14 +43,18 @@ export type Battle = {
     }[]
 }
 
-export type PopulatedBattle = {
-    star: Star;
+export type BattleReport = {
+    reportType: 'battle',
+    star: number;
+    turnNumber: number;
     sides: {
-        faction: Faction,
-        fleets: Fleet[]
+        faction: number,
+        losses: Fleet[],
+        survivors: Fleet[],
     }[]
 }
 
+export type Report = BattleReport
 
 export type GameState = {
     turnNumber: number
@@ -60,5 +64,5 @@ export type GameState = {
     factions: [Faction, ...Faction[]]
     focusedStarId?: number
     selectedFleetId?: number
+    reports: Report[]
 }
-
