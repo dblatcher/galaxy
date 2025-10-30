@@ -15,6 +15,7 @@ export type Faction = {
     name: string;
     color: string;
     playerType: 'LOCAL' | 'CPU' | 'REMOTE'
+    shipDesigns: ShipDesign[]
 }
 
 export type Galaxy = {
@@ -27,12 +28,25 @@ export type Line = {
     points: [XY, XY],
 }
 
+export type ShipDesign = {
+    id: number
+    name: string
+    hp: number
+    atk: number
+}
+
+export type Ship = {
+    designId: number;
+    damage: number
+}
+
 export type Fleet = {
     id: number;
     orbitingStarId?: number
     destinationStarId?: number
     location: XY
     factionId: number
+    ships: Ship[]
 }
 
 export type Battle = {

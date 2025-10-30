@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
-import type { Fleet } from "../lib/model"
+import type { Faction, Fleet } from "../lib/model"
 import { findById, lookUpName } from "../lib/util"
 import { FleetSymbol } from "./FleetSymbol"
 
@@ -15,6 +15,16 @@ const containerStyle: CSSProperties = {
     boxSizing: 'border-box',
 }
 
+const countFleetShips = ({ ships }: Fleet, faction?: Faction) => {
+    if (!faction) return {}
+    const shipCount: Record<string, number> = {}
+    ships.forEach(ship => {
+        const design = faction.shipDesigns.find(design => design.id === ship.designId);
+        if (!design) { return }
+        shipCount[design.name] = (shipCount[design.name] ?? 0) + 1
+    })
+    return shipCount
+}
 
 export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
 
@@ -29,8 +39,16 @@ export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
             <FleetSymbol color={faction?.color} />
         </svg>
         <div>
-            {fleet.destinationStarId &&
+            <div>
+                {Object.entries(countFleetShips(fleet, faction)).map(
+                    ([shipDesignName, count]) => (
+                        <span key={shipDesignName} >{shipDesignName} x{count}{' '}</span>
+                    )
+                )}
+            </div>
+            {fleet.destinationStarId && <>
                 <span>{lookUpName(fleet.destinationStarId, galaxy.stars)} </span>
+            </>
             }
         </div>
     </>
