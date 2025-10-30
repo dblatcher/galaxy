@@ -18,7 +18,7 @@ export const ReportsPanel = () => {
 
     return (
         <div>
-            <div>Reports</div>
+            <h3>Reports</h3>
             {reports.map((report, index) => (
                 <div key={index}>
                     <ReportDisplay report={report}/>

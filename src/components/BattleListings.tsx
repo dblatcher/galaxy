@@ -19,15 +19,13 @@ const BattleList = ({ title, battles, forActivePlayer }: { title: string, battle
                     {lookUpName(battle.star, galaxy.stars)}
                 </span>
                 {forActivePlayer &&
-                    <button onClick={() => dispatch({ type: 'resolve-battle', starId: battle.star })}>resolve</button>
+                    <button 
+                        onClick={() => dispatch({ type: 'resolve-battle', starId: battle.star })}
+                    >resolve</button>
                 }
-                <ul>
-                    {battle.sides.map((side, sideIndex) => (
-                        <li key={sideIndex}>
-                            {lookUpName(side.faction, factions)}: {side.fleets.length} fleets
-                        </li>
-                    ))}
-                </ul>
+                <div>
+                    {battle.sides.map((side) => lookUpName(side.faction, factions)).join(' vs ')}
+                </div>
             </div>
         )}
     </>
