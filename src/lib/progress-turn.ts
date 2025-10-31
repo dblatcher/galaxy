@@ -1,6 +1,6 @@
 import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
 import { autoResolveAllBattles } from "./auto-battles";
-import type { Faction, Fleet, GameState } from "./model";
+import type { Faction, Fleet, GameState, Ship, Star } from "./model";
 import { findById, isSet, nextId } from "./util";
 
 const SPEED = 4;
@@ -33,30 +33,46 @@ const moveFleetInGalaxy = ({ galaxy }: GameState) => (fleet: Fleet) => {
     return fleet
 }
 
-const appendFleet = (newFleet: Omit<Fleet, 'id'>, fleets: Fleet[]) => {
-    fleets.push({ ...newFleet, id: nextId(fleets) })
+const appendFleet = (factionId: number, star: Star, newShips: Ship[], fleets: Fleet[]) => {
+    const fleet: Fleet = {
+        id: nextId(fleets),
+        factionId,
+        orbitingStarId: star.id,
+        location: {
+            x: star.x,
+            y: star.y
+        },
+        ships: newShips,
+    }
+    fleets.push(fleet)
     return fleets
 }
 
-const addNewFleets = ({ galaxy, turnNumber }: GameState) => (fleets: Fleet[]) => {
-    galaxy.stars.forEach(star => {
-        // to do - build queue - not every star produces a new fleet each turn
-        if (isSet(star.factionId)) {
-            if (turnNumber % 4 === 0) {
-                appendFleet({
-                    factionId: star.factionId,
-                    orbitingStarId: star.id,
-                    location: {
-                        x: star.x,
-                        y: star.y
-                    },
-                    ships: [
-                        {
-                            designId: 0,
-                            damage: 0,
-                        }
-                    ]
-                }, fleets)
+const getNewShipsFromStar = (star: Star, { turnNumber }: GameState): Ship[] | undefined => {
+    // TO DO - star's build queue
+    return ((isSet(star.factionId)) && turnNumber % 4 === 0)
+        ? [{ designId: 0, damage: 0 }]
+        : undefined;
+}
+
+const addNewFleets = (gameState: GameState) => (fleets: Fleet[]) => {
+    gameState.galaxy.stars.forEach(star => {
+        const { factionId } = star;
+        if (isSet(factionId)) {
+            const newShips = getNewShipsFromStar(star, gameState)
+
+            if (newShips) {
+                // TO DO - let the player pick which fleet get the new ships
+                const factionsFleetsHere = fleets.filter(fleet =>
+                    fleet.factionId === factionId && fleet.orbitingStarId === star.id
+                )
+                const [firstFleet] = factionsFleetsHere;
+
+                if (!firstFleet) {
+                    appendFleet(factionId, star, newShips, fleets)
+                } else {
+                    firstFleet.ships.push(...newShips)
+                }
             }
         }
     })
