@@ -20,7 +20,6 @@ export const GalaxyMap = ({ scale }: Props) => {
         <svg viewBox={`${-mapMargin} ${-mapMargin} ${width + 2 * mapMargin} ${height + 2 * mapMargin}`} style={{
             width: width * scale,
             height: height * scale,
-            border: '1px solid red',
         }} onClick={() => dispatch({ type: 'focus-star' })}>
             {stars.map((star, index) => (
                 <StarPlot key={index}

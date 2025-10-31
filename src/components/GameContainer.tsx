@@ -24,15 +24,25 @@ export const GameContainer = () => {
 
     return (
         <GameStateContext.Provider value={{ gameState, dispatch }}>
-            <h2>game: <span style={{ color: activeFaction?.color }}>{activeFaction?.name}</span> turn {gameState.turnNumber}</h2>
-            <div style={{
-                display: 'flex'
-            }}>
-                <BattleListings />
-                <GalaxyMap scale={4} />
-                <FocusWindow />
-            </div>
-            <TurnEndControls />
+            <main className='game-main'>
+                <section className='title-section'>
+                    <h2>game: <span style={{ color: activeFaction?.color }}>{activeFaction?.name}</span> turn {gameState.turnNumber}</h2>
+                    <TurnEndControls />
+                </section>
+                <section className='center-section'>
+                    <div className='side-panel'>
+                        <BattleListings />
+                    </div>
+
+                    <div className='map-wrapper'>
+                        <GalaxyMap scale={5} />
+                    </div>
+
+                    <div className='side-panel'>
+                        <FocusWindow />
+                    </div>
+                </section>
+            </main>
         </GameStateContext.Provider>
     )
 }

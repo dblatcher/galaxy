@@ -6,8 +6,9 @@ export const TurnEndControls = () => {
 
     return (
         <div>
-            <span>Battles to resolve: {activeFactionBattles.length}</span>
-            <button disabled={activeFactionBattles.length > 0} onClick={() => dispatch({ type: 'next-turn' })}>next turn</button>
+            <button disabled={activeFactionBattles.length > 0} 
+                onClick={() => dispatch({ type: 'next-turn' })}
+                >next turn</button>
         </div>
     )
 }

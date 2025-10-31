@@ -3,13 +3,6 @@ import { useGameStateContext } from "../hooks/useGameStateContext";
 import { findById, splitArray } from "../lib/util";
 import { FleetList } from "./FleetList";
 
-const sectionStyle: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    flexBasis: 150,
-    flexShrink: 0,
-    border: '1px solid red',
-}
 
 const headerStyle: CSSProperties = {
     borderBottom: '1px solid red',
@@ -22,7 +15,7 @@ export const FocusWindow = () => {
     const [playersFleets, othersFleets] = splitArray(fleetsHere, (fleet) => fleet.factionId === activeFactionId)
     const faction = findById(startStar?.factionId, factions)
 
-    return <section style={sectionStyle}>
+    return <div>
         {startStar && (
             <>
                 <header style={headerStyle}>
@@ -37,5 +30,5 @@ export const FocusWindow = () => {
                 <FleetList title="Your fleets" list={playersFleets} />
                 <FleetList title="Other fleets" list={othersFleets} />
             </>)}
-    </section>
+    </div>
 }
