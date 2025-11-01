@@ -2,7 +2,7 @@ import type { CSSProperties } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { Faction, Fleet } from "../lib/model"
 import { findById, lookUpName } from "../lib/util"
-import { FleetSymbol } from "./FleetSymbol"
+import { FleetIcon } from "./FleetSymbol"
 
 const containerStyle: CSSProperties = {
     display: 'flex',
@@ -35,9 +35,7 @@ export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
     const isActiveFactionFleet = activeFactionId === fleet.factionId;
 
     const contents = <>
-        <svg viewBox="0 0 6 6" style={{ width: 20, height: 20 }}>
-            <FleetSymbol color={faction?.color} />
-        </svg>
+        <FleetIcon color={faction?.color} />
         <div>
             <div>
                 {Object.entries(countFleetShips(fleet, faction)).map(

@@ -1,6 +1,7 @@
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { Faction, ShipDesign } from "../lib/model"
 import { splitArray, findById } from "../lib/util"
+import { FleetIcon } from "./FleetSymbol"
 import { ModalLayout } from "./ModalLayout"
 
 
@@ -25,17 +26,20 @@ export const FleetsControl = () => {
 
     return (
         <ModalLayout
-            title={<div>{faction?.name} fleets at {focusedStar?.name}</div>}
-
+            title={<div style={{ display: 'flex', alignItems: 'center', gap:5 }}>
+                <FleetIcon color={faction?.color} size={25} />
+                {faction?.name} fleets at {focusedStar?.name}
+            </div>}
         >
             {playersFleets.map((fleet, fleetIndex) => (
-                <div style={{ padding: 5, border: '1px dotted white' }}>
-                    <span>#{fleet.id}</span>
+                <div style={{ padding: 5, borderBottom: '1px dotted white' }}>
+                    <div>#{fleet.id} </div>
                     <div key={fleetIndex} style={{ display: 'flex', gap: 5 }}>
                         {fleet.ships.map((ship, shipIndex) => {
                             const design = designMap[ship.designId];
                             if (!design) { return <div key={shipIndex}>!missing design {ship.designId}</div> }
                             return <button key={shipIndex}>
+                                <FleetIcon color={faction?.color} size={15} />
                                 {design.name}
                                 <span>{design.hp - ship.damage}/{design.hp}</span>
                             </button>
@@ -48,7 +52,7 @@ export const FleetsControl = () => {
                 </div>
             ))}
 
-            <div style={{ padding: 5, border: '1px dotted white' }}>
+            <div style={{ padding: 5 }}>
                 <div>
                     <button>make new fleet</button>
                 </div>

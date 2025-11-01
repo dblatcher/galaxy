@@ -22,3 +22,15 @@ export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h }: Props) => {
         pointerEvents={'none'}
     />
 }
+
+
+interface IconProps {
+    color?: string;
+    size?: number
+}
+
+export const FleetIcon = ({ color = 'white', size = 20 }: IconProps) => {
+    return <svg viewBox="0 0 6 6" style={{ width: size, height: size }}>
+        <FleetSymbol color={color} />
+    </svg>
+}
