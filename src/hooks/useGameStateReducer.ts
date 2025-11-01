@@ -1,5 +1,5 @@
 import { useReducer } from "react"
-import type { Fleet, GameState, Star } from "../lib/model"
+import type { Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById } from "../lib/util"
 import { getBattleAt } from "../lib/derived-state"
@@ -19,10 +19,29 @@ export type Action = {
 } | {
     type: 'resolve-battle'
     starId: number
+} | {
+    type: 'open-dialog'
+    dialog: Dialog
+} | {
+    type: 'close-dialog'
 }
 
 const gameStateReducer = (state: GameState, action: Action): GameState => {
+    if (state.dialog) {
+        switch (action.type) {
+            case 'close-dialog': {
+                return { ...state, dialog: undefined }
+            }
+            default:
+                return state
+        }
+    }
+
     switch (action.type) {
+        case "open-dialog":
+            return { ...state, dialog: action.dialog }
+        case "close-dialog":
+            return state
         case "focus-star":
             // to do - optionally select the first fleet on the list for this star
             return { ...state, focusedStarId: action.target?.id, selectedFleetId: undefined }

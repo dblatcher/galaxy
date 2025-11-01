@@ -1,0 +1,23 @@
+.game-modal {
+    inset: 0;
+    border: none;
+    padding: 0;
+}
+
+.game-modal>aside {
+    min-width: 15rem;
+    border: 1px solid red;
+}
+
+.game-modal>aside>header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid red;
+    padding: 10px;
+}
+
+.game-modal>aside>section {
+    padding: 10px;
+}

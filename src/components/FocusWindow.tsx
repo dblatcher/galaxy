@@ -9,18 +9,18 @@ const headerStyle: CSSProperties = {
 }
 
 export const FocusWindow = () => {
-    const { gameState, startStar } = useGameStateContext()
+    const { gameState, focusedStar, dispatch } = useGameStateContext()
     const { fleets, factions, activeFactionId } = gameState
-    const fleetsHere = startStar ? fleets.filter(fleet => fleet.orbitingStarId === startStar?.id) : []
+    const fleetsHere = focusedStar ? fleets.filter(fleet => fleet.orbitingStarId === focusedStar?.id) : []
     const [playersFleets, othersFleets] = splitArray(fleetsHere, (fleet) => fleet.factionId === activeFactionId)
-    const faction = findById(startStar?.factionId, factions)
+    const faction = findById(focusedStar?.factionId, factions)
 
     return <div>
-        {startStar && (
+        {focusedStar && (
             <>
                 <header style={headerStyle}>
-                    {startStar && (
-                        <div>{startStar.name}</div>
+                    {focusedStar && (
+                        <div>{focusedStar.name}</div>
                     )}
                     <div style={{ color: faction?.color }}>
                         {faction?.name ?? 'unpopulated'}
@@ -28,6 +28,9 @@ export const FocusWindow = () => {
                 </header>
 
                 <FleetList title="Your fleets" list={playersFleets} />
+                {playersFleets.length > 0 && (
+                    <button onClick={() => dispatch({ type: 'open-dialog', dialog: { 'role': 'fleets' } })}>arrange fleets</button>
+                )}
                 <FleetList title="Other fleets" list={othersFleets} />
             </>)}
     </div>

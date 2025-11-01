@@ -36,11 +36,11 @@ export const getAllBattles = (gameState: GameState): Battle[] => {
 
 export const getDerivedState = (gameState: GameState) => {
     const { galaxy, focusedStarId, activeFactionId } = gameState;
-    const startStar = galaxy.stars.find(star => star.id === focusedStarId);
+    const focusedStar = galaxy.stars.find(star => star.id === focusedStarId);
     const activeStarId = focusedStarId;
 
     const battles = getAllBattles(gameState);
     const [activeFactionBattles, battlesWithoutActiveFaction] = splitArray(battles, b => b.sides.some(side => side.faction === activeFactionId))
 
-    return { activeStarId, startStar, battles, activeFactionBattles, battlesWithoutActiveFaction }
+    return { activeStarId, focusedStar, battles, activeFactionBattles, battlesWithoutActiveFaction }
 }

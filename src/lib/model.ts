@@ -70,6 +70,10 @@ export type BattleReport = {
 
 export type Report = BattleReport
 
+export type Dialog = {
+    role: 'fleets'
+}
+
 export type GameState = {
     turnNumber: number
     activeFactionId: number
@@ -79,4 +83,5 @@ export type GameState = {
     focusedStarId?: number
     selectedFleetId?: number
     reports: Report[]
+    dialog?: Dialog
 }

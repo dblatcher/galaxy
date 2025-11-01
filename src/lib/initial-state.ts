@@ -7,12 +7,20 @@ const baseShips = (): Ship[] => [{
 }];
 
 const baseDesigns = (): ShipDesign[] => {
-    return [{
-        id: 0,
-        name: 'scout',
-        hp: 3,
-        atk: 1,
-    }]
+    return [
+        {
+            id: 0,
+            name: 'scout',
+            hp: 3,
+            atk: 1,
+        },
+        {
+            id: 1,
+            name: 'colony ship',
+            hp: 10,
+            atk: 0,
+        },
+    ]
 };
 
 const idMap: Record<string, number> = {}
@@ -34,7 +42,7 @@ const FACTION_ID = {
 }
 
 const initialFactions: [Faction, ...Faction[]] = [
-    { id: FACTION_ID.Zorblaxian, name: 'Zorblaxian', color: 'lime', playerType: 'LOCAL', shipDesigns: baseDesigns() },
+    { id: FACTION_ID.Zorblaxian, name: 'Zorblaxian', color: 'lime', playerType: 'LOCAL', shipDesigns: [...baseDesigns()] },
     { id: FACTION_ID.Magrathian, name: 'Magrathian', color: 'crimson', playerType: 'CPU', shipDesigns: baseDesigns() },
     { id: FACTION_ID.Martian, name: 'Martian', color: 'pink', playerType: 'CPU', shipDesigns: baseDesigns() },
     { id: FACTION_ID.Uraninian, name: 'Uraninian', color: 'skyblue', playerType: 'CPU', shipDesigns: baseDesigns() },
@@ -106,7 +114,18 @@ const initialFleets: Fleet[] = [
             y: 0,
         },
         factionId: FACTION_ID.Zorblaxian,
-        ships: [...baseShips(),...baseShips(),...baseShips()],
+        ships: [...baseShips(), { designId: 1, damage: 1 }, ...baseShips()],
+    },
+    {
+        id: nextIdFor('fleet'),
+        orbitingStarId: 6,
+        destinationStarId: undefined,
+        location: {
+            x: 0,
+            y: 0,
+        },
+        factionId: FACTION_ID.Zorblaxian,
+        ships: [...baseShips(), ...baseShips()],
     },
 ]
 

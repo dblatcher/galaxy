@@ -7,6 +7,7 @@ import { GalaxyMap } from './GalaxyMap'
 import { BattleListings } from './BattleListings'
 import { TurnEndControls } from './TurnEndControls'
 import { initalState } from '../lib/initial-state'
+import { Modal } from './Modal'
 
 
 export const GameContainer = () => {
@@ -42,6 +43,7 @@ export const GameContainer = () => {
                         <FocusWindow />
                     </div>
                 </section>
+               <Modal />
             </main>
         </GameStateContext.Provider>
     )
