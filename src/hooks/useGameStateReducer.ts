@@ -1,9 +1,10 @@
 import { useReducer } from "react"
+import { autoResolveBattle } from "../lib/auto-battles"
+import { getBattleAt } from "../lib/derived-state"
+import { appendFleet, transferShips } from "../lib/fleet-operations"
 import type { Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById } from "../lib/util"
-import { getBattleAt } from "../lib/derived-state"
-import { autoResolveBattle } from "../lib/auto-battles"
 
 export type Action = {
     type: 'focus-star',
@@ -27,10 +28,10 @@ export type Action = {
 } | {
     type: 'fleets:transfer-ships',
     fleetId: number,
-    shipIdMap: Record<number, number[]>
+    sourceFleetMap: Record<number, number[]>
 } | {
-    type: 'fleets:add-fleet',
-    shipIdMap: Record<number, number[]>,
+    type: 'fleets:transfer-to-new-fleet',
+    sourceFleetMap: Record<number, number[]>,
 }
 
 const gameStateReducer = (state: GameState, action: Action): GameState => {
@@ -40,7 +41,7 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
                 return { ...state, dialog: undefined }
             }
             case 'fleets:transfer-ships':
-            case 'fleets:add-fleet':
+            case 'fleets:transfer-to-new-fleet':
                 break;
             default:
                 return state
@@ -65,14 +66,27 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
         case "select-fleet":
             return { ...state, selectedFleetId: action.target?.id }
         case "fleets:transfer-ships": {
-            console.log(action);
-            // TO DO - logic for moving ships to different fleet, removing source fleet if empty
-            return { ...state }
+            const { sourceFleetMap, fleetId } = action;
+            const fleets = structuredClone(state.fleets)
+            const destinationFleet = findById(fleetId, fleets)
+            if (!destinationFleet) {
+                console.warn('no destination fleet', fleetId)
+                return { ...state }
+            }
+            transferShips(sourceFleetMap, destinationFleet, fleets)
+            return { ...state, fleets }
         }
-        case "fleets:add-fleet": {
-            console.log(action);
-            // TO DO - logic creating new fleet at focused star for active faction, moving ships, removing source fleet if empty
-            return { ...state }
+        case "fleets:transfer-to-new-fleet": {
+            const { sourceFleetMap } = action;
+            const star = findById(state.focusedStarId, state.galaxy.stars)
+            if (!star) {
+                console.warn('no such star', state.focusedStarId)
+                return { ...state }
+            }
+            const fleets = structuredClone(state.fleets)
+            const destinationFleet = appendFleet(state.activeFactionId, star, [], fleets);
+            transferShips(sourceFleetMap, destinationFleet, fleets)
+            return { ...state, fleets }
         }
         case "resolve-battle": {
             const battle = getBattleAt(action.starId, state);

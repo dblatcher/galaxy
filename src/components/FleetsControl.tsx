@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { Faction, ShipDesign } from "../lib/model"
-import { removeDuplicates, splitArray } from "../lib/util"
+import { findById, removeDuplicates, splitArray } from "../lib/util"
 import { FleetIcon } from "./FleetSymbol"
 import { ModalLayout } from "./ModalLayout"
 import { ToggleableBox } from "./ToggleableBox"
@@ -20,6 +20,9 @@ type SelectedShips = Record<number, number[]>;
 
 export const FleetsControl = () => {
     const { gameState, focusedStar, activeFaction, dispatch } = useGameStateContext()
+    const { fleets, activeFactionId, } = gameState
+    const fleetsHere = focusedStar ? fleets.filter(fleet => fleet.orbitingStarId === focusedStar?.id) : []
+    const [playersFleets] = splitArray(fleetsHere, (fleet) => fleet.factionId === activeFactionId)
 
     const [selectedShips, setSelectedShips] = useState<SelectedShips>({})
     const isSelected = (shipIndex: number, fleetId: number) => {
@@ -29,15 +32,19 @@ export const FleetsControl = () => {
         const newList = removeDuplicates([...(selectedShips[fleetId] ?? []), shipIndex])
         return { ...selectedShips, [fleetId]: newList }
     })
+    const selectAll = (fleetId: number) => setSelectedShips(selectedShips => {
+        const fleet = findById(fleetId, playersFleets);
+        if (!fleet) { return selectedShips }
+        const newList = fleet.ships.map((_ship, index) => index)
+        return { ...selectedShips, [fleetId]: newList }
+    })
     const deselectShip = (shipIndex: number, fleetId: number) => setSelectedShips(selectedShips => {
         const newList = (selectedShips[fleetId] ?? []).filter(ship => ship !== shipIndex)
         return { ...selectedShips, [fleetId]: newList }
     })
 
 
-    const { fleets, activeFactionId, } = gameState
-    const fleetsHere = focusedStar ? fleets.filter(fleet => fleet.orbitingStarId === focusedStar?.id) : []
-    const [playersFleets] = splitArray(fleetsHere, (fleet) => fleet.factionId === activeFactionId)
+
 
     const designMap = useMemo(() => getDesignMap(activeFaction), [activeFaction])
 
@@ -64,11 +71,12 @@ export const FleetsControl = () => {
                                 <span>{design.hp - ship.damage}/{design.hp}</span>
                             </ToggleableBox>
                         })}
-
                     </div>
                     <div>
+                        <button onClick={() => selectAll(fleet.id)}>all</button>
                         <button onClick={() => {
-                            dispatch({ type: 'fleets:transfer-ships', fleetId: fleet.id, shipIdMap: selectedShips })
+                            dispatch({ type: 'fleets:transfer-ships', fleetId: fleet.id, sourceFleetMap: selectedShips })
+                            setSelectedShips({})
                         }}>move here</button>
                     </div>
                 </div>
@@ -77,7 +85,8 @@ export const FleetsControl = () => {
             <div style={{ padding: 5 }}>
                 <div>
                     <button onClick={() => {
-                        dispatch({ type: 'fleets:add-fleet', shipIdMap: selectedShips })
+                        dispatch({ type: 'fleets:transfer-to-new-fleet', sourceFleetMap: selectedShips })
+                        setSelectedShips({})
                     }}>make new fleet</button>
                 </div>
             </div>

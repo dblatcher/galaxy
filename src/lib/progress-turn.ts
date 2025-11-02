@@ -1,7 +1,8 @@
 import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
 import { autoResolveAllBattles } from "./auto-battles";
 import type { Faction, Fleet, GameState, Ship, Star } from "./model";
-import { findById, isSet, nextId } from "./util";
+import { findById, isSet } from "./util";
+import { appendFleet } from "./fleet-operations";
 
 const SPEED = 4;
 const CLOSE_ENOUGH = 5
@@ -33,20 +34,6 @@ const moveFleetInGalaxy = ({ galaxy }: GameState) => (fleet: Fleet) => {
     return fleet
 }
 
-const appendFleet = (factionId: number, star: Star, newShips: Ship[], fleets: Fleet[]) => {
-    const fleet: Fleet = {
-        id: nextId(fleets),
-        factionId,
-        orbitingStarId: star.id,
-        location: {
-            x: star.x,
-            y: star.y
-        },
-        ships: newShips,
-    }
-    fleets.push(fleet)
-    return fleets
-}
 
 const getNewShipsFromStar = (star: Star, { turnNumber }: GameState): Ship[] | undefined => {
     // TO DO - star's build queue

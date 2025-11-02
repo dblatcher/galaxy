@@ -13,12 +13,17 @@ export const nextId = (list: { id: number }[]): number => {
     return Math.max(...list.map(item => item.id)) + 1
 }
 
-export function splitArray<T>(list: T[], predicate: { (item: T): boolean }): [T[], T[]] {
+export function splitArray<T>(list: T[], predicate: { (item: T, index: number): boolean }): [T[], T[]] {
     return [
         list.filter(predicate),
-        list.filter((t) => !predicate(t))
+        list.filter((t, i) => !predicate(t, i))
     ]
 }
+
+export function filterInPlace<T>(list: T[], predicate: { (item: T, index: number): boolean }) {
+    const [matches] = splitArray(list,predicate);
+    list.splice(0,list.length, ...matches)
+} 
 
 export function removeDuplicates(list: number[]): number[] {
     return list.reduce<number[]>((acc, next) => (acc.includes(next)) ? acc : [...acc, next], [])
