@@ -29,7 +29,7 @@ export const ToggleableBox = ({ children, checked, setChecked }: Props) => {
     }}>
         <input type="checkbox"
             style={{ visibility: 'hidden', position: 'absolute' }}
-            checked={checked}
+            checked={!!checked}
             onChange={
                 ({ target: { checked } }) => setChecked?.(checked)}
         />

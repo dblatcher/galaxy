@@ -24,6 +24,13 @@ export type Action = {
     dialog: Dialog
 } | {
     type: 'close-dialog'
+} | {
+    type: 'fleets:transfer-ships',
+    fleetId: number,
+    shipIdMap: Record<number, number[]>
+} | {
+    type: 'fleets:add-fleet',
+    shipIdMap: Record<number, number[]>,
 }
 
 const gameStateReducer = (state: GameState, action: Action): GameState => {
@@ -32,6 +39,9 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             case 'close-dialog': {
                 return { ...state, dialog: undefined }
             }
+            case 'fleets:transfer-ships':
+            case 'fleets:add-fleet':
+                break;
             default:
                 return state
         }
@@ -54,6 +64,16 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             return { ...state }
         case "select-fleet":
             return { ...state, selectedFleetId: action.target?.id }
+        case "fleets:transfer-ships": {
+            console.log(action);
+            // TO DO - logic for moving ships to different fleet, removing source fleet if empty
+            return { ...state }
+        }
+        case "fleets:add-fleet": {
+            console.log(action);
+            // TO DO - logic creating new fleet at focused star for active faction, moving ships, removing source fleet if empty
+            return { ...state }
+        }
         case "resolve-battle": {
             const battle = getBattleAt(action.starId, state);
             if (!battle) {
