@@ -1,7 +1,7 @@
 import { useReducer } from "react"
 import { autoResolveBattle } from "../lib/auto-battles"
 import { getBattleAt } from "../lib/derived-state"
-import { appendFleet, transferShips } from "../lib/fleet-operations"
+import { appendFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
 import type { Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById } from "../lib/util"
@@ -18,7 +18,7 @@ export type Action = {
 } | {
     type: 'next-turn'
 } | {
-    type: 'resolve-battle'
+    type: 'battles:auto-resolve'
     starId: number
 } | {
     type: 'open-dialog'
@@ -42,6 +42,7 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             }
             case 'fleets:transfer-ships':
             case 'fleets:transfer-to-new-fleet':
+            case 'battles:auto-resolve':
                 break;
             default:
                 return state
@@ -88,14 +89,21 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             transferShips(sourceFleetMap, destinationFleet, fleets)
             return { ...state, fleets }
         }
-        case "resolve-battle": {
+        case "battles:auto-resolve": {
             const battle = getBattleAt(action.starId, state);
             if (!battle) {
                 console.warn('no battle at star:', action.starId, state)
                 return { ...state }
             }
             // TO DO - state to switch game mode to battle view
-            return autoResolveBattle(battle, state)
+            const battlesModalWasOpen = state.dialog?.role === 'battles';
+            const newState = autoResolveBattle(battle, state);
+            return {
+                ...newState,
+                dialog: battlesModalWasOpen && factionHasBattles(state.activeFactionId, newState)
+                    ? { role: 'battles' }
+                    : undefined
+            }
         }
         case "next-turn":
             return progressTurn(state);

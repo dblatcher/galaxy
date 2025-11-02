@@ -16,7 +16,8 @@ export const GameStateContext = createContext<{ gameState: GameState, dispatch: 
                 id: 0,
                 name: "",
                 color: "",
-                playerType: "LOCAL"
+                playerType: "LOCAL",
+                shipDesigns: []
             }
         ],
         reports: [],

@@ -16,12 +16,16 @@ export const ReportsPanel = () => {
 
     const { gameState: { reports } } = useGameStateContext()
 
+    if (reports.length === 0) {
+        return null
+    }
+
     return (
         <div>
             <h3>Reports</h3>
             {reports.map((report, index) => (
                 <div key={index}>
-                    <ReportDisplay report={report}/>
+                    <ReportDisplay report={report} />
                 </div>
             ))}
         </div>

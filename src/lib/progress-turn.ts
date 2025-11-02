@@ -1,8 +1,8 @@
 import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
 import { autoResolveAllBattles } from "./auto-battles";
+import { appendFleet, factionHasBattles } from "./fleet-operations";
 import type { Faction, Fleet, GameState, Ship, Star } from "./model";
 import { findById, isSet } from "./util";
-import { appendFleet } from "./fleet-operations";
 
 const SPEED = 4;
 const CLOSE_ENOUGH = 5
@@ -69,18 +69,22 @@ const addNewFleets = (gameState: GameState) => (fleets: Fleet[]) => {
 
 const startNewTurn = (oldGameState: GameState): GameState => {
     const gameState = autoResolveAllBattles({ ...oldGameState, reports: [] });
-
     const { galaxy, fleets: existingFleets, factions, turnNumber, reports } = gameState
     existingFleets.forEach(moveFleetInGalaxy(gameState))
     const fleets = addNewFleets(gameState)(existingFleets)
 
+    const [firstFaction] = factions
+
     return {
-        activeFactionId: factions[0].id,
+        activeFactionId: firstFaction.id,
         galaxy,
         fleets,
         factions,
         turnNumber: turnNumber + 1,
         reports,
+        dialog: factionHasBattles(firstFaction.id, gameState) ? {
+            role: 'battles'
+        } : undefined
     }
 }
 
@@ -91,7 +95,7 @@ const takeCpuTurn = (_faction: Faction, gameState: GameState): GameState => {
 export const progressTurn = (oldGameState: GameState): GameState => {
     const gameState = structuredClone(oldGameState)
 
-    const cycleThroughFactions = (factionIndex: number) => {
+    const cycleThroughFactions = (factionIndex: number): GameState => {
         const nextFaction: Faction | undefined = gameState.factions[factionIndex + 1]
         // last faction has gone, starting next turn
         if (!nextFaction) {
@@ -103,6 +107,9 @@ export const progressTurn = (oldGameState: GameState): GameState => {
                 return {
                     ...gameState,
                     activeFactionId: nextFaction.id,
+                    dialog: factionHasBattles(nextFaction.id, gameState) ? {
+                        role: 'battles'
+                    } : undefined
                 }
             case "CPU":
                 takeCpuTurn(nextFaction, gameState);

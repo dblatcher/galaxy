@@ -1,4 +1,5 @@
-import type { Star, Ship, Fleet } from "./model"
+import { getAllBattles } from "./derived-state"
+import type { Star, Ship, Fleet, GameState } from "./model"
 import { filterInPlace, findById, nextId, splitArray } from "./util"
 
 
@@ -20,7 +21,7 @@ export const appendFleet = (factionId: number, star: Star, newShips: Ship[], fle
 export const transferShips = (
     sourceFleetMap: Record<number, number[]>,
     destinationFleet: Fleet,
-    fleets:Fleet[]
+    fleets: Fleet[]
 ) => {
     Object.entries(sourceFleetMap).forEach(([key, shipIndexList]) => {
         const sourceFleetId = Number(key);
@@ -39,4 +40,11 @@ export const transferShips = (
     filterInPlace(fleets, fleet => fleet.ships.length > 0)
 
     return fleets
+}
+
+export const factionHasBattles = (factionId: number, gameState: GameState) => {
+    return getAllBattles(gameState)
+        .some(battle => battle.sides
+            .some(side => side.faction === factionId)
+        )
 }

@@ -20,7 +20,7 @@ const BattleList = ({ title, battles, forActivePlayer }: { title: string, battle
                 </span>
                 {forActivePlayer &&
                     <button 
-                        onClick={() => dispatch({ type: 'resolve-battle', starId: battle.star })}
+                        onClick={() => dispatch({ type: 'battles:auto-resolve', starId: battle.star })}
                     >resolve</button>
                 }
                 <div>

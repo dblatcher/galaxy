@@ -2,6 +2,7 @@ import type { ReactEventHandler } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import "./modal.css"
 import { FleetsControl } from "./FleetsControl"
+import { BattleControl } from "./BattlesControl"
 
 
 export const Modal = () => {
@@ -16,6 +17,7 @@ export const Modal = () => {
             open={!!dialog}
             closedby='any'>
             {dialog?.role === 'fleets' && <FleetsControl />}
+            {dialog?.role === 'battles' && <BattleControl />}
         </dialog>
     )
 }

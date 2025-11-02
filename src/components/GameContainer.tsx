@@ -5,7 +5,7 @@ import { findById } from '../lib/util'
 import { FocusWindow } from './FocusWindow'
 import { GalaxyMap } from './GalaxyMap'
 import { BattleListings } from './BattleListings'
-import { TurnEndControls } from './TurnEndControls'
+import { GameFlowButtons } from './GameFlowButtons'
 import { initalState } from '../lib/initial-state'
 import { Modal } from './Modal'
 
@@ -28,12 +28,9 @@ export const GameContainer = () => {
             <main className='game-main'>
                 <section className='title-section'>
                     <h2>game: <span style={{ color: activeFaction?.color }}>{activeFaction?.name}</span> turn {gameState.turnNumber}</h2>
-                    <TurnEndControls />
+                    <GameFlowButtons />
                 </section>
                 <section className='center-section'>
-                    <div className='side-panel'>
-                        <BattleListings />
-                    </div>
 
                     <div className='map-wrapper'>
                         <GalaxyMap scale={5} />
