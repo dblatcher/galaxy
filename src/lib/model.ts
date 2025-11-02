@@ -74,6 +74,8 @@ export type Dialog = {
     role: 'fleets'
 } | {
     role: 'battles'
+} | {
+    role: 'reports'
 }
 
 export type GameState = {

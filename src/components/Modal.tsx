@@ -3,6 +3,7 @@ import { useGameStateContext } from "../hooks/useGameStateContext"
 import "./modal.css"
 import { FleetsControl } from "./FleetsControl"
 import { BattleControl } from "./BattlesControl"
+import { ReportsPanel } from "./ReportsPanel"
 
 
 export const Modal = () => {
@@ -18,6 +19,7 @@ export const Modal = () => {
             closedby='any'>
             {dialog?.role === 'fleets' && <FleetsControl />}
             {dialog?.role === 'battles' && <BattleControl />}
+            {dialog?.role=== 'reports' && <ReportsPanel />}
         </dialog>
     )
 }

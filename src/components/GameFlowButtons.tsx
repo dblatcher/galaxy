@@ -6,7 +6,10 @@ export const GameFlowButtons = () => {
 
     return (
         <div>
-            <button disabled={battles.length === 0 && reports.length === 0}
+            <button disabled={reports.length === 0}
+                onClick={() => dispatch({ type: 'open-dialog', dialog: { role: 'reports' } })}
+            >Reports</button>
+            <button disabled={battles.length === 0}
                 onClick={() => dispatch({ type: 'open-dialog', dialog: { role: 'battles' } })}
             >Battles</button>
             <button disabled={activeFactionBattles.length > 0}
