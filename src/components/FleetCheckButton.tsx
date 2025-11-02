@@ -3,16 +3,12 @@ import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { Faction, Fleet } from "../lib/model"
 import { findById, lookUpName } from "../lib/util"
 import { FleetIcon } from "./FleetSymbol"
+import { ToggleableBox } from "./ToggleableBox"
 
-const containerStyle: CSSProperties = {
+const contentStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     gap: 2,
-    borderRadius: 4,
-    padding: 1,
-    borderWidth: 1,
-    borderColor: 'white',
-    boxSizing: 'border-box',
 }
 
 const countFleetShips = ({ ships }: Fleet, faction?: Faction) => {
@@ -34,7 +30,7 @@ export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
     const faction = findById(fleet.factionId, factions)
     const isActiveFactionFleet = activeFactionId === fleet.factionId;
 
-    const contents = <>
+    const contents = <div style={contentStyle}>
         <FleetIcon color={faction?.color} />
         <div>
             <div>
@@ -49,28 +45,19 @@ export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
             </>
             }
         </div>
-    </>
+    </div>
 
     if (!isActiveFactionFleet) {
-        return <div style={{ ...containerStyle, background: 'gray' }}>
+        return <div style={{ ...contentStyle, background: 'gray' }}>
             {contents}
         </div>
     }
 
-    return <label style={{
-        ...containerStyle,
-        background: checked ? 'black' : undefined,
-        borderStyle: checked ? 'solid' : 'dashed',
-        cursor: 'pointer',
-    }}>
-        <input type="checkbox"
-            style={{ visibility: 'hidden', position: 'absolute' }}
-            checked={checked}
-            onChange={
-                ({ target: { checked } }) =>
-                    dispatch({ type: 'select-fleet', target: !checked ? undefined : fleet })
-            }
-        />
+    return <ToggleableBox
+        checked={checked}
+        setChecked={checked =>
+            dispatch({ type: 'select-fleet', target: !checked ? undefined : fleet })}
+    >
         {contents}
-    </label>
+    </ToggleableBox>
 }
