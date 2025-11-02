@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, type CSSProperties } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
-import type { Faction, ShipDesign } from "../lib/model"
-import { findById, removeDuplicates, splitArray } from "../lib/util"
+import type { Faction, Fleet, ShipDesign } from "../lib/model"
+import { findById, isSet, lookUpName, removeDuplicates, splitArray } from "../lib/util"
 import { FleetIcon } from "./FleetSymbol"
 import { ModalLayout } from "./ModalLayout"
 import { ToggleableBox } from "./ToggleableBox"
@@ -12,11 +12,16 @@ const getDesignMap = (faction?: Faction) => {
     faction?.shipDesigns.forEach(design => {
         designMap[design.id] = design
     })
-
     return designMap
 }
 
 type SelectedShips = Record<number, number[]>;
+
+const shipListStyle: CSSProperties = {
+    display: 'flex',
+    gap: 5,
+    flexDirection: 'column',
+}
 
 export const FleetsControl = () => {
     const { gameState, focusedStar, activeFaction, dispatch } = useGameStateContext()
@@ -43,10 +48,14 @@ export const FleetsControl = () => {
         return { ...selectedShips, [fleetId]: newList }
     })
 
-
-
-
     const designMap = useMemo(() => getDesignMap(activeFaction), [activeFaction])
+    const destinationDisplay = (fleet: Fleet) => {
+        if (!isSet(fleet.destinationStarId)) {
+            return `in orbit`
+        }
+        const name = lookUpName(fleet.destinationStarId, gameState.galaxy.stars)
+        return `heading to ${name}`
+    }
 
     return (
         <ModalLayout
@@ -57,8 +66,10 @@ export const FleetsControl = () => {
         >
             {playersFleets.map((fleet, fleetIndex) => (
                 <div style={{ padding: 5, borderBottom: '1px dotted white' }} key={fleetIndex}>
-                    <div>#{fleet.id} </div>
-                    <div style={{ display: 'flex', gap: 5 }}>
+                    <div>
+                        {destinationDisplay(fleet)}
+                    </div>
+                    <div style={shipListStyle}>
                         {fleet.ships.map((ship, shipIndex) => {
                             const design = designMap[ship.designId];
                             if (!design) { return <div key={shipIndex}>!missing design {ship.designId}</div> }
