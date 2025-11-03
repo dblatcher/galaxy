@@ -1,33 +1,56 @@
 import { getAllBattles } from "./derived-state";
-import type { Battle, BattleReport, GameState } from "./model";
+import { getDesignMap } from "./fleet-operations";
+import type { Battle, BattleReport, Faction, Fleet, GameState } from "./model";
 import { findById } from "./util";
 
-// TO DO - should this be mutating rather than returning a new GameState?
+
+const removeDead = (fleets: Fleet[], factions: Faction[]): Fleet[] => {
+
+    
+    fleets.forEach(fleet => {
+        const faction = findById(fleet.factionId, factions);
+        if (!faction) {
+            fleet.ships = []
+            return
+        }
+        console.log(fleet.id, faction.name)
+        const designMap = getDesignMap(faction)
+        fleet.ships = fleet.ships.filter(ship => ship.damage < designMap[ship.designId].hp)
+    })
+
+    return fleets.filter(fleet => fleet.ships.length > 0)
+}
+
 export const autoResolveBattle = (battle: Battle, oldGameState: GameState): GameState => {
     const gameState = structuredClone(oldGameState)
 
-    // TO DO - for now, assume all fleets destroyed
-    const idsOfAllFleetsInBattle = battle.sides.flatMap(side => side.fleets)
-    const fleetsIfAllShipsDieInBattle = gameState.fleets.filter(fleet => !idsOfAllFleetsInBattle.includes(fleet.id))
+    const populatedSides = battle.sides.flatMap(side => {
+        const faction = findById(side.faction, gameState.factions);
+        return faction ? {
+            faction,
+            fleets: side.fleets.flatMap(fleetId => findById(fleetId, gameState.fleets) ?? [])
+        } : []
+    })
 
-    
-    const report: BattleReport = {
+    // TO DO - for now, assume all fleets destroyed
+    populatedSides.forEach(side => {
+        side.fleets.forEach(fleet => {
+            fleet.ships.forEach(ship => ship.damage = Infinity)
+        })
+    })
+
+
+    const report: BattleReport = structuredClone({
         reportType: 'battle',
         turnNumber: gameState.turnNumber,
         star: battle.star,
-        sides: battle.sides.map(side => {
-            return {
-                faction: side.faction,
-                losses: side.fleets.flatMap(fleetId => findById(fleetId, oldGameState.fleets) ?? []).flatMap(fleet => fleet.ships),
-                survivors: []
-            }
-        })
-    }
+        sides: populatedSides,
+    })
 
-    // TO DO - more state for reports on the battle outcomes to show the player
+
     return {
         ...gameState,
-        fleets: fleetsIfAllShipsDieInBattle,
+        fleets: removeDead(gameState.fleets, gameState.factions),
         reports: [...gameState.reports, report]
     }
 }

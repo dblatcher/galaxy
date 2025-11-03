@@ -62,9 +62,8 @@ export type BattleReport = {
     star: number;
     turnNumber: number;
     sides: {
-        faction: number,
-        losses: Ship[], // remodel? maybe just have copy of original fleets with dead ships still in it
-        survivors: Fleet[],
+        faction: Faction;
+        fleets: Fleet[];
     }[]
 }
 

@@ -1,19 +1,12 @@
 import { useMemo, useState, type CSSProperties } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
-import type { Faction, Fleet, ShipDesign } from "../lib/model"
+import { getDesignMap } from "../lib/fleet-operations"
+import type { Fleet } from "../lib/model"
 import { findById, isSet, lookUpName, removeDuplicates, splitArray } from "../lib/util"
 import { FleetIcon } from "./FleetSymbol"
 import { ModalLayout } from "./ModalLayout"
 import { ToggleableBox } from "./ToggleableBox"
 
-
-const getDesignMap = (faction?: Faction) => {
-    const designMap: Record<string, ShipDesign> = {}
-    faction?.shipDesigns.forEach(design => {
-        designMap[design.id] = design
-    })
-    return designMap
-}
 
 type SelectedShips = Record<number, number[]>;
 

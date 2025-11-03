@@ -1,5 +1,5 @@
 import { getAllBattles } from "./derived-state"
-import type { Star, Ship, Fleet, GameState } from "./model"
+import type { Star, Ship, Fleet, GameState, Faction, ShipDesign } from "./model"
 import { filterInPlace, findById, nextId, splitArray } from "./util"
 
 
@@ -47,4 +47,12 @@ export const factionHasBattles = (factionId: number, gameState: GameState) => {
         .some(battle => battle.sides
             .some(side => side.faction === factionId)
         )
+}
+
+export const getDesignMap = (faction?: Faction) => {
+    const designMap: Record<string, ShipDesign> = {}
+    faction?.shipDesigns.forEach(design => {
+        designMap[design.id] = design
+    })
+    return designMap
 }

@@ -1,26 +1,32 @@
 import { useGameStateContext } from "../hooks/useGameStateContext"
+import { getDesignMap } from "../lib/fleet-operations"
 import type { Report } from "../lib/model"
-import { lookUpName } from "../lib/util"
+import { lookUpName, splitArray } from "../lib/util"
 import { ModalLayout } from "./ModalLayout"
 
 
 const ReportDisplay = ({ report }: { report: Report }) => {
-    const { gameState: { galaxy, factions } } = useGameStateContext()
+    const { gameState: { galaxy } } = useGameStateContext()
 
     switch (report.reportType) {
         case 'battle': {
             return <div>
                 <h4>Battle at {lookUpName(report.star, galaxy.stars)}</h4>
                 <ul>
-                    {report.sides.map((side, index) => (
-                        <li key={index}>
-                            {lookUpName(side.faction, factions)} 
+                    {report.sides.map((side, index) => {
+
+                        const allShips = side.fleets.flatMap(fleet => fleet.ships);
+                        const designMap = getDesignMap(side.faction);
+                        const [survivors, losses] = splitArray(allShips, ship => ship.damage < designMap[ship.designId].hp)
+
+                        return <li key={index}>
+                            {side.faction.name}
                             <ul>
-                                <li>lost {side.losses.length} ships. </li>
-                                <li>{side.survivors.flatMap(fleet=>fleet.ships).length} surviving ships</li>
+                                <li>lost {losses.length} ships. </li>
+                                <li>{survivors.length} surviving ships</li>
                             </ul>
                         </li>
-                    ))}
+                    })}
                 </ul>
             </div>
         }
