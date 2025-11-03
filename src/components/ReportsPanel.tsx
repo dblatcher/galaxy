@@ -14,13 +14,25 @@ const ReportDisplay = ({ report }: { report: Report }) => {
                 <ul>
                     {report.sides.map((side, index) => (
                         <li key={index}>
-                            {lookUpName(side.faction, factions)}
+                            {lookUpName(side.faction, factions)} 
+                            <ul>
+                                <li>lost {side.losses.length} ships. </li>
+                                <li>{side.survivors.flatMap(fleet=>fleet.ships).length} surviving ships</li>
+                            </ul>
                         </li>
                     ))}
                 </ul>
             </div>
         }
+        case "message": {
+            return <div>
+                <h4>Message</h4>
+                <div>{report.message}</div>
+            </div>
+        }
     }
+
+
 }
 
 

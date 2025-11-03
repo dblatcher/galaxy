@@ -63,12 +63,18 @@ export type BattleReport = {
     turnNumber: number;
     sides: {
         faction: number,
-        losses: Fleet[],
+        losses: Ship[], // remodel? maybe just have copy of original fleets with dead ships still in it
         survivors: Fleet[],
     }[]
 }
 
-export type Report = BattleReport
+export type MessageReport = {
+    reportType: 'message'
+    turnNumber: number
+    message: string
+}
+
+export type Report = BattleReport | MessageReport
 
 export type Dialog = {
     role: 'fleets'

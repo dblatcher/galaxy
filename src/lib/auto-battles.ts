@@ -7,8 +7,8 @@ export const autoResolveBattle = (battle: Battle, oldGameState: GameState): Game
     const gameState = structuredClone(oldGameState)
 
     // TO DO - for now, assume all fleets destroyed
-    const idsOfAllShipInBattle = battle.sides.flatMap(side => side.fleets)
-    const fleetsIfAllShipsDieInBattle = gameState.fleets.filter(fleet => !idsOfAllShipInBattle.includes(fleet.id))
+    const idsOfAllFleetsInBattle = battle.sides.flatMap(side => side.fleets)
+    const fleetsIfAllShipsDieInBattle = gameState.fleets.filter(fleet => !idsOfAllFleetsInBattle.includes(fleet.id))
 
     
     const report: BattleReport = {
@@ -18,7 +18,7 @@ export const autoResolveBattle = (battle: Battle, oldGameState: GameState): Game
         sides: battle.sides.map(side => {
             return {
                 faction: side.faction,
-                losses: side.fleets.flatMap(fleetId => findById(fleetId, oldGameState.fleets) ?? []),
+                losses: side.fleets.flatMap(fleetId => findById(fleetId, oldGameState.fleets) ?? []).flatMap(fleet => fleet.ships),
                 survivors: []
             }
         })
