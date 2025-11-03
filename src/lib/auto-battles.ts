@@ -1,25 +1,9 @@
+import { removeDead } from "./battle-operations";
 import { getAllBattles } from "./derived-state";
-import { getDesignMap } from "./fleet-operations";
-import type { Battle, BattleReport, Faction, Fleet, GameState } from "./model";
+import type { Battle, BattleReport, GameState } from "./model";
 import { findById } from "./util";
 
 
-const removeDead = (fleets: Fleet[], factions: Faction[]): Fleet[] => {
-
-    
-    fleets.forEach(fleet => {
-        const faction = findById(fleet.factionId, factions);
-        if (!faction) {
-            fleet.ships = []
-            return
-        }
-        console.log(fleet.id, faction.name)
-        const designMap = getDesignMap(faction)
-        fleet.ships = fleet.ships.filter(ship => ship.damage < designMap[ship.designId].hp)
-    })
-
-    return fleets.filter(fleet => fleet.ships.length > 0)
-}
 
 export const autoResolveBattle = (battle: Battle, oldGameState: GameState): GameState => {
     const gameState = structuredClone(oldGameState)
@@ -39,14 +23,12 @@ export const autoResolveBattle = (battle: Battle, oldGameState: GameState): Game
         })
     })
 
-
     const report: BattleReport = structuredClone({
         reportType: 'battle',
         turnNumber: gameState.turnNumber,
         star: battle.star,
         sides: populatedSides,
     })
-
 
     return {
         ...gameState,
