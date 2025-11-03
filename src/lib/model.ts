@@ -83,14 +83,21 @@ export type Dialog = {
     role: 'reports'
 }
 
+export type BattleParameters = {
+    type: 'battle',
+    starId: number,
+}
+
 export type GameState = {
     turnNumber: number
     activeFactionId: number
     galaxy: Galaxy
+    starsWhereBattlesFoughtAlready: number[]
     fleets: Fleet[]
     factions: [Faction, ...Faction[]]
     focusedStarId?: number
     selectedFleetId?: number
     reports: Report[]
     dialog?: Dialog
+    subProgram?: BattleParameters
 }

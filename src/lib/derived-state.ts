@@ -6,6 +6,9 @@ export const getBattleAt = (starId: number, gameState: GameState, fleetsHereAlre
     const fleetsHere = fleetsHereAlreadyFound ?? gameState.fleets.filter(f => f.orbitingStarId === starId);
     const factionsHere = removeDuplicates(fleetsHere.map(f => f.factionId)).flatMap(id => findById(id, gameState.factions) ?? []);
 
+    if (gameState.starsWhereBattlesFoughtAlready.includes(starId)) {
+        return undefined
+    }
     if (factionsHere.length < 2) { return undefined }
     const sides = factionsHere.map(faction => (
         {

@@ -2,7 +2,7 @@ import { useReducer } from "react"
 import { autoResolveBattle } from "../lib/auto-battles"
 import { getBattleAt } from "../lib/derived-state"
 import { appendFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
-import type { Dialog, Fleet, GameState, Star } from "../lib/model"
+import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById } from "../lib/util"
 
@@ -32,6 +32,12 @@ export type Action = {
 } | {
     type: 'fleets:transfer-to-new-fleet',
     sourceFleetMap: Record<number, number[]>,
+} | {
+    type: 'battles:launch',
+    starId: number,
+} | {
+    type: 'battles:result',
+    report: BattleReport,
 }
 
 const gameStateReducer = (state: GameState, action: Action): GameState => {
@@ -43,6 +49,8 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             case 'fleets:transfer-ships':
             case 'fleets:transfer-to-new-fleet':
             case 'battles:auto-resolve':
+            case 'battles:launch':
+            case 'battles:result':
                 break;
             default:
                 return state
@@ -89,24 +97,48 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             transferShips(sourceFleetMap, destinationFleet, fleets)
             return { ...state, fleets }
         }
+
+        case "next-turn":
+            return progressTurn(state);
         case "battles:auto-resolve": {
             const battle = getBattleAt(action.starId, state);
             if (!battle) {
                 console.warn('no battle at star:', action.starId, state)
                 return { ...state }
             }
-            // TO DO - state to switch game mode to battle view
             const battlesModalWasOpen = state.dialog?.role === 'battles';
             const newState = autoResolveBattle(battle, state);
             return {
                 ...newState,
+                starsWhereBattlesFoughtAlready: [...newState.starsWhereBattlesFoughtAlready, action.starId],
                 dialog: battlesModalWasOpen && factionHasBattles(state.activeFactionId, newState)
                     ? { role: 'battles' }
                     : undefined
             }
         }
-        case "next-turn":
-            return progressTurn(state);
+        case "battles:launch":
+            return {
+                ...state,
+                subProgram: {
+                    type: 'battle',
+                    starId: action.starId,
+                }
+            }
+        case "battles:result":
+            const battlesModalWasOpen = state.dialog?.role === 'battles';
+            const newState = structuredClone({
+                ...state,
+                reports: [...state.reports, action.report],
+                starsWhereBattlesFoughtAlready: [...state.starsWhereBattlesFoughtAlready, action.report.star],
+                fleets: state.fleets // TO DO - apply the reports to the state by updating fleets
+            })
+            return {
+                ...newState,
+                subProgram: undefined,
+                dialog: battlesModalWasOpen && factionHasBattles(newState.activeFactionId, newState)
+                    ? { role: 'battles' }
+                    : undefined
+            }
     }
 
 }

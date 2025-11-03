@@ -135,6 +135,7 @@ export const initalState: GameState = {
     galaxy: initialGalaxy,
     fleets: initialFleets,
     factions: initialFactions,
+    starsWhereBattlesFoughtAlready: [],
     reports: [
         { reportType: 'message', turnNumber: 1, message: 'Game started' }
     ],

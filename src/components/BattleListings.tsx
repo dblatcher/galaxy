@@ -18,9 +18,14 @@ const BattleList = ({ title, battles, forActivePlayer }: { title: string, battle
                     {lookUpName(battle.star, galaxy.stars)}
                 </span>
                 {forActivePlayer &&
+                <>
                     <button 
                         onClick={() => dispatch({ type: 'battles:auto-resolve', starId: battle.star })}
-                    >resolve</button>
+                        >automate</button>
+                    <button 
+                        onClick={() => dispatch({ type: 'battles:launch', starId: battle.star })}
+                        >fight</button>
+                        </>
                 }
                 <div>
                     {battle.sides.map((side) => lookUpName(side.faction, factions)).join(' vs ')}

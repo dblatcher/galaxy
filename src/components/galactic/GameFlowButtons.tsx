@@ -1,4 +1,4 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
 
 export const GameFlowButtons = () => {
 

@@ -40,10 +40,8 @@ export const autoResolveBattle = (battle: Battle, oldGameState: GameState): Game
 export const autoResolveAllBattles = (oldGameState: GameState): GameState => {
     let gameState = structuredClone(oldGameState);
     const battles = getAllBattles(gameState);
-
     battles.forEach(battle => {
         gameState = autoResolveBattle(battle, gameState)
     })
-
-    return gameState
+    return { ...gameState, starsWhereBattlesFoughtAlready: [] }
 }

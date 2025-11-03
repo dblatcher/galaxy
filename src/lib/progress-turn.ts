@@ -81,6 +81,7 @@ const startNewTurn = (oldGameState: GameState): GameState => {
         fleets,
         factions,
         turnNumber: turnNumber + 1,
+        starsWhereBattlesFoughtAlready: [],
         reports,
         dialog: factionHasBattles(firstFaction.id, gameState) ? {
             role: 'battles'

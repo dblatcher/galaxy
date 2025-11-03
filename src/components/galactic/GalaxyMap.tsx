@@ -1,7 +1,7 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
-import { handleStarClickFunction } from "../lib/ui-interactions"
-import { FleetPlot } from "./FleetPlot"
-import { StarPlot } from "./StarPlot"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { handleStarClickFunction } from "../../lib/ui-interactions"
+import { FleetPlot } from "../FleetPlot"
+import { StarPlot } from "../StarPlot"
 
 interface Props {
     scale: number

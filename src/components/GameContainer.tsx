@@ -1,13 +1,10 @@
 import { useEffect } from 'react'
 import { GameStateContext } from '../context/gameStateContext'
 import { useGameStateReducer } from '../hooks/useGameStateReducer'
-import { findById } from '../lib/util'
-import { FocusWindow } from './FocusWindow'
-import { GalaxyMap } from './GalaxyMap'
-import { BattleListings } from './BattleListings'
-import { GameFlowButtons } from './GameFlowButtons'
 import { initalState } from '../lib/initial-state'
-import { Modal } from './Modal'
+import { findById } from '../lib/util'
+import { BattleApp } from './battle/BattleApp'
+import { GalaticView } from './galactic/GalaticView'
 
 
 export const GameContainer = () => {
@@ -25,23 +22,12 @@ export const GameContainer = () => {
 
     return (
         <GameStateContext.Provider value={{ gameState, dispatch }}>
-            <main className='game-main'>
-                <section className='title-section'>
-                    <h2>game: <span style={{ color: activeFaction?.color }}>{activeFaction?.name}</span> turn {gameState.turnNumber}</h2>
-                    <GameFlowButtons />
-                </section>
-                <section className='center-section'>
-
-                    <div className='map-wrapper'>
-                        <GalaxyMap scale={5} />
-                    </div>
-
-                    <div className='side-panel'>
-                        <FocusWindow />
-                    </div>
-                </section>
-               <Modal />
-            </main>
+            {gameState.subProgram?.type === 'battle' && (
+                <BattleApp params={gameState.subProgram} />
+            )}
+            {!gameState.subProgram && (
+                <GalaticView />
+            )}
         </GameStateContext.Provider>
     )
 }
