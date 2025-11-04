@@ -18,7 +18,6 @@ const ReportDisplay = ({ report }: { report: Report }) => {
                         const allShips = side.fleets.flatMap(fleet => fleet.ships);
                         const designMap = getDesignMap(side.faction);
                         const [survivors, losses] = splitArray(allShips, ship => ship.damage < designMap[ship.designId].hp)
-
                         return <li key={index}>
                             {side.faction.name}
                             <ul>

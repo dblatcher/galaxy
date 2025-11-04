@@ -1,20 +1,12 @@
-import { removeDead } from "./battle-operations";
+import { populateBattleSides, removeDead } from "./battle-operations";
 import { getAllBattles } from "./derived-state";
 import type { Battle, BattleReport, GameState } from "./model";
-import { findById } from "./util";
-
 
 
 export const autoResolveBattle = (battle: Battle, oldGameState: GameState): GameState => {
     const gameState = structuredClone(oldGameState)
 
-    const populatedSides = battle.sides.flatMap(side => {
-        const faction = findById(side.faction, gameState.factions);
-        return faction ? {
-            faction,
-            fleets: side.fleets.flatMap(fleetId => findById(fleetId, gameState.fleets) ?? [])
-        } : []
-    })
+    const populatedSides = populateBattleSides(battle, gameState)
 
     // TO DO - for now, assume all fleets destroyed
     populatedSides.forEach(side => {

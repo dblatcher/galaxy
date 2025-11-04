@@ -1,10 +1,12 @@
 import { useReducer } from "react"
 import { autoResolveBattle } from "../lib/auto-battles"
+import { updateFleetsFromBattleReport } from "../lib/battle-operations"
 import { getBattleAt } from "../lib/derived-state"
 import { appendFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById } from "../lib/util"
+
 
 export type Action = {
     type: 'focus-star',
@@ -125,12 +127,14 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
                 }
             }
         case "battles:result":
+            const { report } = action
             const battlesModalWasOpen = state.dialog?.role === 'battles';
+
             const newState = structuredClone({
                 ...state,
-                reports: [...state.reports, action.report],
-                starsWhereBattlesFoughtAlready: [...state.starsWhereBattlesFoughtAlready, action.report.star],
-                fleets: state.fleets // TO DO - apply the reports to the state by updating fleets
+                reports: [...state.reports, report],
+                starsWhereBattlesFoughtAlready: [...state.starsWhereBattlesFoughtAlready, report.star],
+                fleets: updateFleetsFromBattleReport(report, state.fleets, state.factions)
             })
             return {
                 ...newState,

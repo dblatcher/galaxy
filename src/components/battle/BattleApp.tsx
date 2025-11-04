@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { populateBattleSides } from "../../lib/battle-operations"
 import { getBattleAt } from "../../lib/derived-state"
 import type { BattleParameters } from "../../lib/model"
-import { findById } from "../../lib/util"
-import { FleetIcon } from "../FleetSymbol"
+import { ShipProfile } from "./ShipInfo"
+
 
 interface Props {
     params: BattleParameters
@@ -11,18 +12,24 @@ interface Props {
 
 export const BattleApp = ({ params }: Props) => {
     const { gameState, dispatch } = useGameStateContext()
-    const [initialBattle] = useState(() => {
-        return getBattleAt(params.starId, gameState)
+
+    const [sides, setSides] = useState(() => {
+        const initialBattle = getBattleAt(params.starId, gameState)
+        return initialBattle ? populateBattleSides(initialBattle, gameState) : []
     })
-    const [sides] = useState(() => {
-        return initialBattle?.sides.flatMap(side => {
-            const faction = findById(side.faction, gameState.factions);
-            return faction ? {
-                faction,
-                fleets: side.fleets.flatMap(fleetId => findById(fleetId, gameState.fleets) ?? [])
-            } : []
-        }) ?? []
-    })
+
+    const applyDamage = (factionId: number, fleetId: number, shipIndex: number) => {
+        setSides(oldSides => {
+            const sides = structuredClone(oldSides)
+            const ship = sides.find(side => side.faction.id === factionId)
+                ?.fleets.find(fleet => fleet.id === fleetId)
+                ?.ships[shipIndex]
+            if (ship) {
+                ship.damage = ship.damage + 1
+            }
+            return sides
+        })
+    }
 
     const conclude = () => {
         dispatch({
@@ -39,17 +46,25 @@ export const BattleApp = ({ params }: Props) => {
         <main>
             <p>Battle</p>
 
-            {sides.map(side => (
-                <div key={side.faction.id}>
-                    <h3>{side.faction.name}</h3>
-                    {side.fleets.flatMap(f => f.ships).map((ship, index) => <div key={index}>
-                        <FleetIcon color={side.faction.color} />
-                        {ship.designId}
-                    </div>)}
+            <div style={{ display: 'flex', gap: 20 }}>
+                {sides.map(side => (
+                    <div key={side.faction.id}>
+                        <h3>{side.faction.name}</h3>
 
-                </div>
-            ))}
+                        {side.fleets.map(fleet =>
+                            <Fragment key={fleet.id}>
+                                {fleet.ships.map((ship, index) => (
+                                    <div key={index} style={{ display: 'flex', gap: 5 }}>
+                                        <ShipProfile faction={side.faction} ship={ship} />
+                                        <button onClick={() => applyDamage(side.faction.id, fleet.id, index)}>damage</button>
+                                    </div>
 
+                                ))}
+                            </Fragment>
+                        )}
+                    </div>
+                ))}
+            </div>
             <button onClick={conclude}>conclude</button>
         </main>
     )
