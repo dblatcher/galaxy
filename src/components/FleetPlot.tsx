@@ -23,9 +23,13 @@ export const FleetPlot = ({ fleet }: Props) => {
         dispatch({ type: 'select-fleet', target: fleet })
     } : undefined
 
+    const className = orbiting ? 'fleet' : 'fleet fleet--clickable'
+
     return (
         <>
-            <FleetSymbol h={h} color={faction?.color} location={location} onClick={onClick} />
+            <g className={className}>
+                <FleetSymbol h={h} color={faction?.color} location={location} onClick={onClick} />
+            </g>
             {destination && (
                 <LineTo line={{ points: [location, destination] }} priority={priority} />
             )}

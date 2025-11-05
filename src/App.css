@@ -1,7 +1,5 @@
 #root {
-
   margin: 0 auto;
-
   text-align: center;
 }
 
@@ -50,14 +48,16 @@
   border: 1px solid red;
 }
 
-.star {
+.star,
+.fleet {
   transform-origin: center center;
   transform-box: content-box;
   transition: transform .5s;
 }
 
-.star:hover {
-  transform: scale(1.2);
+.star:hover,
+.fleet--clickable:hover {
+  transform: scale(1.2);  
 }
 
 .star-label {
