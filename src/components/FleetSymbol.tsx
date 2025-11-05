@@ -4,22 +4,28 @@ interface Props {
     color?: string;
     location?: XY;
     h?: number
+    onClick?: { (): void }
 }
 
 const getPoints = (x: number, y: number) => `${x},${y - 3} ${x + 3},${y + 3} ${x},${y + 2} ${x - 3},${y + 3}`
 
-export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h }: Props) => {
+export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h, onClick }: Props) => {
     return <polygon
         style={{
             transformBox: 'border-box',
             transformOrigin: 'center',
-            transform: h ? `rotate(${180 - (h * 180 / Math.PI)}deg)` : undefined
+            transform: h ? `rotate(${180 - (h * 180 / Math.PI)}deg)` : undefined,
+            cursor: onClick ? 'pointer' : undefined,
         }}
         points={getPoints(location.x, location.y)}
         fill={color}
         stroke="white"
         strokeWidth={.5}
-        pointerEvents={'none'}
+        pointerEvents={onClick ? undefined : 'none'}
+        onClick={onClick ? event => {
+            event.stopPropagation()
+            onClick()
+        } : undefined}
     />
 }
 

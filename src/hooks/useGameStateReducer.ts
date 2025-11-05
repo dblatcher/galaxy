@@ -5,7 +5,7 @@ import { getBattleAt } from "../lib/derived-state"
 import { appendFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
-import { findById } from "../lib/util"
+import { findById, isSet } from "../lib/util"
 
 
 export type Action = {
@@ -75,7 +75,11 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             activeFleet.destinationStarId = action.target.id
             return { ...state }
         case "select-fleet":
-            return { ...state, selectedFleetId: action.target?.id }
+            return {
+                ...state,
+                selectedFleetId: action.target?.id,
+                focusedStarId: isSet(action.target?.orbitingStarId) ? state.focusedStarId : undefined,
+            }
         case "fleets:transfer-ships": {
             const { sourceFleetMap, fleetId } = action;
             const fleets = structuredClone(state.fleets)

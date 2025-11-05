@@ -11,22 +11,24 @@ interface Props {
 
 
 export const FleetPlot = ({ fleet }: Props) => {
-    const { gameState: { galaxy, selectedFleetId, factions } } = useGameStateContext()
+    const { gameState: { galaxy, selectedFleetId, factions }, dispatch } = useGameStateContext()
     const orbiting = findById(fleet.orbitingStarId, galaxy.stars)
     const destination = findById(fleet.destinationStarId, galaxy.stars)
     const faction = findById(fleet.factionId, factions);
     const location: XY = orbiting ?? fleet.location
     const priority = selectedFleetId === fleet.id ? undefined : 'subdued'
 
-    const h = destination && !orbiting ? getHeadingFrom(location, destination) : undefined
+    const h = destination && !orbiting ? getHeadingFrom(location, destination) : undefined;
+    const onClick = !orbiting ? () => {
+        dispatch({ type: 'select-fleet', target: fleet })
+    } : undefined
 
     return (
         <>
-            <FleetSymbol h={h} color={faction?.color} location={location} />
+            <FleetSymbol h={h} color={faction?.color} location={location} onClick={onClick} />
             {destination && (
                 <LineTo line={{ points: [location, destination] }} priority={priority} />
             )}
         </>
     )
-
 }
