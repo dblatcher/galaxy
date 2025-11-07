@@ -36,9 +36,12 @@ const moveFleetInGalaxy = ({ galaxy }: GameState) => (fleet: Fleet) => {
 
 
 const getNewShipsFromStar = (star: Star, { turnNumber }: GameState): Ship[] | undefined => {
-    // TO DO - star's build queue
-    return ((isSet(star.factionId)) && turnNumber % 4 === 0)
-        ? [{ designId: 0, damage: 0 }]
+    // TO DO - star's build resources, design construction cost
+
+    const { factionId, shipDesignToConstruct } = star
+
+    return ((isSet(factionId) && isSet(shipDesignToConstruct)) && turnNumber % 4 === 0)
+        ? [{ designId: shipDesignToConstruct, damage: 0 }]
         : undefined;
 }
 

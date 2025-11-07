@@ -18,6 +18,10 @@ export type Action = {
     type: 'select-fleet'
     target?: Fleet
 } | {
+    type: "set-star-construction-design",
+    starId: number,
+    designId?: number
+} | {
     type: 'next-turn'
 } | {
     type: 'battles:auto-resolve'
@@ -67,6 +71,20 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
         case "focus-star":
             // to do - optionally select the first fleet on the list for this star
             return { ...state, focusedStarId: action.target?.id, selectedFleetId: undefined }
+        case "set-star-construction-design": {
+            const stars = structuredClone(state.galaxy.stars)
+            const star = findById(action.starId, stars)
+            if (star) {
+                star.shipDesignToConstruct = action.designId
+            }
+
+            return {
+                ...state,
+                galaxy: {
+                    ...state.galaxy, stars
+                }
+            }
+        }
         case "pick-destination":
             const activeFleet = findById(state.selectedFleetId, state.fleets);
             if (!activeFleet) {

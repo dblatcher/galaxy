@@ -52,7 +52,7 @@ const initialGalaxy: Galaxy = {
     stars: [
         { x: 100, y: 75, id: 1, name: 'Arcturus', factionId: FACTION_ID.Magrathian },
         { x: 30, y: 45, id: 2, name: 'Kunitio' },
-        { x: 130, y: 35, id: 3, name: 'Junke', factionId: FACTION_ID.Martian },
+        { x: 130, y: 35, id: 3, name: 'Junke', factionId: FACTION_ID.Martian, shipDesignToConstruct: 0 },
         { x: 120, y: 45, id: 4, name: 'Maddow' },
         { x: 60, y: 25, id: 5, name: 'Zorblax', factionId: FACTION_ID.Zorblaxian },
         { x: 20, y: 20, id: 6, name: 'Sol', factionId: FACTION_ID.Zorblaxian },

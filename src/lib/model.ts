@@ -8,6 +8,7 @@ export type Star = XY & {
     id: number;
     name: string;
     factionId?: number;
+    shipDesignToConstruct?: number;
 }
 
 export type Faction = {
@@ -37,7 +38,7 @@ export type ShipDesign = {
 
 export type Ship = {
     designId: number;
-    damage: number
+    damage: number,
 }
 
 export type Fleet = {

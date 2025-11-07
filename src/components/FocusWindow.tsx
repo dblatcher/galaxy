@@ -1,7 +1,8 @@
 import type { CSSProperties } from "react";
 import { useGameStateContext } from "../hooks/useGameStateContext";
-import { findById, isSet, splitArray } from "../lib/util";
+import { findById, splitArray } from "../lib/util";
 import { FleetList } from "./FleetList";
+import { ColonyMenu } from "./ColonyMenu";
 
 
 const headerStyle: CSSProperties = {
@@ -14,7 +15,6 @@ export const FocusWindow = () => {
     const fleetsHere = focusedStar ? fleets.filter(fleet => fleet.orbitingStarId === focusedStar?.id) : []
     const [playersFleets, othersFleets] = splitArray(fleetsHere, (fleet) => fleet.factionId === activeFactionId)
     const faction = findById(focusedStar?.factionId, factions)
-
     const selectedTravelingFleet = focusedStar ? undefined : findById(selectedFleetId, fleets)
 
     return <div>
@@ -28,7 +28,9 @@ export const FocusWindow = () => {
                         {faction?.name ?? 'unpopulated'}
                     </div>
                 </header>
-
+                {activeFactionId === focusedStar.factionId && (
+                    <ColonyMenu star={focusedStar} />
+                )}
                 <FleetList title="Your fleets" list={playersFleets} />
                 {playersFleets.length > 0 && (
                     <button onClick={() => dispatch({ type: 'open-dialog', dialog: { 'role': 'fleets' } })}>arrange fleets</button>
