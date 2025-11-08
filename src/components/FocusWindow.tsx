@@ -1,9 +1,9 @@
 import type { CSSProperties } from "react";
 import { useGameStateContext } from "../hooks/useGameStateContext";
-import { findById, isSet, splitArray } from "../lib/util";
-import { FleetList } from "./FleetList";
-import { ColonyMenu } from "./ColonyMenu";
+import { findById, splitArray } from "../lib/util";
 import { ColoniseButton } from "./ColoniseButton";
+import { ColonyMenu } from "./ColonyMenu";
+import { FleetList } from "./FleetList";
 
 
 const headerStyle: CSSProperties = {
