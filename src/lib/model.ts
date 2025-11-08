@@ -34,8 +34,11 @@ export type ShipDesign = {
     id: number
     name: string
     constructionCost: number;
-    hp: number
-    atk: number
+    hp: number;
+    atk: number;
+    specials: {
+        colonise?: boolean
+    }
 }
 
 export type Ship = {
