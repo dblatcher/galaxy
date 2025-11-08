@@ -14,7 +14,7 @@ export type Action = {
     target?: Star,
 } | {
     type: 'pick-destination',
-    target: Star,
+    target?: Star,
 } | {
     type: 'select-fleet'
     target?: Fleet
@@ -124,7 +124,7 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
             if (!activeFleet) {
                 return state
             }
-            activeFleet.destinationStarId = action.target.id
+            activeFleet.destinationStarId = action.target?.id
             return { ...state }
         case "select-fleet":
             return {
