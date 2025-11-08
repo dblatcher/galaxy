@@ -1,12 +1,15 @@
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import { getDesignMap } from "../lib/fleet-operations"
 import type { Report } from "../lib/model"
-import { lookUpName, splitArray } from "../lib/util"
+import { lookUpName, mapOnId, splitArray } from "../lib/util"
 import { ModalLayout } from "./ModalLayout"
 
 
 const ReportDisplay = ({ report }: { report: Report }) => {
-    const { gameState: { galaxy } } = useGameStateContext()
+    const { gameState: { galaxy, factions } } = useGameStateContext()
+
+    const factionMap = mapOnId(factions);
+    const starMap = mapOnId(galaxy.stars);
 
     switch (report.reportType) {
         case 'battle': {
@@ -33,6 +36,16 @@ const ReportDisplay = ({ report }: { report: Report }) => {
             return <div>
                 <h4>Message</h4>
                 <div>{report.message}</div>
+            </div>
+        }
+        case "colonyStart":{
+            return <div>
+                <h4>New colony</h4>
+                <div>
+                    {factionMap[report.faction]?.name} colony established on {starMap[report.star]?.name}. 
+                    They now control {galaxy.stars.filter(s=>s.factionId===report.faction).length} systems.
+                </div>
+                
             </div>
         }
     }

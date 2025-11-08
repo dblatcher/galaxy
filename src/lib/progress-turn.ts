@@ -108,9 +108,12 @@ const startNewTurn = (oldGameState: GameState): GameState => {
 }
 
 const takeCpuTurn = (_faction: Faction, gameState: GameState): GameState => {
-    // TO DO
-    // decide which ships to build at each star
-    // issue orders (or no orders) to each fleet
+    // TO DO - modify state with CPU actions
+    // - decide which ships to build at each star
+    // - issue orders (or no orders) to each fleet
+    // - start colonies on planets with orbiting colony ships
+    // should be able to import `gameStateReducer` and use it to recursively modify gamestate
+    // with actions until CPU has none left to take.
     return gameState
 }
 

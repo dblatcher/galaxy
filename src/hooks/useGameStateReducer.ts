@@ -6,6 +6,7 @@ import { addNewFleet, factionHasBattles, transferShips } from "../lib/fleet-oper
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById, isSet } from "../lib/util"
+import { removeOneColonyShip } from "../lib/colony-operations"
 
 
 export type Action = {
@@ -18,9 +19,13 @@ export type Action = {
     type: 'select-fleet'
     target?: Fleet
 } | {
-    type: "set-star-construction-design",
+    type: 'set-star-construction-design',
     starId: number,
     designId?: number
+} | {
+    type: 'start-colony'
+    starId: number,
+    fleetId: number,
 } | {
     type: 'next-turn'
 } | {
@@ -83,6 +88,35 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
                 galaxy: {
                     ...state.galaxy, stars
                 }
+            }
+        }
+        case "start-colony": {
+            const fleets = structuredClone(state.fleets)
+            const stars = structuredClone(state.galaxy.stars)
+
+            const starToColonise = findById(action.starId, stars);
+            const fleetWithColonyShip = findById(action.fleetId, fleets);
+            const faction = findById(fleetWithColonyShip?.factionId, state.factions);
+            if (!starToColonise || !fleetWithColonyShip || !faction) {
+                console.warn('could not find star or fleet for start=colony', { action, starToColonise, fleetWithColonyShip, faction })
+                return state
+            }
+
+            removeOneColonyShip(fleetWithColonyShip, faction)
+            starToColonise.factionId = faction.id
+
+            return {
+                ...state,
+                fleets: fleets.filter(fleet => fleet.ships.length > 0),
+                galaxy: {
+                    ...state.galaxy, stars
+                },
+                reports: [...state.reports, {
+                    reportType: 'colonyStart',
+                    turnNumber: state.turnNumber,
+                    star: action.starId,
+                    faction: fleetWithColonyShip.factionId
+                }]
             }
         }
         case "pick-destination":

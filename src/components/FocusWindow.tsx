@@ -1,8 +1,9 @@
 import type { CSSProperties } from "react";
 import { useGameStateContext } from "../hooks/useGameStateContext";
-import { findById, splitArray } from "../lib/util";
+import { findById, isSet, splitArray } from "../lib/util";
 import { FleetList } from "./FleetList";
 import { ColonyMenu } from "./ColonyMenu";
+import { ColoniseButton } from "./ColoniseButton";
 
 
 const headerStyle: CSSProperties = {
@@ -31,6 +32,9 @@ export const FocusWindow = () => {
                 {activeFactionId === focusedStar.factionId && (
                     <ColonyMenu star={focusedStar} />
                 )}
+
+                {(!faction && playersFleets.length) && <ColoniseButton star={focusedStar}/> }
+
                 <FleetList title="Your fleets" list={playersFleets} />
                 {playersFleets.length > 0 && (
                     <button onClick={() => dispatch({ type: 'open-dialog', dialog: { 'role': 'fleets' } })}>arrange fleets</button>

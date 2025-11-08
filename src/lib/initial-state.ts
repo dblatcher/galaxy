@@ -149,9 +149,10 @@ const initialFleets: Fleet[] = [
             x: 0, y: 0
         },
         factionId: FACTION_ID.Zorblaxian,
-        ships: [{
-            designId: 1, damage: 0
-        }]
+        ships: [
+            { designId: 1, damage: 0 },
+            { designId: 1, damage: 0 },
+        ]
     },
 ]
 
