@@ -33,6 +33,10 @@ export const ColonyMenu = ({ star }: Props) => {
                     ))}
                 </select>
             </label>
+
+            <div>
+                Progress {star.shipConstructionProgress ?? 0} / {currentDesign?.constructionCost}
+            </div>
         </section>
     )
 }

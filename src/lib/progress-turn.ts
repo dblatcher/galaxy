@@ -1,11 +1,15 @@
 import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
 import { autoResolveAllBattles } from "./auto-battles";
-import { appendFleet, factionHasBattles } from "./fleet-operations";
+import { addNewFleet, factionHasBattles } from "./fleet-operations";
 import type { Faction, Fleet, GameState, Ship, Star } from "./model";
-import { findById, isSet } from "./util";
+import { findById, isSet, mapOnId } from "./util";
 
 const SPEED = 4;
 const CLOSE_ENOUGH = 5
+
+const calculateConstructionPoints = (_star: Star): number => {
+    return 1
+}
 
 const moveFleetInGalaxy = ({ galaxy }: GameState) => (fleet: Fleet) => {
     const destination = findById(fleet.destinationStarId, galaxy.stars);
@@ -35,46 +39,57 @@ const moveFleetInGalaxy = ({ galaxy }: GameState) => (fleet: Fleet) => {
 }
 
 
-const getNewShipsFromStar = (star: Star, { turnNumber }: GameState): Ship[] | undefined => {
-    // TO DO - star's build resources, design construction cost
+const getNewShipsFromStar = (star: Star, faction: Faction): Ship[] | undefined => {
+    const design = findById(star.shipDesignToConstruct, faction.shipDesigns)
+    if (!design) {
+        return undefined
+    }
+    const { shipConstructionProgress = 0 } = star
+    const newProgress = calculateConstructionPoints(star) + shipConstructionProgress;
 
-    const { factionId, shipDesignToConstruct } = star
+    if (newProgress < design.constructionCost) {
+        star.shipConstructionProgress = newProgress
+        return undefined
+    }
 
-    return ((isSet(factionId) && isSet(shipDesignToConstruct)) && turnNumber % 4 === 0)
-        ? [{ designId: shipDesignToConstruct, damage: 0 }]
-        : undefined;
+    const numberOfShips = Math.floor(newProgress / design.constructionCost);
+    star.shipConstructionProgress = newProgress % design.constructionCost;
+    const newShips: Ship[] = new Array(numberOfShips).fill(undefined).map(_ => ({ designId: design.id, damage: 0 }))
+    return newShips;
 }
 
-const addNewFleets = (gameState: GameState) => (fleets: Fleet[]) => {
+const runConstruction = (gameState: GameState) => {
+    const { fleets } = gameState
+    const factionMap = mapOnId(gameState.factions);
+
     gameState.galaxy.stars.forEach(star => {
-        const { factionId } = star;
-        if (isSet(factionId)) {
-            const newShips = getNewShipsFromStar(star, gameState)
+        const faction = isSet(star.factionId) ? factionMap[star.factionId] : undefined;
+        if (faction) {
+            const newShips = getNewShipsFromStar(star, faction);
 
             if (newShips) {
-                // TO DO - let the player pick which fleet get the new ships
+                // TO DO - let the player pick which fleet gets the new ships ?
                 const factionsFleetsHere = fleets.filter(fleet =>
-                    fleet.factionId === factionId && fleet.orbitingStarId === star.id
+                    fleet.factionId === faction.id && fleet.orbitingStarId === star.id
                 )
                 const [firstFleet] = factionsFleetsHere;
 
                 if (!firstFleet) {
-                    appendFleet(factionId, star, newShips, fleets)
+                    addNewFleet(faction.id, star, newShips, fleets)
                 } else {
                     firstFleet.ships.push(...newShips)
                 }
             }
         }
     })
-    return fleets
 }
 
 
 const startNewTurn = (oldGameState: GameState): GameState => {
     const gameState = autoResolveAllBattles({ ...oldGameState, reports: [] });
-    const { galaxy, fleets: existingFleets, factions, turnNumber, reports } = gameState
-    existingFleets.forEach(moveFleetInGalaxy(gameState))
-    const fleets = addNewFleets(gameState)(existingFleets)
+    const { galaxy, fleets, factions, turnNumber, reports } = gameState
+    fleets.forEach(moveFleetInGalaxy(gameState))
+    runConstruction(gameState)
 
     const [firstFaction] = factions
 
@@ -93,6 +108,9 @@ const startNewTurn = (oldGameState: GameState): GameState => {
 }
 
 const takeCpuTurn = (_faction: Faction, gameState: GameState): GameState => {
+    // TO DO
+    // decide which ships to build at each star
+    // issue orders (or no orders) to each fleet
     return gameState
 }
 

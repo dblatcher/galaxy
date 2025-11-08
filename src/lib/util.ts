@@ -3,6 +3,14 @@ export function findById<T extends { id: number }>(id: number | undefined, list:
     return list.find(_ => _.id === id)
 }
 
+export function mapOnId<T extends { id: number }>(list: T[]): Record<string, T|undefined> {
+    const map: Record<string, T> = {}
+    list.forEach(item => {
+        map[item.id] = item
+    })
+    return map
+}
+
 export function lookUpName<T extends { id: number, name: string }>(id: number | undefined, list: T[], fallback = '??'): string {
     return findById(id, list)?.name ?? fallback
 }
@@ -21,9 +29,9 @@ export function splitArray<T>(list: T[], predicate: { (item: T, index: number): 
 }
 
 export function filterInPlace<T>(list: T[], predicate: { (item: T, index: number): boolean }) {
-    const [matches] = splitArray(list,predicate);
-    list.splice(0,list.length, ...matches)
-} 
+    const [matches] = splitArray(list, predicate);
+    list.splice(0, list.length, ...matches)
+}
 
 export function removeDuplicates(list: number[]): number[] {
     return list.reduce<number[]>((acc, next) => (acc.includes(next)) ? acc : [...acc, next], [])

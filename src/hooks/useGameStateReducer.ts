@@ -2,7 +2,7 @@ import { useReducer } from "react"
 import { autoResolveBattle } from "../lib/auto-battles"
 import { updateFleetsFromBattleReport } from "../lib/battle-operations"
 import { getBattleAt } from "../lib/derived-state"
-import { appendFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
+import { addNewFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById, isSet } from "../lib/util"
@@ -117,7 +117,7 @@ const gameStateReducer = (state: GameState, action: Action): GameState => {
                 return { ...state }
             }
             const fleets = structuredClone(state.fleets)
-            const destinationFleet = appendFleet(state.activeFactionId, star, [], fleets);
+            const destinationFleet = addNewFleet(state.activeFactionId, star, [], fleets);
             transferShips(sourceFleetMap, destinationFleet, fleets)
             return { ...state, fleets }
         }

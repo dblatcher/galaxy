@@ -13,12 +13,14 @@ const baseDesigns = (): ShipDesign[] => {
             name: 'scout',
             hp: 3,
             atk: 1,
+            constructionCost: 3,
         },
         {
             id: 1,
             name: 'colony ship',
             hp: 10,
             atk: 0,
+            constructionCost: 10
         },
     ]
 };
@@ -54,7 +56,7 @@ const initialGalaxy: Galaxy = {
         { x: 30, y: 45, id: 2, name: 'Kunitio' },
         { x: 130, y: 35, id: 3, name: 'Junke', factionId: FACTION_ID.Martian, shipDesignToConstruct: 0 },
         { x: 120, y: 45, id: 4, name: 'Maddow' },
-        { x: 60, y: 25, id: 5, name: 'Zorblax', factionId: FACTION_ID.Zorblaxian },
+        { x: 60, y: 25, id: 5, name: 'Zorblax', factionId: FACTION_ID.Zorblaxian, shipDesignToConstruct: 1, shipConstructionProgress: 8 },
         { x: 20, y: 20, id: 6, name: 'Sol', factionId: FACTION_ID.Zorblaxian },
     ],
     width: 150,

@@ -3,7 +3,7 @@ import type { Star, Ship, Fleet, GameState, Faction, ShipDesign } from "./model"
 import { filterInPlace, findById, nextId, splitArray } from "./util"
 
 
-export const appendFleet = (factionId: number, star: Star, newShips: Ship[], fleets: Fleet[]) => {
+export const addNewFleet = (factionId: number, star: Star, newShips: Ship[], fleets: Fleet[]) => {
     const fleet: Fleet = {
         id: nextId(fleets),
         factionId,

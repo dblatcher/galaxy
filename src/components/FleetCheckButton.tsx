@@ -36,12 +36,12 @@ export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
             <div>
                 {Object.entries(countFleetShips(fleet, faction)).map(
                     ([shipDesignName, count]) => (
-                        <span key={shipDesignName} >{shipDesignName} x{count}{' '}</span>
+                        <div key={shipDesignName} >{shipDesignName} x{count}{' '}</div>
                     )
                 )}
             </div>
             {fleet.destinationStarId && <>
-                <span>{lookUpName(fleet.destinationStarId, galaxy.stars)} </span>
+                <div>{lookUpName(fleet.destinationStarId, galaxy.stars)} </div>
             </>
             }
         </div>
