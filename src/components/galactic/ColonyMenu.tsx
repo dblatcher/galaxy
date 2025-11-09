@@ -1,6 +1,6 @@
-import { useGameStateContext } from "../hooks/useGameStateContext";
-import type { Star } from "../lib/model";
-import { findById } from "../lib/util";
+import { useGameStateContext } from "../../hooks/useGameStateContext";
+import type { Star } from "../../lib/model";
+import { findById } from "../../lib/util";
 
 interface Props {
     star: Star

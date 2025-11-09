@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
-import { useGameStateContext } from "../hooks/useGameStateContext";
-import { findById, splitArray } from "../lib/util";
+import { useGameStateContext } from "../../hooks/useGameStateContext";
+import { findById, splitArray } from "../../lib/util";
 import { ColoniseButton } from "./ColoniseButton";
 import { ColonyMenu } from "./ColonyMenu";
 import { FleetList } from "./FleetList";

@@ -1,5 +1,5 @@
 import { useGameStateContext } from '../../hooks/useGameStateContext'
-import { FocusWindow } from '../FocusWindow'
+import { FocusWindow } from './FocusWindow'
 import { GalaxyMap } from './GalaxyMap'
 import { GameFlowButtons } from './GameFlowButtons'
 import { Modal } from '../Modal'

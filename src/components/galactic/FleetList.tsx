@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
-import type { Fleet } from "../lib/model";
-import { FleetCheckButton } from "./FleetCheckButton";
+import type { Fleet } from "../../lib/model";
+import { FleetCheckButton } from "../FleetCheckButton";
 
 interface Props {
     title: string;

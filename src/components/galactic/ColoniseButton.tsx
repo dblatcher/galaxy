@@ -1,6 +1,6 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
-import { findColonisingFleets } from "../lib/colony-operations"
-import type { Star } from "../lib/model"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { findColonisingFleets } from "../../lib/colony-operations"
+import type { Star } from "../../lib/model"
 
 interface Props {
     star: Star
