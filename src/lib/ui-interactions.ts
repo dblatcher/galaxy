@@ -4,29 +4,28 @@ import { findById, isSet } from "./util";
 import type { Action } from "../hooks/useGameStateReducer";
 
 export const handleStarClickFunction = (
-    { focusedStarId, selectedFleetId, fleets }: GameState,
+    { focusedStarId, selectedFleetId, fleets, activeFactionId }: GameState,
     dispatch: ActionDispatch<[action: Action]>
 ) => (star: Star) => {
 
     const selectedFleet = findById(selectedFleetId, fleets);
-    const clickedOnFocusedStar = star.id === focusedStarId
+    const clickedOnFocusedStar = star.id === focusedStarId;
+    const clickedOnOrbitedStart = star.id === selectedFleet?.orbitingStarId;
+    const canDirectFleet = selectedFleet?.factionId === activeFactionId && isSet(selectedFleet.orbitingStarId);
 
-    if (selectedFleet && !clickedOnFocusedStar) {
-        dispatch({ type: 'pick-destination', target: star })
-        return
+    if (canDirectFleet && !clickedOnOrbitedStart) {
+        return dispatch({ type: 'pick-destination', target: star })
     }
     if (
-        clickedOnFocusedStar &&
-        selectedFleet &&
-        selectedFleet.orbitingStarId === star.id &&
+        canDirectFleet &&
+        clickedOnOrbitedStart &&
         isSet(selectedFleet.destinationStarId)
     ) {
-        dispatch({ type: 'pick-destination', target: undefined })
-        return
+        return dispatch({ type: 'pick-destination', target: undefined })
     }
     if (clickedOnFocusedStar) {
-        dispatch({ type: 'focus-star', target: undefined });
-        return
+        return dispatch({ type: 'focus-star', target: undefined });
+
     }
-    dispatch({ type: 'focus-star', target: star })
+    return dispatch({ type: 'focus-star', target: star })
 }
