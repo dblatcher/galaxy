@@ -4,11 +4,13 @@ import type { Faction, Fleet } from "../lib/model"
 import { findById, lookUpName } from "../lib/util"
 import { FleetIcon } from "./FleetSymbol"
 import { ToggleableBox } from "./ToggleableBox"
+import { getShipsThatCouldBomb } from "../lib/colony-operations"
 
 
 interface Props {
     fleet: Fleet;
     canOrder?: boolean;
+    isPendingBattle?: boolean;
 }
 
 const rowStyle: CSSProperties = {
@@ -28,13 +30,14 @@ const countFleetShips = ({ ships }: Fleet, faction?: Faction) => {
     return shipCount
 }
 
-export const FleetBox = ({ fleet, canOrder }: Props) => {
+export const FleetBox = ({ fleet, canOrder, isPendingBattle }: Props) => {
 
     const { gameState, dispatch } = useGameStateContext()
     const { factions, galaxy, selectedFleetId, activeFactionId } = gameState;
     const checked = selectedFleetId === fleet.id;
     const faction = findById(fleet.factionId, factions)
     const isActiveFactionFleet = activeFactionId === fleet.factionId;
+
 
     const fleetDescription = <div>
         <div style={rowStyle}>
@@ -49,7 +52,6 @@ export const FleetBox = ({ fleet, canOrder }: Props) => {
                     )
                 )}
             </div>
-
         </div>
         {fleet.destinationStarId && <div> &rarr; {lookUpName(fleet.destinationStarId, galaxy.stars)} </div>}
 
@@ -59,11 +61,23 @@ export const FleetBox = ({ fleet, canOrder }: Props) => {
         return fleetDescription
     }
 
-    return <ToggleableBox
-        checked={checked}
-        setChecked={checked =>
-            dispatch({ type: 'select-fleet', target: !checked ? undefined : fleet })}
-    >
-        {fleetDescription}
-    </ToggleableBox>
+    const star = findById(fleet.orbitingStarId, galaxy.stars)
+    const couldBomb = !isPendingBattle && !!(faction && star) && getShipsThatCouldBomb(fleet, faction, star).length > 0
+
+    return <>
+        <ToggleableBox
+            checked={checked}
+            setChecked={checked =>
+                dispatch({ type: 'select-fleet', target: !checked ? undefined : fleet })}
+        >
+            {fleetDescription}
+        </ToggleableBox>
+        <div>
+            <button onClick={() => {
+                if (star) {
+                    dispatch({ type: 'order-bombing', starId: star.id, fleetId: fleet.id })
+                }
+            }} disabled={!couldBomb}>bomb!</button>
+        </div>
+    </>
 }

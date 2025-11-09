@@ -85,11 +85,17 @@ const runConstruction = (gameState: GameState) => {
     })
 }
 
+const resetShip = (ship: Ship) => {
+    ship.hasBombed = false
+}
 
 const startNewTurn = (oldGameState: GameState): GameState => {
     const gameState = autoResolveAllBattles({ ...oldGameState, reports: [] });
     const { galaxy, fleets, factions, turnNumber, reports } = gameState
     fleets.forEach(moveFleetInGalaxy(gameState))
+    fleets.forEach(fleet => {
+        fleet.ships.forEach(resetShip)
+    })
     runConstruction(gameState)
 
     const [firstFaction] = factions

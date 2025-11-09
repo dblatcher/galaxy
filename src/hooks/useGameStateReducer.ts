@@ -3,10 +3,10 @@ import { autoResolveBattle } from "../lib/auto-battles"
 import { updateFleetsFromBattleReport } from "../lib/battle-operations"
 import { getBattleAt } from "../lib/derived-state"
 import { addNewFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
-import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
+import type { BattleReport, Dialog, Fleet, GameState, MessageReport, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById, isSet } from "../lib/util"
-import { removeOneColonyShip } from "../lib/colony-operations"
+import { getShipsThatCouldBomb, removeOneColonyShip } from "../lib/colony-operations"
 
 
 export type Action = {
@@ -49,6 +49,10 @@ export type Action = {
 } | {
     type: 'battles:result',
     report: BattleReport,
+} | {
+    type: 'order-bombing',
+    starId: number,
+    fleetId: number,
 }
 
 export const gameStateReducer = (state: GameState, action: Action): GameState => {
@@ -94,17 +98,17 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             const fleets = structuredClone(state.fleets)
             const stars = structuredClone(state.galaxy.stars)
 
-            const starToColonise = findById(action.starId, stars);
-            const fleetWithColonyShip = findById(action.fleetId, fleets);
-            const faction = findById(fleetWithColonyShip?.factionId, state.factions);
-            if (!starToColonise || !fleetWithColonyShip || !faction) {
-                console.warn('could not find star or fleet for start=colony', { action, starToColonise, fleetWithColonyShip, faction })
+            const star = findById(action.starId, stars);
+            const fleet = findById(action.fleetId, fleets);
+            const faction = findById(fleet?.factionId, state.factions);
+            if (!star || !fleet || !faction) {
+                console.warn('could not find star or fleet for start-colony', { action, star, fleet, faction })
                 return state
             }
 
-            const colonyShipUsed = removeOneColonyShip(fleetWithColonyShip, faction)
+            const colonyShipUsed = removeOneColonyShip(fleet, faction)
             if (colonyShipUsed) {
-                starToColonise.factionId = faction.id
+                star.factionId = faction.id
             }
 
             return {
@@ -117,8 +121,51 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                     reportType: 'colonyStart',
                     turnNumber: state.turnNumber,
                     star: action.starId,
-                    faction: fleetWithColonyShip.factionId
+                    faction: fleet.factionId
                 }]
+            }
+        }
+        case "order-bombing": {
+            const pendingBattle = getBattleAt(action.starId, state)
+
+            if (pendingBattle) {
+                console.warn('could not bomb as battle needs to be resolve first', pendingBattle)
+                return state
+            }
+
+            const fleets = structuredClone(state.fleets)
+            const stars = structuredClone(state.galaxy.stars)
+
+            const star = findById(action.starId, stars);
+            const fleet = findById(action.fleetId, fleets);
+            const faction = findById(fleet?.factionId, state.factions);
+            if (!star || !fleet || !faction) {
+                console.warn('could not find star or fleet for order-bombing', { action, star, fleet, faction })
+                return state
+            }
+
+
+            const bombedFaction = findById(star.factionId, state.factions)
+            const bombers = getShipsThatCouldBomb(fleet, faction, star)
+            bombers.forEach(ship => ship.hasBombed = true)
+
+
+            const report: MessageReport = {
+                reportType: 'message',
+                turnNumber: state.turnNumber,
+                message: `${faction.name} bombed the ${bombedFaction?.name} colony at ${star.name}. It was completely destroyed.`
+            }
+
+            // TO DO - determine damage amount
+            star.factionId = undefined;
+
+            return {
+                ...state,
+                fleets,
+                galaxy: {
+                    ...state.galaxy, stars
+                },
+                reports: [...state.reports, report]
             }
         }
         case "pick-destination":

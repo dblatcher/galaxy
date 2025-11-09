@@ -16,8 +16,8 @@ export type Faction = {
     id: number;
     name: string;
     color: string;
-    playerType: 'LOCAL' | 'CPU' | 'REMOTE'
-    shipDesigns: ShipDesign[]
+    playerType: 'LOCAL' | 'CPU' | 'REMOTE';
+    shipDesigns: ShipDesign[];
 }
 
 export type Galaxy = {
@@ -27,7 +27,7 @@ export type Galaxy = {
 }
 
 export type Line = {
-    points: [XY, XY],
+    points: [XY, XY];
 }
 
 export type ShipDesign = {
@@ -38,21 +38,23 @@ export type ShipDesign = {
     atk: number;
     specials: {
         colonise?: boolean
+        bomb?: boolean
     }
 }
 
 export type Ship = {
     designId: number;
-    damage: number,
+    damage: number;
+    hasBombed?: boolean;
 }
 
 export type Fleet = {
     id: number;
-    orbitingStarId?: number
-    destinationStarId?: number
-    location: XY
-    factionId: number
-    ships: Ship[]
+    orbitingStarId?: number;
+    destinationStarId?: number;
+    location: XY;
+    factionId: number;
+    ships: Ship[];
 }
 
 export type Battle = {

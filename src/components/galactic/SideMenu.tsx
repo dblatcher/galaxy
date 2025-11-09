@@ -7,12 +7,14 @@ import { FleetList } from "./FleetList";
 
 
 export const SideMenu = () => {
-    const { gameState, focusedStar, dispatch } = useGameStateContext()
+    const { gameState, focusedStar, activeFactionBattles, dispatch } = useGameStateContext()
     const { fleets, factions, activeFactionId, selectedFleetId } = gameState
     const fleetsHere = focusedStar ? fleets.filter(fleet => fleet.orbitingStarId === focusedStar?.id) : []
     const [playersFleets, othersFleets] = splitArray(fleetsHere, (fleet) => fleet.factionId === activeFactionId)
     const faction = findById(focusedStar?.factionId, factions)
     const selectedTravelingFleet = focusedStar ? undefined : findById(selectedFleetId, fleets)
+
+    const pendingBattleHere = focusedStar && activeFactionBattles.find(battle => battle.star === focusedStar.id)
 
     return <>
         {focusedStar && (
@@ -26,11 +28,19 @@ export const SideMenu = () => {
                 )}
 
                 {(!faction && playersFleets.length) && <ColoniseButton star={focusedStar} />}
+
+                {pendingBattleHere && <div>
+                    <button onClick={() => {
+                        dispatch({
+                            type: 'battles:launch', starId: focusedStar.id
+                        })
+                    }}>FIGHT BATTLE</button>
+                </div>}
             </section>
         )}
 
         {focusedStar && (<>
-            <FleetList title="Your fleets" list={playersFleets} canOrder  arrangeButton/>
+            <FleetList title="Your fleets" list={playersFleets} canOrder arrangeButton pendingBattle={pendingBattleHere} />
             <FleetList title="Other fleets" list={othersFleets} />
         </>)}
 
