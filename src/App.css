@@ -43,12 +43,13 @@
 .side-panel {
   display: flex;
   flex-direction: column;
-  flex-basis: 160px;
+  flex-basis: 180px;
   flex-shrink: 0;
   border: 1px solid red;
 }
 
 .side-panel > section {
+  padding-bottom: .75rem;
   border-bottom: 1px solid red;
 }
 

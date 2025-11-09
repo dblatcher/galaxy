@@ -1,6 +1,7 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext";
 import type { Star } from "../../lib/model";
 import { findById } from "../../lib/util";
+import { ProgressBar } from "../ProgressBar";
 
 interface Props {
     star: Star
@@ -22,11 +23,17 @@ export const ColonyMenu = ({ star }: Props) => {
         dispatch({ type: 'set-star-construction-design', designId: newDesign?.id, starId: star.id })
     }
 
+    const shipConstrucionProgress = {
+        value: star.shipConstructionProgress ?? 0,
+        max: currentDesign?.constructionCost ?? 0,
+    }
+
     return (
         <div>
             <label>
-                Constructing
-                <select value={currentDesign?.id ?? undefinedToken} onChange={({ target: { value } }) => handleDesignSelect(value)}>
+                <div>Constructing</div>
+                <select name="ship-design-to-build"
+                    value={currentDesign?.id ?? undefinedToken} onChange={({ target: { value } }) => handleDesignSelect(value)}>
                     <option value={undefinedToken} >none</option>
                     {designs.map(design => (
                         <option key={design.id} value={design.id}>{design.name}</option>
@@ -34,10 +41,9 @@ export const ColonyMenu = ({ star }: Props) => {
                 </select>
             </label>
 
-            <div>
-                <progress max={currentDesign?.constructionCost ?? 0} value={star.shipConstructionProgress ?? 0} />
-                Progress {star.shipConstructionProgress ?? 0} / {currentDesign?.constructionCost??0}
-            </div>
+            {currentDesign && (
+                <ProgressBar title={"ship construction progress"} {...shipConstrucionProgress} showValues />
+            )}
         </div>
     )
 }
