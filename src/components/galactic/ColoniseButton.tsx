@@ -7,20 +7,15 @@ interface Props {
 }
 
 export const ColoniseButton = ({ star }: Props) => {
-
     const { activeFaction, gameState: { fleets, selectedFleetId }, dispatch, } = useGameStateContext()
-
     const fleetsThatCouldColonise = findColonisingFleets(star, fleets, activeFaction)
 
-
     const startColony = () => {
-
         const [firstFleet] = fleetsThatCouldColonise;
         if (!firstFleet) {
             return
         }
         const idOfFleetToUse = fleetsThatCouldColonise.find(fleet => fleet.id === selectedFleetId)?.id ?? firstFleet.id;
-
         dispatch({
             type: 'start-colony',
             fleetId: idOfFleetToUse,

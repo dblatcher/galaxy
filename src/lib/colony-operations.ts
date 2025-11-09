@@ -3,6 +3,11 @@ import type { Faction, Fleet, Ship, Star } from "./model";
 import { filterInPlace } from "./util";
 
 export const findColonisingFleets = (star: Star, fleets: Fleet[], faction: Faction): Fleet[] => {
+
+    if (fleets.some(fleet => fleet.factionId !== faction.id && fleet.orbitingStarId === star.id)) {
+        return []
+    }
+
     const designs = getDesignMap(faction)
     return fleets.filter(fleet =>
         fleet.factionId === faction.id &&
@@ -14,6 +19,6 @@ export const findColonisingFleets = (star: Star, fleets: Fleet[], faction: Facti
 export const removeOneColonyShip = (fleet: Fleet, faction: Faction): Ship | undefined => {
     const designs = getDesignMap(faction)
     const firstColonyShip = fleet.ships.find(ship => designs[ship.designId]?.specials.colonise)
-    filterInPlace(fleet.ships, ship => ship !== firstColonyShip) 
+    filterInPlace(fleet.ships, ship => ship !== firstColonyShip)
     return firstColonyShip
 }
