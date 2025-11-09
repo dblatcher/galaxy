@@ -111,7 +111,7 @@ const initialFleets: Fleet[] = [
     },
     {
         id: nextIdFor('fleet'),
-        orbitingStarId: STAR_ID.Arcturus,
+        orbitingStarId: STAR_ID.Zorblax,
         destinationStarId: undefined,
         location: {
             x: 10,

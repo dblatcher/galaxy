@@ -51,7 +51,7 @@ export type Action = {
     report: BattleReport,
 }
 
-const gameStateReducer = (state: GameState, action: Action): GameState => {
+export const gameStateReducer = (state: GameState, action: Action): GameState => {
     if (state.dialog) {
         switch (action.type) {
             case 'close-dialog': {

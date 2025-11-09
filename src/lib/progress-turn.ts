@@ -1,5 +1,6 @@
 import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
 import { autoResolveAllBattles } from "./auto-battles";
+import { takeCpuTurn } from "./cpu-turn";
 import { addNewFleet, factionHasBattles } from "./fleet-operations";
 import type { Faction, Fleet, GameState, Ship, Star } from "./model";
 import { findById, isSet, mapOnId } from "./util";
@@ -107,18 +108,9 @@ const startNewTurn = (oldGameState: GameState): GameState => {
     }
 }
 
-const takeCpuTurn = (_faction: Faction, gameState: GameState): GameState => {
-    // TO DO - modify state with CPU actions
-    // - decide which ships to build at each star
-    // - issue orders (or no orders) to each fleet
-    // - start colonies on planets with orbiting colony ships
-    // should be able to import `gameStateReducer` and use it to recursively modify gamestate
-    // with actions until CPU has none left to take.
-    return gameState
-}
 
 export const progressTurn = (oldGameState: GameState): GameState => {
-    const gameState = structuredClone(oldGameState)
+    let gameState = structuredClone(oldGameState)
 
     const cycleThroughFactions = (factionIndex: number): GameState => {
         const nextFaction: Faction | undefined = gameState.factions[factionIndex + 1]
@@ -137,7 +129,7 @@ export const progressTurn = (oldGameState: GameState): GameState => {
                     } : undefined
                 }
             case "CPU":
-                takeCpuTurn(nextFaction, gameState);
+                gameState = takeCpuTurn(nextFaction, gameState);
                 return cycleThroughFactions(factionIndex + 1)
             case "REMOTE":
                 return {
