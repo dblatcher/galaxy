@@ -10,7 +10,7 @@ const headerStyle: CSSProperties = {
     borderBottom: '1px solid red',
 }
 
-export const FocusWindow = () => {
+export const SideMenu = () => {
     const { gameState, focusedStar, dispatch } = useGameStateContext()
     const { fleets, factions, activeFactionId, selectedFleetId } = gameState
     const fleetsHere = focusedStar ? fleets.filter(fleet => fleet.orbitingStarId === focusedStar?.id) : []

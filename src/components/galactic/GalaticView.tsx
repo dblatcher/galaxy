@@ -1,5 +1,5 @@
 import { useGameStateContext } from '../../hooks/useGameStateContext'
-import { FocusWindow } from './FocusWindow'
+import { SideMenu } from './SideMenu'
 import { GalaxyMap } from './GalaxyMap'
 import { GameFlowButtons } from './GameFlowButtons'
 import { Modal } from '../Modal'
@@ -20,7 +20,7 @@ export const GalaticView = () => {
                 </div>
 
                 <div className='side-panel'>
-                    <FocusWindow />
+                    <SideMenu />
                 </div>
             </section>
             <Modal />
