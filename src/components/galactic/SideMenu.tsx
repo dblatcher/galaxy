@@ -30,7 +30,7 @@ export const SideMenu = () => {
         )}
 
         {focusedStar && (<>
-            <FleetList title="Your fleets" list={playersFleets}  arrangeButton/>
+            <FleetList title="Your fleets" list={playersFleets} canOrder  arrangeButton/>
             <FleetList title="Other fleets" list={othersFleets} />
         </>)}
 

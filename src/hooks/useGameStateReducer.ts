@@ -102,8 +102,10 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                 return state
             }
 
-            removeOneColonyShip(fleetWithColonyShip, faction)
-            starToColonise.factionId = faction.id
+            const colonyShipUsed = removeOneColonyShip(fleetWithColonyShip, faction)
+            if (colonyShipUsed) {
+                starToColonise.factionId = faction.id
+            }
 
             return {
                 ...state,
@@ -130,7 +132,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             return {
                 ...state,
                 selectedFleetId: action.target?.id,
-                focusedStarId: isSet(action.target?.orbitingStarId) ? state.focusedStarId : undefined,
+                focusedStarId: !action.target ? state.focusedStarId : isSet(action.target?.orbitingStarId) ? state.focusedStarId : undefined,
             }
         case "fleets:transfer-ships": {
             const { sourceFleetMap, fleetId } = action;

@@ -5,7 +5,13 @@ import { findById, lookUpName } from "../lib/util"
 import { FleetIcon } from "./FleetSymbol"
 import { ToggleableBox } from "./ToggleableBox"
 
-const contentStyle: CSSProperties = {
+
+interface Props {
+    fleet: Fleet;
+    canOrder?: boolean;
+}
+
+const rowStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     gap: 2,
@@ -22,7 +28,7 @@ const countFleetShips = ({ ships }: Fleet, faction?: Faction) => {
     return shipCount
 }
 
-export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
+export const FleetBox = ({ fleet, canOrder }: Props) => {
 
     const { gameState, dispatch } = useGameStateContext()
     const { factions, galaxy, selectedFleetId, activeFactionId } = gameState;
@@ -30,8 +36,11 @@ export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
     const faction = findById(fleet.factionId, factions)
     const isActiveFactionFleet = activeFactionId === fleet.factionId;
 
-    const contents = <div style={contentStyle}>
-        <FleetIcon color={faction?.color} />
+    const fleetDescription = <div>
+        <div style={rowStyle}>
+            <FleetIcon color={faction?.color} />
+            <div style={{ color: faction?.color }}>{faction?.name} fleet</div>
+        </div>
         <div>
             <div>
                 {Object.entries(countFleetShips(fleet, faction)).map(
@@ -40,17 +49,14 @@ export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
                     )
                 )}
             </div>
-            {fleet.destinationStarId && <>
-                <div>{lookUpName(fleet.destinationStarId, galaxy.stars)} </div>
-            </>
-            }
+
         </div>
+        {fleet.destinationStarId && <div> &rarr; {lookUpName(fleet.destinationStarId, galaxy.stars)} </div>}
+
     </div>
 
-    if (!isActiveFactionFleet) {
-        return <div style={{ ...contentStyle, background: 'gray' }}>
-            {contents}
-        </div>
+    if (!canOrder || !isActiveFactionFleet) {
+        return fleetDescription
     }
 
     return <ToggleableBox
@@ -58,6 +64,6 @@ export const FleetCheckButton = ({ fleet }: { fleet: Fleet }) => {
         setChecked={checked =>
             dispatch({ type: 'select-fleet', target: !checked ? undefined : fleet })}
     >
-        {contents}
+        {fleetDescription}
     </ToggleableBox>
 }
