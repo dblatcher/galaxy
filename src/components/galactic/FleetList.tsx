@@ -1,10 +1,12 @@
 import type { CSSProperties } from "react";
 import type { Fleet } from "../../lib/model";
 import { FleetCheckButton } from "../FleetCheckButton";
+import { useGameStateContext } from "../../hooks/useGameStateContext";
 
 interface Props {
     title: string;
     list: Fleet[];
+    arrangeButton?: boolean;
 }
 
 const listStyle: CSSProperties = {
@@ -20,14 +22,16 @@ const itemStyle: CSSProperties = {
     paddingRight: 3
 }
 
-export const FleetList = ({ list, title }: Props) => {
+export const FleetList = ({ list, title, arrangeButton }: Props) => {
+
+    const { dispatch } = useGameStateContext()
 
     if (list.length === 0) {
         return null
     }
 
-    return <div>
-        <span>{title}</span>
+    return <section>
+        <h3>{title}</h3>
         <ul style={listStyle}>
             {list.map((fleet, index) => (
                 <li key={index} style={itemStyle}>
@@ -35,5 +39,8 @@ export const FleetList = ({ list, title }: Props) => {
                 </li>
             ))}
         </ul>
-    </div>
+        {arrangeButton && (
+            <button onClick={() => dispatch({ type: 'open-dialog', dialog: { 'role': 'fleets' } })}>arrange fleets</button>
+        )}
+    </section>
 }

@@ -23,7 +23,7 @@ export const ColonyMenu = ({ star }: Props) => {
     }
 
     return (
-        <section>
+        <div>
             <label>
                 Constructing
                 <select value={currentDesign?.id ?? undefinedToken} onChange={({ target: { value } }) => handleDesignSelect(value)}>
@@ -35,8 +35,9 @@ export const ColonyMenu = ({ star }: Props) => {
             </label>
 
             <div>
-                Progress {star.shipConstructionProgress ?? 0} / {currentDesign?.constructionCost}
+                <progress max={currentDesign?.constructionCost ?? 0} value={star.shipConstructionProgress ?? 0} />
+                Progress {star.shipConstructionProgress ?? 0} / {currentDesign?.constructionCost??0}
             </div>
-        </section>
+        </div>
     )
 }

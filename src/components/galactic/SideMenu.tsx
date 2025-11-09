@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { useGameStateContext } from "../../hooks/useGameStateContext";
 import { findById, splitArray } from "../../lib/util";
 import { ColoniseButton } from "./ColoniseButton";
@@ -6,9 +5,6 @@ import { ColonyMenu } from "./ColonyMenu";
 import { FleetList } from "./FleetList";
 
 
-const headerStyle: CSSProperties = {
-    borderBottom: '1px solid red',
-}
 
 export const SideMenu = () => {
     const { gameState, focusedStar, dispatch } = useGameStateContext()
@@ -18,32 +14,28 @@ export const SideMenu = () => {
     const faction = findById(focusedStar?.factionId, factions)
     const selectedTravelingFleet = focusedStar ? undefined : findById(selectedFleetId, fleets)
 
-    return <div>
+    return <>
         {focusedStar && (
-            <>
-                <header style={headerStyle}>
-                    {focusedStar && (
-                        <div>{focusedStar.name}</div>
-                    )}
-                    <div style={{ color: faction?.color }}>
-                        {faction?.name ?? 'unpopulated'}
-                    </div>
-                </header>
+            <section>
+                <h3>{focusedStar.name}</h3>
+                <div style={{ color: faction?.color }}>
+                    {faction?.name ?? 'unpopulated'}
+                </div>
                 {activeFactionId === focusedStar.factionId && (
                     <ColonyMenu star={focusedStar} />
                 )}
 
-                {(!faction && playersFleets.length) && <ColoniseButton star={focusedStar}/> }
+                {(!faction && playersFleets.length) && <ColoniseButton star={focusedStar} />}
+            </section>
+        )}
 
-                <FleetList title="Your fleets" list={playersFleets} />
-                {playersFleets.length > 0 && (
-                    <button onClick={() => dispatch({ type: 'open-dialog', dialog: { 'role': 'fleets' } })}>arrange fleets</button>
-                )}
-                <FleetList title="Other fleets" list={othersFleets} />
-            </>)}
+        {focusedStar && (<>
+            <FleetList title="Your fleets" list={playersFleets}  arrangeButton/>
+            <FleetList title="Other fleets" list={othersFleets} />
+        </>)}
 
         {selectedTravelingFleet && (
             <FleetList title="Fleet" list={[selectedTravelingFleet]} />
         )}
-    </div>
+    </>
 }
