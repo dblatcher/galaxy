@@ -12,9 +12,7 @@ const undefinedToken = "_-_-_"
 export const ShipConstruction = ({ star }: Props) => {
 
     const { gameState: { factions }, dispatch } = useGameStateContext();
-
     const faction = findById(star.factionId, factions)
-
     const designs = faction?.shipDesigns ?? [];
     const currentDesign = findById(star.shipDesignToConstruct, designs)
 
@@ -30,20 +28,15 @@ export const ShipConstruction = ({ star }: Props) => {
 
     return (
         <div>
-            <label>
-                <div>Constructing</div>
-                <select name="ship-design-to-build"
-                    value={currentDesign?.id ?? undefinedToken} onChange={({ target: { value } }) => handleDesignSelect(value)}>
-                    <option value={undefinedToken} >none</option>
-                    {designs.map(design => (
-                        <option key={design.id} value={design.id}>{design.name}</option>
-                    ))}
-                </select>
-            </label>
+            <select name="ship-design-to-build" aria-label="select ship to build"
+                value={currentDesign?.id ?? undefinedToken} onChange={({ target: { value } }) => handleDesignSelect(value)}>
+                <option value={undefinedToken} >none</option>
+                {designs.map(design => (
+                    <option key={design.id} value={design.id}>{design.name}</option>
+                ))}
+            </select>
 
-            {currentDesign && (
-                <ProgressBar title={"ship construction progress"} {...shipConstrucionProgress} showValues />
-            )}
+            <ProgressBar title={"ship construction progress"} {...shipConstrucionProgress} showValues />
         </div>
     )
 }

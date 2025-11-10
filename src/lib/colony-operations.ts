@@ -40,8 +40,8 @@ export const getShipsThatCouldBomb = (fleet: Fleet, faction: Faction, star: Star
     return inRightPlace ? fleet.ships.filter(ship => designs[ship.designId]?.specials.bomb && !ship.hasBombed) : [];
 }
 
-const calculateConstructionPoints = (_star: Star): number => {
-    return 1
+export const calculateConstructionPoints = (star: Star): number => {
+    return Math.max(1, Math.floor(star.population))
 }
 
 export const getNewShipsFromStar = (star: Star, faction: Faction): Ship[] | undefined => {

@@ -73,7 +73,8 @@ export const FleetBox = ({ fleet, canOrder, isPendingBattle }: Props) => {
             {fleetDescription}
         </ToggleableBox>
         <div>
-            <button onClick={() => {
+            <button className="small"
+            onClick={() => {
                 if (star) {
                     dispatch({ type: 'order-bombing', starId: star.id, fleetId: fleet.id })
                 }

@@ -48,16 +48,20 @@
   border: 1px solid red;
 }
 
-.side-panel > section {
+.side-panel>section {
   padding-bottom: .75rem;
   border-bottom: 1px solid red;
+  text-align: left;
 }
 
-.side-panel h3 {
+.side-panel>section>header {
   border-bottom: 1px dotted red;
   padding: .5rem 0;
-  margin: 0;
   margin-bottom: .5rem;
+}
+
+.panel-content {
+  padding: 0 4px;
 }
 
 .star,
@@ -69,7 +73,7 @@
 
 .star:hover,
 .fleet--clickable:hover {
-  transform: scale(1.2);  
+  transform: scale(1.2);
 }
 
 .star-label {

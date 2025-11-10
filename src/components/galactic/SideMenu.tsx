@@ -1,5 +1,6 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext";
 import { findById, splitArray } from "../../lib/util";
+import { SubHeading } from "../SubHeading";
 import { ColoniseButton } from "./ColoniseButton";
 import { ColonyOverview } from "./ColonyOverview";
 import { FleetList } from "./FleetList";
@@ -27,8 +28,8 @@ export const SideMenu = () => {
                         isPendingBattleHere={!!pendingBattleHere} />
                 ) : (
                     <section>
-                        <h3>{focusedStar.name}</h3>
-                        <div>unpopulated</div>
+                        <SubHeading>{focusedStar.name}</SubHeading>
+                        <div className="panel-content">unpopulated</div>
                         {playerCanColonise && <ColoniseButton star={focusedStar} />}
                         {pendingBattleHere && <div>
                             <button onClick={() => {

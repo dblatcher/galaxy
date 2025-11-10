@@ -1,5 +1,7 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { calculateConstructionPoints } from "../../lib/colony-operations"
 import type { Faction, Star } from "../../lib/model"
+import { SubHeading } from "../SubHeading"
 import { ShipConstruction } from "./ShipConstruction"
 
 interface Props {
@@ -12,24 +14,33 @@ export const ColonyOverview = ({ star, colonyFaction, isPendingBattleHere }: Pro
 
     const { activeFaction, dispatch } = useGameStateContext()
 
-    return <section>
-        <h3>{star.name}</h3>
-        <div style={{ color: colonyFaction.color }}>
-            {colonyFaction.name}
-        </div>
-        <div>
-            pop: {star.population?.toFixed(2)}m
-        </div>
-        {activeFaction.id === colonyFaction.id && (
-            <ShipConstruction star={star} />
-        )}
-        {isPendingBattleHere && <div>
-            <button onClick={() => {
+    const battleButton = isPendingBattleHere ? (
+        <button
+            title="fight battle"
+            className="small"
+            onClick={() => {
                 dispatch({
                     type: 'battles:launch', starId: star.id
                 })
-            }}>FIGHT BATTLE</button>
-        </div>}
+            }}>B</button>)
+        : undefined
+
+    return <section>
+        <SubHeading buttons={battleButton}>{star.name}</SubHeading>
+        <div className="panel-content" style={{ color: colonyFaction.color }}>
+            {colonyFaction.name}
+        </div>
+        <table className="panel-content">
+            <tr>
+                <th>pop</th><td>{star.population?.toFixed(2)}m</td>
+            </tr>
+            <tr>
+                <th>production</th><td>{calculateConstructionPoints(star)}/turn</td>
+            </tr>
+        </table>
+        {activeFaction.id === colonyFaction.id && (
+            <ShipConstruction star={star} />
+        )}
     </section>
 
 }
