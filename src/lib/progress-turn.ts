@@ -1,16 +1,14 @@
 import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
 import { autoResolveAllBattles } from "./auto-battles";
+import { getNewShipsFromStar } from "./colony-operations";
 import { takeCpuTurn } from "./cpu-turn";
 import { addNewFleet, factionHasBattles } from "./fleet-operations";
-import type { Faction, Fleet, GameState, Ship, Star } from "./model";
+import type { Faction, Fleet, GameState, Ship } from "./model";
 import { findById, isSet, mapOnId } from "./util";
 
 const SPEED = 4;
 const CLOSE_ENOUGH = 5
 
-const calculateConstructionPoints = (_star: Star): number => {
-    return 1
-}
 
 const moveFleetInGalaxy = ({ galaxy }: GameState) => (fleet: Fleet) => {
     const destination = findById(fleet.destinationStarId, galaxy.stars);
@@ -39,25 +37,6 @@ const moveFleetInGalaxy = ({ galaxy }: GameState) => (fleet: Fleet) => {
     return fleet
 }
 
-
-const getNewShipsFromStar = (star: Star, faction: Faction): Ship[] | undefined => {
-    const design = findById(star.shipDesignToConstruct, faction.shipDesigns)
-    if (!design) {
-        return undefined
-    }
-    const { shipConstructionProgress = 0 } = star
-    const newProgress = calculateConstructionPoints(star) + shipConstructionProgress;
-
-    if (newProgress < design.constructionCost) {
-        star.shipConstructionProgress = newProgress
-        return undefined
-    }
-
-    const numberOfShips = Math.floor(newProgress / design.constructionCost);
-    star.shipConstructionProgress = newProgress % design.constructionCost;
-    const newShips: Ship[] = new Array(numberOfShips).fill(undefined).map(_ => ({ designId: design.id, damage: 0 }))
-    return newShips;
-}
 
 const runConstruction = (gameState: GameState) => {
     const { fleets } = gameState

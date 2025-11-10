@@ -1,6 +1,6 @@
 import { getDesignMap } from "./fleet-operations";
 import type { Faction, Fleet, Ship, Star } from "./model";
-import { filterInPlace, isSet } from "./util";
+import { filterInPlace, findById, isSet } from "./util";
 
 export const findColonisingFleets = (star: Star, fleets: Fleet[], faction: Faction): Fleet[] => {
 
@@ -40,3 +40,25 @@ export const getShipsThatCouldBomb = (fleet: Fleet, faction: Faction, star: Star
     return inRightPlace ? fleet.ships.filter(ship => designs[ship.designId]?.specials.bomb && !ship.hasBombed) : [];
 }
 
+const calculateConstructionPoints = (_star: Star): number => {
+    return 1
+}
+
+export const getNewShipsFromStar = (star: Star, faction: Faction): Ship[] | undefined => {
+    const design = findById(star.shipDesignToConstruct, faction.shipDesigns)
+    if (!design) {
+        return undefined
+    }
+    const { shipConstructionProgress = 0 } = star
+    const newProgress = calculateConstructionPoints(star) + shipConstructionProgress;
+
+    if (newProgress < design.constructionCost) {
+        star.shipConstructionProgress = newProgress
+        return undefined
+    }
+
+    const numberOfShips = Math.floor(newProgress / design.constructionCost);
+    star.shipConstructionProgress = newProgress % design.constructionCost;
+    const newShips: Ship[] = new Array(numberOfShips).fill(undefined).map(_ => ({ designId: design.id, damage: 0 }))
+    return newShips;
+}
