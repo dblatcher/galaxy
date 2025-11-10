@@ -1,7 +1,7 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext";
 import { findById, splitArray } from "../../lib/util";
 import { ColoniseButton } from "./ColoniseButton";
-import { ShipConstruction } from "./ShipConstruction";
+import { ColonyOverview } from "./ColonyOverview";
 import { FleetList } from "./FleetList";
 
 
@@ -20,32 +20,25 @@ export const SideMenu = () => {
     return <>
         {focusedStar && (
             <>
-                <section>
-                    <h3>{focusedStar.name}</h3>
-                    {colonyFaction ? (<>
-                        <div style={{ color: colonyFaction.color }}>
-                            {colonyFaction.name}
-                        </div>
-                        <div>
-                            pop: {focusedStar.population?.toFixed(2)}m
-                        </div>
-                        {activeFactionId === colonyFaction.id && (
-                            <ShipConstruction star={focusedStar} />
-                        )}
-                    </>) : (
-                        <>
-                            <div>unpopulated</div>
-                            {playerCanColonise && <ColoniseButton star={focusedStar} />}
-                        </>
-                    )}
-                    {pendingBattleHere && <div>
-                        <button onClick={() => {
-                            dispatch({
-                                type: 'battles:launch', starId: focusedStar.id
-                            })
-                        }}>FIGHT BATTLE</button>
-                    </div>}
-                </section>
+                {colonyFaction ? (
+                    <ColonyOverview
+                        colonyFaction={colonyFaction}
+                        star={focusedStar}
+                        isPendingBattleHere={!!pendingBattleHere} />
+                ) : (
+                    <section>
+                        <h3>{focusedStar.name}</h3>
+                        <div>unpopulated</div>
+                        {playerCanColonise && <ColoniseButton star={focusedStar} />}
+                        {pendingBattleHere && <div>
+                            <button onClick={() => {
+                                dispatch({
+                                    type: 'battles:launch', starId: focusedStar.id
+                                })
+                            }}>FIGHT BATTLE</button>
+                        </div>}
+                    </section>
+                )}
 
                 <FleetList title="Your fleets" list={playersFleets} canOrder arrangeButton pendingBattle={pendingBattleHere} />
                 <FleetList title="Other fleets" list={othersFleets} />
