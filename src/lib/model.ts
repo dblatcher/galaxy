@@ -10,6 +10,7 @@ export type Star = XY & {
     factionId?: number;
     shipDesignToConstruct?: number;
     shipConstructionProgress?: number;
+    population: number;
 }
 
 export type Faction = {

@@ -109,6 +109,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             const colonyShipUsed = removeOneColonyShip(fleet, faction)
             if (colonyShipUsed) {
                 star.factionId = faction.id
+                star.population = 1
             }
 
             return {

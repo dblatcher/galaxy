@@ -75,12 +75,12 @@ const STAR_ID = {
 
 const initialGalaxy: Galaxy = {
     stars: [
-        { x: 100, y: 75, id: STAR_ID.Arcturus, name: 'Arcturus', factionId: FACTION_ID.Magrathian },
-        { x: 30, y: 45, id: STAR_ID.Kunitio, name: 'Kunitio' },
-        { x: 130, y: 35, id: STAR_ID.Junke, name: 'Junke', factionId: FACTION_ID.Martian, shipDesignToConstruct: 0 },
-        { x: 120, y: 45, id: STAR_ID.Maddow, name: 'Maddow' },
-        { x: 60, y: 25, id: STAR_ID.Zorblax, name: 'Zorblax', factionId: FACTION_ID.Zorblaxian, shipDesignToConstruct: 1, shipConstructionProgress: 8 },
-        { x: 20, y: 20, id: STAR_ID.Sol, name: 'Sol', factionId: FACTION_ID.Zorblaxian },
+        { x: 100, y: 75, id: STAR_ID.Arcturus, name: 'Arcturus', factionId: FACTION_ID.Magrathian, population: 2 },
+        { x: 30, y: 45, id: STAR_ID.Kunitio, name: 'Kunitio', population: 0 },
+        { x: 130, y: 35, id: STAR_ID.Junke, name: 'Junke', factionId: FACTION_ID.Martian, shipDesignToConstruct: 0, population: 3.2 },
+        { x: 120, y: 45, id: STAR_ID.Maddow, name: 'Maddow', population: 0 },
+        { x: 60, y: 25, id: STAR_ID.Zorblax, name: 'Zorblax', factionId: FACTION_ID.Zorblaxian, population: 3.7, shipDesignToConstruct: 1, shipConstructionProgress: 8 },
+        { x: 20, y: 20, id: STAR_ID.Sol, name: 'Sol', factionId: FACTION_ID.Zorblaxian, population: 1.1 },
     ],
     width: 150,
     height: 100,

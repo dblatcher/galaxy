@@ -9,7 +9,7 @@ interface Props {
 
 const undefinedToken = "_-_-_"
 
-export const ColonyMenu = ({ star }: Props) => {
+export const ShipConstruction = ({ star }: Props) => {
 
     const { gameState: { factions }, dispatch } = useGameStateContext();
 
