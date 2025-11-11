@@ -1,7 +1,6 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext";
 import { findById, splitArray } from "../../lib/util";
 import { SubHeading } from "../SubHeading";
-import { ColoniseButton } from "./ColoniseButton";
 import { ColonyOverview } from "./ColonyOverview";
 import { FleetList } from "./FleetList";
 
@@ -14,9 +13,7 @@ export const SideMenu = () => {
     const [playersFleets, othersFleets] = splitArray(fleetsHere, (fleet) => fleet.factionId === activeFactionId)
     const colonyFaction = findById(focusedStar?.factionId, factions)
     const selectedTravelingFleet = focusedStar ? undefined : findById(selectedFleetId, fleets)
-
     const pendingBattleHere = focusedStar && activeFactionBattles.find(battle => battle.star === focusedStar.id)
-    const playerCanColonise = !!(!colonyFaction && playersFleets.length);
 
     return <>
         {focusedStar && (
@@ -30,7 +27,6 @@ export const SideMenu = () => {
                     <section>
                         <SubHeading>{focusedStar.name}</SubHeading>
                         <div className="panel-content">unpopulated</div>
-                        {playerCanColonise && <ColoniseButton star={focusedStar} />}
                         {pendingBattleHere && <div>
                             <button onClick={() => {
                                 dispatch({

@@ -1,32 +1,22 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext"
-import { findColonisingFleets } from "../../lib/colony-operations"
-import type { Star } from "../../lib/model"
+import type { Fleet, Star } from "../../lib/model"
 
 interface Props {
     star: Star
+    fleet: Fleet
 }
 
-export const ColoniseButton = ({ star }: Props) => {
-    const { activeFaction, gameState: { fleets, selectedFleetId }, dispatch, } = useGameStateContext()
-    const fleetsThatCouldColonise = findColonisingFleets(star, fleets, activeFaction)
-
+export const ColoniseButton = ({ star, fleet }: Props) => {
+    const { dispatch, } = useGameStateContext()
     const startColony = () => {
-        const [firstFleet] = fleetsThatCouldColonise;
-        if (!firstFleet) {
-            return
-        }
-        const idOfFleetToUse = fleetsThatCouldColonise.find(fleet => fleet.id === selectedFleetId)?.id ?? firstFleet.id;
         dispatch({
             type: 'start-colony',
-            fleetId: idOfFleetToUse,
+            fleetId: fleet?.id,
             starId: star.id
         })
     }
-
-    return <div>
-        <button
-            onClick={startColony}
-            disabled={fleetsThatCouldColonise.length === 0}
-        >start colony on {star.name}</button>
-    </div>
+    return <button
+        className="small"
+        onClick={startColony}
+    >colonise!</button>
 }

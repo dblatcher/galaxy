@@ -20,6 +20,19 @@ export const findColonisingFleets = (star: Star, fleets: Fleet[], faction: Facti
     )
 }
 
+export const couldFleetColoniseStar = (fleet: Fleet, faction: Faction, star: Star) => {
+
+    if (isSet(star.factionId)) {
+        return false
+    }
+
+    if (fleet.orbitingStarId !== star.id) {
+        return false
+    }
+    const designs = getDesignMap(faction)
+    return fleet.ships.some(ship => designs[ship.designId]?.specials.colonise)
+}
+
 export const removeOneColonyShip = (fleet: Fleet, faction: Faction): Ship | undefined => {
     const designs = getDesignMap(faction)
     const firstColonyShip = fleet.ships.find(ship => designs[ship.designId]?.specials.colonise)

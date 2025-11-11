@@ -1,10 +1,11 @@
 import type { CSSProperties } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
+import { couldFleetColoniseStar, getShipsThatCouldBomb } from "../lib/colony-operations"
 import type { Faction, Fleet } from "../lib/model"
 import { findById, lookUpName } from "../lib/util"
 import { FleetIcon } from "./FleetSymbol"
+import { ColoniseButton } from "./galactic/ColoniseButton"
 import { ToggleableBox } from "./ToggleableBox"
-import { getShipsThatCouldBomb } from "../lib/colony-operations"
 
 
 interface Props {
@@ -63,6 +64,7 @@ export const FleetBox = ({ fleet, canOrder, isPendingBattle }: Props) => {
 
     const star = findById(fleet.orbitingStarId, galaxy.stars)
     const couldBomb = !isPendingBattle && !!(faction && star) && getShipsThatCouldBomb(fleet, faction, star).length > 0
+    const couldColonise = !!(star && faction) && couldFleetColoniseStar(fleet, faction, star)
 
     return <>
         <ToggleableBox
@@ -73,12 +75,17 @@ export const FleetBox = ({ fleet, canOrder, isPendingBattle }: Props) => {
             {fleetDescription}
         </ToggleableBox>
         <div>
-            <button className="small"
-            onClick={() => {
-                if (star) {
-                    dispatch({ type: 'order-bombing', starId: star.id, fleetId: fleet.id })
-                }
-            }} disabled={!couldBomb}>bomb!</button>
+            {couldBomb && (
+                <button className="small"
+                    onClick={() => {
+                        if (star) {
+                            dispatch({ type: 'order-bombing', starId: star.id, fleetId: fleet.id })
+                        }
+                    }} >bomb!</button>
+            )}
+            {couldColonise && (
+                <ColoniseButton star={star} fleet={fleet}/>
+            )}
         </div>
     </>
 }
