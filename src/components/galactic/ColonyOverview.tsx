@@ -31,12 +31,14 @@ export const ColonyOverview = ({ star, colonyFaction, isPendingBattleHere }: Pro
             {colonyFaction.name}
         </div>
         <table className="panel-content">
-            <tr>
-                <th>pop</th><td>{star.population?.toFixed(2)}m</td>
-            </tr>
-            <tr>
-                <th>production</th><td>{calculateConstructionPoints(star)}/turn</td>
-            </tr>
+            <tbody>
+                <tr>
+                    <th>pop</th><td>{star.population?.toFixed(2)}m</td>
+                </tr>
+                <tr>
+                    <th>production</th><td>{calculateConstructionPoints(star)}/turn</td>
+                </tr>
+            </tbody>
         </table>
         {activeFaction.id === colonyFaction.id && (
             <ShipConstruction star={star} />
