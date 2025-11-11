@@ -1,5 +1,6 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext"
 import { handleStarClickFunction } from "../../lib/ui-interactions"
+import { isSet } from "../../lib/util"
 import { FleetPlot } from "../FleetPlot"
 import { StarPlot } from "../StarPlot"
 
@@ -27,7 +28,7 @@ export const GalaxyMap = ({ scale }: Props) => {
                     star={star}
                     onClick={handleStarClickFunction(gameState, dispatch)} />
             ))}
-            {fleets.map((fleet) => <FleetPlot key={fleet.id} fleet={fleet} />)}
+            {fleets.filter(fleet => !isSet(fleet.orbitingStarId)).map((fleet) => <FleetPlot key={fleet.id} fleet={fleet} />)}
 
         </svg>
     )

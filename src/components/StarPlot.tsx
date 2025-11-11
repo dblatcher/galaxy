@@ -1,6 +1,7 @@
 import { useGameStateContext } from "../hooks/useGameStateContext";
 import type { Fleet, Star } from "../lib/model";
 import { findById } from "../lib/util";
+import { FleetSymbol } from "./FleetSymbol";
 
 interface Props {
    star: Star;
@@ -26,12 +27,19 @@ const FleetCounts = ({ star }: { star: Star }) => {
    const fleetsBreakdown = getFleetBreakdown(fleetsHere)
 
    return <>
-      {Object.entries(fleetsBreakdown).map(([factionId, count], index) => (
-         <text pointerEvents={'none'}
-            key={index} dx={6 * index}
-            x={star.x - 4} y={star.y - 4}
-            fill={findById(Number(factionId), factions)?.color} fontSize={5}>{count}</text>
-      )
+      {Object.entries(fleetsBreakdown).map(([factionId, count], index) => {
+         const faction = findById(Number(factionId), factions);
+         const oX = star.x - 12;
+         const oY = star.y - 4;
+         const dY = 5 * index;
+
+         return <g data-is="fleet-count" key={index}>
+            <text pointerEvents={'none'}
+               x={oX} y={oY + dY}
+               fill={faction?.color} fontSize={4}>{count}</text>
+            <FleetSymbol color={faction?.color} location={{ x: oX + 6, y: oY + dY - 1 }} scale={1 / 2} />
+         </g>
+      }
       )}
    </>
 }

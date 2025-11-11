@@ -5,11 +5,12 @@ interface Props {
     location?: XY;
     h?: number
     onClick?: { (): void }
+    scale?: number
 }
 
-const getPoints = (x: number, y: number) => `${x},${y - 3} ${x + 3},${y + 3} ${x},${y + 2} ${x - 3},${y + 3}`
+const getPoints = (x: number, y: number, scale = 1) => `${x},${y - (3 * scale)} ${x + (3 * scale)},${y + (3 * scale)} ${x},${y + (2 * scale)} ${x - (3 * scale)},${y + (3 * scale)}`
 
-export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h, onClick }: Props) => {
+export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h, onClick, scale = 1 }: Props) => {
     return <polygon
         style={{
             transformBox: 'border-box',
@@ -17,10 +18,10 @@ export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h, onClick }: Pr
             transform: h ? `rotate(${180 - (h * 180 / Math.PI)}deg)` : undefined,
             cursor: onClick ? 'pointer' : undefined,
         }}
-        points={getPoints(location.x, location.y)}
+        points={getPoints(location.x, location.y, scale)}
         fill={color}
         stroke="white"
-        strokeWidth={.5}
+        strokeWidth={.5 * scale}
         pointerEvents={onClick ? undefined : 'none'}
         onClick={onClick ? event => {
             event.stopPropagation()
