@@ -18,18 +18,22 @@ export const FleetPlot = ({ fleet }: Props) => {
     const location: XY = orbiting ?? fleet.location
     const priority = selectedFleetId === fleet.id ? undefined : 'subdued'
 
-    const h = destination && !orbiting ? getHeadingFrom(location, destination) : undefined;
+    const h = destination ? getHeadingFrom(location, destination) : undefined;
     const onClick = !orbiting ? () => {
         dispatch({ type: 'select-fleet', target: fleet })
     } : undefined
 
     const className = orbiting ? 'fleet' : 'fleet fleet--clickable'
 
+    const shouldRenderSymbol = fleet.id === selectedFleetId || !orbiting;
+
     return (
         <>
-            <g className={className}>
-                <FleetSymbol h={h} color={faction?.color} location={location} onClick={onClick} />
-            </g>
+            {shouldRenderSymbol && (
+                <g className={className}>
+                    <FleetSymbol h={h} color={faction?.color} location={location} onClick={onClick} />
+                </g>
+            )}
             {destination && (
                 <LineTo line={{ points: [location, destination] }} priority={priority} />
             )}
