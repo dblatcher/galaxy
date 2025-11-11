@@ -1,8 +1,8 @@
 import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
 import { autoResolveAllBattles } from "./auto-battles";
-import { getNewShipsFromStar } from "./colony-operations";
+import { runColonyConstruction, runColonyGrowth } from "./colony-operations";
 import { takeCpuTurn } from "./cpu-turn";
-import { addNewFleet, factionHasBattles } from "./fleet-operations";
+import { factionHasBattles } from "./fleet-operations";
 import type { Faction, Fleet, GameState, Ship } from "./model";
 import { findById, isSet, mapOnId } from "./util";
 
@@ -38,31 +38,18 @@ const moveFleetInGalaxy = ({ galaxy }: GameState) => (fleet: Fleet) => {
 }
 
 
-const runConstruction = (gameState: GameState) => {
+const updateColonies = (gameState: GameState) => {
     const { fleets } = gameState
     const factionMap = mapOnId(gameState.factions);
-
     gameState.galaxy.stars.forEach(star => {
         const faction = isSet(star.factionId) ? factionMap[star.factionId] : undefined;
         if (faction) {
-            const newShips = getNewShipsFromStar(star, faction);
-
-            if (newShips) {
-                // TO DO - let the player pick which fleet gets the new ships ?
-                const factionsFleetsHere = fleets.filter(fleet =>
-                    fleet.factionId === faction.id && fleet.orbitingStarId === star.id
-                )
-                const [firstFleet] = factionsFleetsHere;
-
-                if (!firstFleet) {
-                    addNewFleet(faction.id, star, newShips, fleets)
-                } else {
-                    firstFleet.ships.push(...newShips)
-                }
-            }
+            runColonyConstruction(star, faction, fleets);
+            runColonyGrowth(star);
         }
     })
 }
+
 
 const resetShip = (ship: Ship) => {
     ship.hasBombed = false
@@ -75,7 +62,7 @@ const startNewTurn = (oldGameState: GameState): GameState => {
     fleets.forEach(fleet => {
         fleet.ships.forEach(resetShip)
     })
-    runConstruction(gameState)
+    updateColonies(gameState)
 
     const [firstFaction] = factions
 
@@ -87,6 +74,7 @@ const startNewTurn = (oldGameState: GameState): GameState => {
         turnNumber: turnNumber + 1,
         starsWhereBattlesFoughtAlready: [],
         reports,
+        focusedStarId: gameState.focusedStarId,
         dialog: factionHasBattles(firstFaction.id, gameState) ? {
             role: 'battles'
         } : undefined

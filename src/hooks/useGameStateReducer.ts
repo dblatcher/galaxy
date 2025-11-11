@@ -1,12 +1,12 @@
 import { useReducer } from "react"
 import { autoResolveBattle } from "../lib/auto-battles"
 import { updateFleetsFromBattleReport } from "../lib/battle-operations"
+import { bombColony, removeOneColonyShip } from "../lib/colony-operations"
 import { getBattleAt } from "../lib/derived-state"
 import { addNewFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
-import type { BattleReport, Dialog, Fleet, GameState, MessageReport, Star } from "../lib/model"
+import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById, isSet } from "../lib/util"
-import { getShipsThatCouldBomb, removeOneColonyShip } from "../lib/colony-operations"
 
 
 export type Action = {
@@ -128,7 +128,6 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
         }
         case "order-bombing": {
             const pendingBattle = getBattleAt(action.starId, state)
-
             if (pendingBattle) {
                 console.warn('could not bomb as battle needs to be resolve first', pendingBattle)
                 return state
@@ -139,26 +138,14 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
 
             const star = findById(action.starId, stars);
             const fleet = findById(action.fleetId, fleets);
-            const faction = findById(fleet?.factionId, state.factions);
-            if (!star || !fleet || !faction) {
-                console.warn('could not find star or fleet for order-bombing', { action, star, fleet, faction })
+            const bombingFaction = findById(fleet?.factionId, state.factions);
+            const bombedFaction = findById(star?.factionId, state.factions)
+            if (!star || !fleet || !bombingFaction || !bombedFaction) {
+                console.warn('could not find star or fleet for order-bombing', { action, star, fleet, bombingFaction, bombedFaction })
                 return state
             }
 
-
-            const bombedFaction = findById(star.factionId, state.factions)
-            const bombers = getShipsThatCouldBomb(fleet, faction, star)
-            bombers.forEach(ship => ship.hasBombed = true)
-
-
-            const report: MessageReport = {
-                reportType: 'message',
-                turnNumber: state.turnNumber,
-                message: `${faction.name} bombed the ${bombedFaction?.name} colony at ${star.name}. It was completely destroyed.`
-            }
-
-            // TO DO - determine damage amount
-            star.factionId = undefined;
+            const report = bombColony(bombingFaction, fleet, bombedFaction, star, state.turnNumber)
 
             return {
                 ...state,
