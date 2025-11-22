@@ -85,14 +85,14 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
     }
 
     switch (action.type) {
-        case "open-dialog":
+        case 'open-dialog':
             return { ...state, dialog: action.dialog }
-        case "close-dialog":
+        case 'close-dialog':
             return state
-        case "focus-star":
+        case 'focus-star':
             // to do - optionally select the first fleet on the list for this star
             return { ...state, focusedStarId: action.target?.id, selectedFleetId: undefined }
-        case "set-star-construction-design": {
+        case 'set-star-construction-design': {
             const stars = structuredClone(state.galaxy.stars)
             const star = findById(action.starId, stars)
             if (star) {
@@ -106,7 +106,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                 }
             }
         }
-        case "set-star-budget": {
+        case 'set-star-budget': {
             const stars = structuredClone(state.galaxy.stars)
             const star = findById(action.starId, stars)
             if (star) {
@@ -121,7 +121,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                 }
             }
         }
-        case "star-budget-lock": {
+        case 'star-budget-lock': {
             const stars = structuredClone(state.galaxy.stars)
             const star = findById(action.starId, stars)
             if (star) {
@@ -137,7 +137,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                 }
             }
         }
-        case "start-colony": {
+        case 'start-colony': {
             const fleets = structuredClone(state.fleets)
             const stars = structuredClone(state.galaxy.stars)
 
@@ -170,7 +170,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                 }]
             }
         }
-        case "order-bombing": {
+        case 'order-bombing': {
             const pendingBattle = getBattleAt(action.starId, state)
             if (pendingBattle) {
                 console.warn('could not bomb as battle needs to be resolve first', pendingBattle)
@@ -200,20 +200,20 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                 reports: [...state.reports, report]
             }
         }
-        case "pick-destination":
+        case 'pick-destination':
             const activeFleet = findById(state.selectedFleetId, state.fleets);
             if (!activeFleet) {
                 return state
             }
             activeFleet.destinationStarId = action.target?.id
             return { ...state }
-        case "select-fleet":
+        case 'select-fleet':
             return {
                 ...state,
                 selectedFleetId: action.target?.id,
                 focusedStarId: !action.target ? state.focusedStarId : isSet(action.target?.orbitingStarId) ? state.focusedStarId : undefined,
             }
-        case "fleets:transfer-ships": {
+        case 'fleets:transfer-ships': {
             const { sourceFleetMap, fleetId } = action;
             const fleets = structuredClone(state.fleets)
             const destinationFleet = findById(fleetId, fleets)
@@ -224,7 +224,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             transferShips(sourceFleetMap, destinationFleet, fleets)
             return { ...state, fleets }
         }
-        case "fleets:transfer-to-new-fleet": {
+        case 'fleets:transfer-to-new-fleet': {
             const { sourceFleetMap } = action;
             const star = findById(state.focusedStarId, state.galaxy.stars)
             if (!star) {
@@ -237,9 +237,9 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             return { ...state, fleets }
         }
 
-        case "next-turn":
+        case 'next-turn':
             return progressTurn(state);
-        case "battles:auto-resolve": {
+        case 'battles:auto-resolve': {
             const battle = getBattleAt(action.starId, state);
             if (!battle) {
                 console.warn('no battle at star:', action.starId, state)
@@ -255,7 +255,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                     : undefined
             }
         }
-        case "battles:launch":
+        case 'battles:launch':
             return {
                 ...state,
                 subProgram: {
@@ -263,7 +263,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                     starId: action.starId,
                 }
             }
-        case "battles:result":
+        case 'battles:result':
             const { report } = action
             const battlesModalWasOpen = state.dialog?.role === 'battles';
 
