@@ -13,7 +13,7 @@ export const ProgressBar = ({ title, value, max, showValues }: Props) => {
 
     return <div title={title} className="progress-bar-holder">
         {showValues && (
-            <div className="progress-bar-values">{value}/{max}</div>
+            <div className="progress-bar-values">{value.toFixed(1)}/{max}</div>
         )}
         <progress className="progress-bar" aria-label={label} value={value} max={max} />
     </div>

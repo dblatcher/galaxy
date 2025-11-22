@@ -28,7 +28,6 @@ function getAdjustableItems<ItemName extends string>(itemName: ItemName, budget:
 function reduceBudgetAmount<ItemName extends string>(itemName: ItemName, reduction: number, budget: Budget<ItemName>): Budget<ItemName> {
     const itemsToReceiveExcess = getAdjustableItems(itemName, budget);
     if (itemsToReceiveExcess.length === 0) {
-        console.warn('no unlocked items')
         return budget
     }
     let excess = reduction;
@@ -50,7 +49,6 @@ function reduceBudgetAmount<ItemName extends string>(itemName: ItemName, reducti
 function increaseBudgetAmount<ItemName extends string>(itemName: ItemName, increase: number, budget: Budget<ItemName>): Budget<ItemName> {
     const itemsToProvideExtra = getAdjustableItems(itemName, budget);
     if (itemsToProvideExtra.length === 0) {
-        console.warn('no unlocked items')
         return budget
     }
 

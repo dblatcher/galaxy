@@ -1,3 +1,4 @@
+import type { ColonyBudget } from "./colony-budget";
 
 export type XY = {
     x: number;
@@ -11,6 +12,7 @@ export type Star = XY & {
     shipDesignToConstruct?: number;
     shipConstructionProgress?: number;
     population: number;
+    budget?: ColonyBudget;
 }
 
 export type Faction = {

@@ -7,6 +7,8 @@ import { addNewFleet, factionHasBattles, transferShips } from "../lib/fleet-oper
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById, isSet } from "../lib/util"
+import { createBalancedColonyBudget, createBudgetWithAllIn, type ColonyBudgetItem } from "../lib/colony-budget"
+import { setBudgetAmount } from "../lib/budget"
 
 
 export type Action = {
@@ -22,6 +24,16 @@ export type Action = {
     type: 'set-star-construction-design',
     starId: number,
     designId?: number
+} | {
+    type: 'star-budget-lock',
+    starId: number,
+    itemName: ColonyBudgetItem,
+    locked: boolean
+} | {
+    type: 'set-star-budget',
+    starId: number,
+    itemName: ColonyBudgetItem,
+    targetPercentage: number
 } | {
     type: 'start-colony'
     starId: number,
@@ -94,6 +106,37 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                 }
             }
         }
+        case "set-star-budget": {
+            const stars = structuredClone(state.galaxy.stars)
+            const star = findById(action.starId, stars)
+            if (star) {
+                const oldBudget = structuredClone(star.budget) || createBalancedColonyBudget();
+                star.budget = setBudgetAmount(action.itemName, action.targetPercentage, oldBudget)
+            }
+
+            return {
+                ...state,
+                galaxy: {
+                    ...state.galaxy, stars
+                }
+            }
+        }
+        case "star-budget-lock": {
+            const stars = structuredClone(state.galaxy.stars)
+            const star = findById(action.starId, stars)
+            if (star) {
+                const oldBudget = structuredClone(star.budget) || createBalancedColonyBudget();
+                oldBudget.items[action.itemName].locked = action.locked
+                star.budget = oldBudget
+            }
+
+            return {
+                ...state,
+                galaxy: {
+                    ...state.galaxy, stars
+                }
+            }
+        }
         case "start-colony": {
             const fleets = structuredClone(state.fleets)
             const stars = structuredClone(state.galaxy.stars)
@@ -110,6 +153,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             if (colonyShipUsed) {
                 star.factionId = faction.id
                 star.population = 1
+                star.budget = createBudgetWithAllIn('industry');
             }
 
             return {

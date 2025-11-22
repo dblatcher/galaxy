@@ -1,3 +1,4 @@
+import { createBalancedColonyBudget, type ColonyBudgetItem } from "./colony-budget";
 import { addNewFleet, getDesignMap } from "./fleet-operations";
 import type { Faction, Fleet, MessageReport, Ship, Star } from "./model";
 import { filterInPlace, findById, isSet } from "./util";
@@ -57,8 +58,10 @@ export const getShipsThatCouldBomb = (fleet: Fleet, faction: Faction, star: Star
     return inRightPlace ? fleet.ships.filter(ship => designs[ship.designId]?.specials.bomb && !ship.hasBombed) : [];
 }
 
-export const calculateConstructionPoints = (star: Star): number => {
-    return Math.max(1, Math.floor(star.population))
+export const calculateConstructionPoints = (star: Star, budgetItem?: ColonyBudgetItem): number => {
+    const budget = star.budget ?? createBalancedColonyBudget();
+    const portion = budgetItem ? budget.items[budgetItem].percentage / 100 : 1;
+    return Math.max(1, Math.floor(star.population)) * portion;
 }
 
 export const getNewShipsFromStar = (star: Star, faction: Faction): Ship[] | undefined => {
@@ -67,7 +70,7 @@ export const getNewShipsFromStar = (star: Star, faction: Faction): Ship[] | unde
         return undefined
     }
     const { shipConstructionProgress = 0 } = star
-    const newProgress = calculateConstructionPoints(star) + shipConstructionProgress;
+    const newProgress = calculateConstructionPoints(star, 'ships') + shipConstructionProgress;
 
     if (newProgress < design.constructionCost) {
         star.shipConstructionProgress = newProgress

@@ -1,3 +1,4 @@
+import { createBalancedColonyBudget, createBudgetWithAllIn } from "./colony-budget";
 import type { Galaxy, Fleet, Faction, GameState, ShipDesign, Ship } from "./model"
 
 
@@ -79,8 +80,18 @@ const initialGalaxy: Galaxy = {
         { x: 30, y: 45, id: STAR_ID.Kunitio, name: 'Kunitio', population: 0 },
         { x: 130, y: 35, id: STAR_ID.Junke, name: 'Junke', factionId: FACTION_ID.Martian, shipDesignToConstruct: 0, population: 3.2 },
         { x: 120, y: 45, id: STAR_ID.Maddow, name: 'Maddow', population: 0 },
-        { x: 60, y: 25, id: STAR_ID.Zorblax, name: 'Zorblax', factionId: FACTION_ID.Zorblaxian, population: 3.7, shipDesignToConstruct: 1, shipConstructionProgress: 8 },
-        { x: 20, y: 20, id: STAR_ID.Sol, name: 'Sol', factionId: FACTION_ID.Zorblaxian, population: 1.1 },
+        {
+            x: 60, y: 25, id: STAR_ID.Zorblax, name: 'Zorblax',
+            factionId: FACTION_ID.Zorblaxian, population: 3.7,
+            shipDesignToConstruct: 1, shipConstructionProgress: 8,
+            budget: createBalancedColonyBudget()
+        },
+        {
+            x: 20, y: 20, id: STAR_ID.Sol, name: 'Sol',
+            factionId: FACTION_ID.Zorblaxian, population: 1.1,
+            shipDesignToConstruct: 0, shipConstructionProgress: 0,
+            budget: createBudgetWithAllIn('industry')
+        },
     ],
     width: 150,
     height: 100,

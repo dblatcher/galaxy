@@ -2,6 +2,7 @@ import { useGameStateContext } from "../../hooks/useGameStateContext"
 import { calculateConstructionPoints } from "../../lib/colony-operations"
 import type { Faction, Star } from "../../lib/model"
 import { SubHeading } from "../SubHeading"
+import { BudgetControl } from "./BudgetControl"
 import { ShipConstruction } from "./ShipConstruction"
 
 interface Props {
@@ -41,7 +42,10 @@ export const ColonyOverview = ({ star, colonyFaction, isPendingBattleHere }: Pro
             </tbody>
         </table>
         {activeFaction.id === colonyFaction.id && (
-            <ShipConstruction star={star} />
+            <>
+                <BudgetControl star={star} />
+                <ShipConstruction star={star} />
+            </>
         )}
     </section>
 
