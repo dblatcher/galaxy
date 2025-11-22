@@ -25,6 +25,12 @@ function getAdjustableItems<ItemName extends string>(itemName: ItemName, budget:
     return items
 }
 
+function sortNamesAscendingFunction <ItemName extends string>(budget: Budget<ItemName>)  {
+    return (a:ItemName, b:ItemName) => {
+        return budget.items[a].percentage - budget.items[b].percentage
+    }
+}
+
 function reduceBudgetAmount<ItemName extends string>(itemName: ItemName, reduction: number, budget: Budget<ItemName>): Budget<ItemName> {
     const itemsToReceiveExcess = getAdjustableItems(itemName, budget);
     if (itemsToReceiveExcess.length === 0) {
@@ -33,13 +39,14 @@ function reduceBudgetAmount<ItemName extends string>(itemName: ItemName, reducti
     let excess = reduction;
 
     while (excess > 0) {
+        itemsToReceiveExcess.sort(sortNamesAscendingFunction(budget))
         const remainder = excess % itemsToReceiveExcess.length;
         const share = Math.floor((excess - remainder) / itemsToReceiveExcess.length);
         itemsToReceiveExcess.forEach(name => {
             budget.items[name].percentage += share;
             excess -= share
         })
-        itemsToReceiveExcess.pop() // to do - remove the item with highest percentage
+        itemsToReceiveExcess.pop()
     }
 
     budget.items[itemName].percentage -= reduction; 
@@ -55,13 +62,14 @@ function increaseBudgetAmount<ItemName extends string>(itemName: ItemName, incre
     let extra = 0
     while (extra < increase) {
         filterInPlace(itemsToProvideExtra, name => budget.items[name].percentage > 0)
+        itemsToProvideExtra.sort(sortNamesAscendingFunction(budget))
         if (itemsToProvideExtra.length === 0) {
             break
         }
 
         const mostNeededFromEach = Math.floor((increase - extra) / itemsToProvideExtra.length);
         if (mostNeededFromEach <= 0) {
-            itemsToProvideExtra.pop() // to do - remove the item with lowest percentage
+            itemsToProvideExtra.shift()
             continue
         }
 
