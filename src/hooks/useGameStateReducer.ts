@@ -10,17 +10,7 @@ import { findById, isSet } from "../lib/util"
 import { createBalancedColonyBudget, createBudgetWithAllIn, type ColonyBudgetItem } from "../lib/colony-budget"
 import { setBudgetAmount } from "../lib/budget"
 
-
-export type Action = {
-    type: 'focus-star',
-    target?: Star,
-} | {
-    type: 'pick-destination',
-    target?: Star,
-} | {
-    type: 'select-fleet'
-    target?: Fleet
-} | {
+type ColonyControlAction = {
     type: 'set-star-construction-design',
     starId: number,
     designId?: number
@@ -34,38 +24,58 @@ export type Action = {
     starId: number,
     itemName: ColonyBudgetItem,
     targetPercentage: number
-} | {
-    type: 'start-colony'
-    starId: number,
-    fleetId: number,
-} | {
-    type: 'next-turn'
-} | {
-    type: 'battles:auto-resolve'
-    starId: number
-} | {
-    type: 'open-dialog'
-    dialog: Dialog
-} | {
-    type: 'close-dialog'
-} | {
+};
+
+type FleetDialogAction = {
     type: 'fleets:transfer-ships',
     fleetId: number,
     sourceFleetMap: Record<number, number[]>
 } | {
     type: 'fleets:transfer-to-new-fleet',
     sourceFleetMap: Record<number, number[]>,
+};
+
+type SelectionAction = {
+    type: 'select-star',
+    target?: Star,
+} | {
+    type: 'select-fleet'
+    target?: Fleet
+};
+
+type FleetOrderActions = {
+    type: 'pick-destination',
+    target?: Star,
+} | {
+    type: 'start-colony'
+    starId: number,
+    fleetId: number,
+} | {
+    type: 'order-bombing',
+    starId: number,
+    fleetId: number,
+};
+
+type SpaceBattleActions = {
+    type: 'battles:auto-resolve'
+    starId: number
 } | {
     type: 'battles:launch',
     starId: number,
 } | {
     type: 'battles:result',
     report: BattleReport,
+};
+
+export type Action = ColonyControlAction | FleetDialogAction | SelectionAction | FleetOrderActions | SpaceBattleActions |
+{
+    type: 'next-turn'
 } | {
-    type: 'order-bombing',
-    starId: number,
-    fleetId: number,
-}
+    type: 'open-dialog'
+    dialog: Dialog
+} | {
+    type: 'close-dialog'
+};
 
 export const gameStateReducer = (state: GameState, action: Action): GameState => {
     if (state.dialog) {
@@ -89,7 +99,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             return { ...state, dialog: action.dialog }
         case 'close-dialog':
             return state
-        case 'focus-star':
+        case 'select-star':
             // to do - optionally select the first fleet on the list for this star
             return { ...state, focusedStarId: action.target?.id, selectedFleetId: undefined }
         case 'set-star-construction-design': {

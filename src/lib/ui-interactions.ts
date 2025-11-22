@@ -24,8 +24,7 @@ export const handleStarClickFunction = (
         return dispatch({ type: 'pick-destination', target: undefined })
     }
     if (clickedOnFocusedStar) {
-        return dispatch({ type: 'focus-star', target: undefined });
-
+        return dispatch({ type: 'select-star', target: undefined });
     }
-    return dispatch({ type: 'focus-star', target: star })
+    return dispatch({ type: 'select-star', target: star })
 }

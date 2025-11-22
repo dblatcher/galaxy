@@ -6,6 +6,7 @@ import { findById, isSet } from "./util";
 export const takeCpuTurn = (faction: Faction, oldGameState: GameState): GameState => {
     // TO DO = CPU decision logi
     // - decide which ships to build at each star
+    // - adjust colony budgets
     // - issue orders (or no orders) to each fleet
     // - start colonies on planets with orbiting colony ships
 
