@@ -1,30 +1,14 @@
 import { useReducer } from "react"
+import { reduceColonyAction, type ColonyControlAction } from "../actions/colony-control-actions"
+import { reduceFleetOrderAction, type FleetOrderAction } from "../actions/fleet-order-actions"
 import { autoResolveBattle } from "../lib/auto-battles"
 import { updateFleetsFromBattleReport } from "../lib/battle-operations"
-import { bombColony, removeOneColonyShip } from "../lib/colony-operations"
 import { getBattleAt } from "../lib/derived-state"
 import { addNewFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { findById, isSet } from "../lib/util"
-import { createBalancedColonyBudget, createBudgetWithAllIn, type ColonyBudgetItem } from "../lib/colony-budget"
-import { setBudgetAmount } from "../lib/budget"
 
-type ColonyControlAction = {
-    type: 'set-star-construction-design',
-    starId: number,
-    designId?: number
-} | {
-    type: 'star-budget-lock',
-    starId: number,
-    itemName: ColonyBudgetItem,
-    locked: boolean
-} | {
-    type: 'set-star-budget',
-    starId: number,
-    itemName: ColonyBudgetItem,
-    targetPercentage: number
-};
 
 type FleetDialogAction = {
     type: 'fleets:transfer-ships',
@@ -43,18 +27,6 @@ type SelectionAction = {
     target?: Fleet
 };
 
-type FleetOrderActions = {
-    type: 'pick-destination',
-    target?: Star,
-} | {
-    type: 'start-colony'
-    starId: number,
-    fleetId: number,
-} | {
-    type: 'order-bombing',
-    starId: number,
-    fleetId: number,
-};
 
 type SpaceBattleActions = {
     type: 'battles:auto-resolve'
@@ -67,7 +39,7 @@ type SpaceBattleActions = {
     report: BattleReport,
 };
 
-export type Action = ColonyControlAction | FleetDialogAction | SelectionAction | FleetOrderActions | SpaceBattleActions |
+export type Action = ColonyControlAction | FleetDialogAction | SelectionAction | FleetOrderAction | SpaceBattleActions |
 {
     type: 'next-turn'
 } | {
@@ -102,127 +74,22 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
         case 'select-star':
             // to do - optionally select the first fleet on the list for this star
             return { ...state, focusedStarId: action.target?.id, selectedFleetId: undefined }
-        case 'set-star-construction-design': {
-            const stars = structuredClone(state.galaxy.stars)
-            const star = findById(action.starId, stars)
-            if (star) {
-                star.shipDesignToConstruct = action.designId
-            }
-
-            return {
-                ...state,
-                galaxy: {
-                    ...state.galaxy, stars
-                }
-            }
-        }
-        case 'set-star-budget': {
-            const stars = structuredClone(state.galaxy.stars)
-            const star = findById(action.starId, stars)
-            if (star) {
-                const oldBudget = structuredClone(star.budget) || createBalancedColonyBudget();
-                star.budget = setBudgetAmount(action.itemName, action.targetPercentage, oldBudget)
-            }
-
-            return {
-                ...state,
-                galaxy: {
-                    ...state.galaxy, stars
-                }
-            }
-        }
-        case 'star-budget-lock': {
-            const stars = structuredClone(state.galaxy.stars)
-            const star = findById(action.starId, stars)
-            if (star) {
-                const oldBudget = structuredClone(star.budget) || createBalancedColonyBudget();
-                oldBudget.items[action.itemName].locked = action.locked
-                star.budget = oldBudget
-            }
-
-            return {
-                ...state,
-                galaxy: {
-                    ...state.galaxy, stars
-                }
-            }
-        }
-        case 'start-colony': {
-            const fleets = structuredClone(state.fleets)
-            const stars = structuredClone(state.galaxy.stars)
-
-            const star = findById(action.starId, stars);
-            const fleet = findById(action.fleetId, fleets);
-            const faction = findById(fleet?.factionId, state.factions);
-            if (!star || !fleet || !faction) {
-                console.warn('could not find star or fleet for start-colony', { action, star, fleet, faction })
-                return state
-            }
-
-            const colonyShipUsed = removeOneColonyShip(fleet, faction)
-            if (colonyShipUsed) {
-                star.factionId = faction.id
-                star.population = 1
-                star.budget = createBudgetWithAllIn('industry');
-            }
-
-            return {
-                ...state,
-                fleets: fleets.filter(fleet => fleet.ships.length > 0),
-                galaxy: {
-                    ...state.galaxy, stars
-                },
-                reports: [...state.reports, {
-                    reportType: 'colonyStart',
-                    turnNumber: state.turnNumber,
-                    star: action.starId,
-                    faction: fleet.factionId
-                }]
-            }
-        }
-        case 'order-bombing': {
-            const pendingBattle = getBattleAt(action.starId, state)
-            if (pendingBattle) {
-                console.warn('could not bomb as battle needs to be resolve first', pendingBattle)
-                return state
-            }
-
-            const fleets = structuredClone(state.fleets)
-            const stars = structuredClone(state.galaxy.stars)
-
-            const star = findById(action.starId, stars);
-            const fleet = findById(action.fleetId, fleets);
-            const bombingFaction = findById(fleet?.factionId, state.factions);
-            const bombedFaction = findById(star?.factionId, state.factions)
-            if (!star || !fleet || !bombingFaction || !bombedFaction) {
-                console.warn('could not find star or fleet for order-bombing', { action, star, fleet, bombingFaction, bombedFaction })
-                return state
-            }
-
-            const report = bombColony(bombingFaction, fleet, bombedFaction, star, state.turnNumber)
-
-            return {
-                ...state,
-                fleets,
-                galaxy: {
-                    ...state.galaxy, stars
-                },
-                reports: [...state.reports, report]
-            }
-        }
-        case 'pick-destination':
-            const activeFleet = findById(state.selectedFleetId, state.fleets);
-            if (!activeFleet) {
-                return state
-            }
-            activeFleet.destinationStarId = action.target?.id
-            return { ...state }
         case 'select-fleet':
             return {
                 ...state,
                 selectedFleetId: action.target?.id,
                 focusedStarId: !action.target ? state.focusedStarId : isSet(action.target?.orbitingStarId) ? state.focusedStarId : undefined,
             }
+        case 'set-star-construction-design':
+        case 'set-star-budget':
+        case 'star-budget-lock':
+            return reduceColonyAction(state, action)
+
+        case "pick-destination":
+        case "start-colony":
+        case "order-bombing":
+            return reduceFleetOrderAction(state, action)
+
         case 'fleets:transfer-ships': {
             const { sourceFleetMap, fleetId } = action;
             const fleets = structuredClone(state.fleets)
