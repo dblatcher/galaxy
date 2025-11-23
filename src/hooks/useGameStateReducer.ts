@@ -1,23 +1,16 @@
 import { useReducer } from "react"
 import { reduceColonyAction, type ColonyControlAction } from "../actions/colony-control-actions"
+import { reduceFleetDialogAction, type FleetDialogAction } from "../actions/fleet-dialog-actions"
 import { reduceFleetOrderAction, type FleetOrderAction } from "../actions/fleet-order-actions"
 import { autoResolveBattle } from "../lib/auto-battles"
 import { updateFleetsFromBattleReport } from "../lib/battle-operations"
 import { getBattleAt } from "../lib/derived-state"
-import { addNewFleet, factionHasBattles, transferShips } from "../lib/fleet-operations"
+import { factionHasBattles } from "../lib/fleet-operations"
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
-import { findById, isSet } from "../lib/util"
+import { isSet } from "../lib/util"
 
 
-type FleetDialogAction = {
-    type: 'fleets:transfer-ships',
-    fleetId: number,
-    sourceFleetMap: Record<number, number[]>
-} | {
-    type: 'fleets:transfer-to-new-fleet',
-    sourceFleetMap: Record<number, number[]>,
-};
 
 type SelectionAction = {
     type: 'select-star',
@@ -90,29 +83,9 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
         case "order-bombing":
             return reduceFleetOrderAction(state, action)
 
-        case 'fleets:transfer-ships': {
-            const { sourceFleetMap, fleetId } = action;
-            const fleets = structuredClone(state.fleets)
-            const destinationFleet = findById(fleetId, fleets)
-            if (!destinationFleet) {
-                console.warn('no destination fleet', fleetId)
-                return { ...state }
-            }
-            transferShips(sourceFleetMap, destinationFleet, fleets)
-            return { ...state, fleets }
-        }
-        case 'fleets:transfer-to-new-fleet': {
-            const { sourceFleetMap } = action;
-            const star = findById(state.focusedStarId, state.galaxy.stars)
-            if (!star) {
-                console.warn('no such star', state.focusedStarId)
-                return { ...state }
-            }
-            const fleets = structuredClone(state.fleets)
-            const destinationFleet = addNewFleet(state.activeFactionId, star, [], fleets);
-            transferShips(sourceFleetMap, destinationFleet, fleets)
-            return { ...state, fleets }
-        }
+        case 'fleets:transfer-ships':
+        case 'fleets:transfer-to-new-fleet':
+            return reduceFleetDialogAction(state, action);
 
         case 'next-turn':
             return progressTurn(state);
