@@ -5,7 +5,7 @@ import { reduceFleetOrderAction, type FleetOrderAction } from "../actions/fleet-
 import { autoResolveBattle } from "../lib/auto-battles"
 import { updateFleetsFromBattleReport } from "../lib/battle-operations"
 import { getBattleAt } from "../lib/derived-state"
-import { factionHasBattles } from "../lib/fleet-operations"
+import { factionHasBattlesOrCanBomb } from "../lib/fleet-operations"
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { isSet } from "../lib/util"
@@ -53,6 +53,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             case 'battles:auto-resolve':
             case 'battles:launch':
             case 'battles:result':
+            case 'order-bombing': // can do from dialog 
                 break;
             default:
                 return state
@@ -100,7 +101,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             return {
                 ...newState,
                 starsWhereBattlesFoughtAlready: [...newState.starsWhereBattlesFoughtAlready, action.starId],
-                dialog: battlesModalWasOpen && factionHasBattles(state.activeFactionId, newState)
+                dialog: battlesModalWasOpen && factionHasBattlesOrCanBomb(state.activeFactionId, newState)
                     ? { role: 'battles' }
                     : undefined
             }
@@ -126,7 +127,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             return {
                 ...newState,
                 subProgram: undefined,
-                dialog: battlesModalWasOpen && factionHasBattles(newState.activeFactionId, newState)
+                dialog: battlesModalWasOpen && factionHasBattlesOrCanBomb(newState.activeFactionId, newState)
                     ? { role: 'battles' }
                     : undefined
             }

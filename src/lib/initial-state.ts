@@ -191,6 +191,15 @@ const initialFleets: Fleet[] = [
             { designId: 1, damage: 0 },
         ]
     },
+    {
+        id: nextIdFor('fleet'),
+        orbitingStarId: STAR_ID.Junke,
+        factionId: FACTION_ID.Zorblaxian,
+        location: { x: 0, y: 0 },
+        ships: [
+            { designId: 2, damage: 0 }
+        ]
+    }
 ]
 
 export const initalState: GameState = {
@@ -203,4 +212,7 @@ export const initalState: GameState = {
     reports: [
         { reportType: 'message', turnNumber: 1, message: 'Game started' }
     ],
+    dialog: {
+        role: 'battles'
+    }
 }

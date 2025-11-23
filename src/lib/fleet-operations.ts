@@ -1,6 +1,6 @@
 import { getAllBattles } from "./derived-state"
 import type { Star, Ship, Fleet, GameState, Faction, ShipDesign } from "./model"
-import { filterInPlace, findById, nextId, splitArray } from "./util"
+import { filterInPlace, findById, isSet, nextId, splitArray } from "./util"
 
 
 export const addNewFleet = (factionId: number, star: Star, newShips: Ship[], fleets: Fleet[]) => {
@@ -42,11 +42,38 @@ export const transferShips = (
     return fleets
 }
 
-export const factionHasBattles = (factionId: number, gameState: GameState) => {
-    return getAllBattles(gameState)
+export const findFleetsReadyToBomb = (state: GameState, faction: Faction): Fleet[] => {
+    const battles = getAllBattles(state)
+    const { fleets, galaxy: { stars } } = state
+    const designs = getDesignMap(faction)
+    return fleets
+        .filter(fleet => fleet.factionId == faction.id)
+        .filter(fleet => {
+            const star = findById(fleet.orbitingStarId, stars)
+            return !!star &&
+                isSet(star.factionId) &&
+                star.factionId !== faction.id &&
+                !battles.some(battle => battle.star === star?.id) &&
+                fleet.ships.some(ship => designs[ship.designId]?.specials.bomb && !ship.hasBombed)
+        })
+}
+
+export const factionHasBattlesOrCanBomb = (factionId: number, gameState: GameState): boolean => {
+    const hasBattles = getAllBattles(gameState)
         .some(battle => battle.sides
             .some(side => side.faction === factionId)
-        )
+        );
+
+    if (hasBattles) {
+        return true
+    }
+
+    const faction = findById(factionId, gameState.factions)
+    if (!faction) {
+        return false
+    }
+    return findFleetsReadyToBomb(gameState, faction).length > 0
+
 }
 
 export const getDesignMap = (faction?: Faction) => {

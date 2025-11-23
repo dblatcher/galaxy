@@ -2,7 +2,7 @@ import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geome
 import { autoResolveAllBattles } from "./auto-battles";
 import { runColonyConstruction, runColonyGrowth } from "./colony-operations";
 import { takeCpuTurn } from "./cpu-turn";
-import { factionHasBattles } from "./fleet-operations";
+import { factionHasBattlesOrCanBomb } from "./fleet-operations";
 import type { Faction, Fleet, GameState, Ship } from "./model";
 import { findById, isSet, mapOnId } from "./util";
 
@@ -75,7 +75,7 @@ const startNewTurn = (oldGameState: GameState): GameState => {
         starsWhereBattlesFoughtAlready: [],
         reports,
         focusedStarId: gameState.focusedStarId,
-        dialog: factionHasBattles(firstFaction.id, gameState) ? {
+        dialog: factionHasBattlesOrCanBomb(firstFaction.id, gameState) ? {
             role: 'battles'
         } : undefined
     }
@@ -97,7 +97,7 @@ export const progressTurn = (oldGameState: GameState): GameState => {
                 return {
                     ...gameState,
                     activeFactionId: nextFaction.id,
-                    dialog: factionHasBattles(nextFaction.id, gameState) ? {
+                    dialog: factionHasBattlesOrCanBomb(nextFaction.id, gameState) ? {
                         role: 'battles'
                     } : undefined
                 }

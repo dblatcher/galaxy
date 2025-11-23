@@ -84,6 +84,16 @@ export type MessageReport = {
     message: string
 }
 
+export type BombingReport = {
+    reportType: 'bombing'
+    turnNumber: number
+    bombingFactionId: number;
+    bombedFactionId: number;
+    star: number;
+    startingPopulation: number;
+    populationDamage: number;
+}
+
 export type ColonyStartReport = {
     reportType: 'colonyStart'
     turnNumber: number
@@ -91,7 +101,7 @@ export type ColonyStartReport = {
     faction: number
 }
 
-export type Report = BattleReport | MessageReport | ColonyStartReport
+export type Report = BattleReport | MessageReport | ColonyStartReport | BombingReport
 
 export type Dialog = {
     role: 'fleets'

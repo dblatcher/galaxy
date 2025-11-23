@@ -1,5 +1,6 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext"
 import { calculateConstructionPoints } from "../../lib/colony-operations"
+import { Population } from "../display-values"
 import type { Faction, Star } from "../../lib/model"
 import { SubHeading } from "../SubHeading"
 import { BudgetControl } from "./BudgetControl"
@@ -34,7 +35,7 @@ export const ColonyOverview = ({ star, colonyFaction, isPendingBattleHere }: Pro
         <table className="panel-content">
             <tbody>
                 <tr>
-                    <th>pop</th><td>{star.population?.toFixed(2)}m</td>
+                    <th>pop</th><td><Population value={star.population} /></td>
                 </tr>
                 <tr>
                     <th>production</th><td>{calculateConstructionPoints(star)}/turn</td>

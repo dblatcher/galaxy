@@ -3,6 +3,7 @@ import { SideMenu } from './SideMenu'
 import { GalaxyMap } from './GalaxyMap'
 import { GameFlowButtons } from './GameFlowButtons'
 import { Modal } from '../Modal'
+import { FactionName } from '../display-values'
 
 
 export const GalaticView = () => {
@@ -10,7 +11,7 @@ export const GalaticView = () => {
     return (
         <main className='game-main'>
             <section className='title-section'>
-                <h2>game: <span style={{ color: activeFaction?.color }}>{activeFaction?.name}</span> turn {gameState.turnNumber}</h2>
+                <h2><FactionName faction={activeFaction} /> turn {gameState.turnNumber}</h2>
                 <GameFlowButtons />
             </section>
             <section className='center-section'>

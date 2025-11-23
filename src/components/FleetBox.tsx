@@ -6,6 +6,7 @@ import { findById, lookUpName } from "../lib/util"
 import { FleetIcon } from "./FleetSymbol"
 import { ColoniseButton } from "./galactic/ColoniseButton"
 import { ToggleableBox } from "./ToggleableBox"
+import { FactionName } from "./display-values"
 
 
 interface Props {
@@ -43,7 +44,7 @@ export const FleetBox = ({ fleet, canOrder, isPendingBattle }: Props) => {
     const fleetDescription = <div>
         <div style={rowStyle}>
             <FleetIcon color={faction?.color} />
-            <div style={{ color: faction?.color }}>{faction?.name} fleet</div>
+            <FactionName faction={faction} after=" fleet"/>
         </div>
         <div>
             <div>

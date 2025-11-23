@@ -1,6 +1,7 @@
 import { createBalancedColonyBudget, type ColonyBudgetItem } from "./colony-budget";
+import { getAllBattles } from "./derived-state";
 import { addNewFleet, getDesignMap } from "./fleet-operations";
-import type { Faction, Fleet, MessageReport, Ship, Star } from "./model";
+import type { BombingReport, Faction, Fleet, GameState, Ship, Star } from "./model";
 import { filterInPlace, findById, isSet } from "./util";
 
 const MAX_POPULATION = 10
@@ -39,15 +40,6 @@ export const removeOneColonyShip = (fleet: Fleet, faction: Faction): Ship | unde
     const firstColonyShip = fleet.ships.find(ship => designs[ship.designId]?.specials.colonise)
     filterInPlace(fleet.ships, ship => ship !== firstColonyShip)
     return firstColonyShip
-}
-
-export const findBombingFleets = (star: Star, fleets: Fleet[], faction: Faction): Fleet[] => {
-    const designs = getDesignMap(faction)
-    return fleets.filter(fleet =>
-        fleet.factionId === faction.id &&
-        fleet.orbitingStarId === star.id &&
-        fleet.ships.some(ship => designs[ship.designId]?.specials.bomb && !ship.hasBombed)
-    )
 }
 
 export const getShipsThatCouldBomb = (fleet: Fleet, faction: Faction, star: Star): Ship[] => {
@@ -105,26 +97,27 @@ export const runColonyGrowth = (star: Star) => {
     star.population = Math.min(MAX_POPULATION, star.population + GROWTH_RATE)
 }
 
-export const bombColony = (bombingFaction: Faction, fleet: Fleet, bombedFaction: Faction, star: Star, turnNumber: number) => {
+export const bombColony = (bombingFaction: Faction, fleet: Fleet, bombedFaction: Faction, star: Star, turnNumber: number): BombingReport => {
     const bombers = getShipsThatCouldBomb(fleet, bombingFaction, star)
     bombers.forEach(ship => ship.hasBombed = true)
 
-    const damage = bombers.length * .25;
+    const populationDamage = bombers.length * .25;
     const startingPopulation = star.population;
-    star.population -= damage
+    star.population -= populationDamage
 
     if (star.population <= 0) {
         star.factionId = undefined;
         star.population = 0
     }
 
-    const report: MessageReport = {
-        reportType: 'message',
+    const report: BombingReport = {
+        reportType: "bombing",
         turnNumber,
-        message: [
-            `${bombingFaction.name} bombed the ${bombedFaction?.name} colony at ${star.name}.`,
-            star.factionId === undefined ? `It was completely destroyed.` : `${damage} of ${startingPopulation} killed.`
-        ].join(" ")
+        bombingFactionId: bombingFaction.id,
+        bombedFactionId: bombedFaction.id,
+        star: star.id,
+        startingPopulation,
+        populationDamage,
     }
     return report
 }
