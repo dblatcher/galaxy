@@ -12,6 +12,8 @@ export type Star = XY & {
     shipDesignToConstruct?: number;
     shipConstructionProgress?: number;
     population: number;
+    factories: number;
+    factoryConstructionProgress?: number;
     budget?: ColonyBudget;
 }
 

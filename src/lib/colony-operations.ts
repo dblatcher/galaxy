@@ -1,11 +1,12 @@
-import { createBalancedColonyBudget, type ColonyBudgetItem } from "./colony-budget";
-import { getAllBattles } from "./derived-state";
+import { createBalancedColonyBudget, createBudgetWithAllIn, type ColonyBudgetItem } from "./colony-budget";
 import { addNewFleet, getDesignMap } from "./fleet-operations";
-import type { BombingReport, Faction, Fleet, GameState, Ship, Star } from "./model";
+import type { BombingReport, Faction, Fleet, Ship, Star } from "./model";
 import { filterInPlace, findById, isSet } from "./util";
 
 const MAX_POPULATION = 10
 const GROWTH_RATE = .1
+const FACTORY_COST = 5
+const FACTORY_OUTPUT = 2
 
 
 export const findColonisingFleets = (star: Star, fleets: Fleet[], faction: Faction): Fleet[] => {
@@ -50,10 +51,19 @@ export const getShipsThatCouldBomb = (fleet: Fleet, faction: Faction, star: Star
     return inRightPlace ? fleet.ships.filter(ship => designs[ship.designId]?.specials.bomb && !ship.hasBombed) : [];
 }
 
+// TO DO - faction advances will allow for higher productivity
+export const calculateMaxFactoryUsage = (star: Star) => {
+    return Math.max(1, Math.floor(star.population))
+}
+
 export const calculateConstructionPoints = (star: Star, budgetItem?: ColonyBudgetItem): number => {
+    const workerUnits = Math.max(1, Math.floor(star.population));
+    const staffedFactories = Math.min(star.factories, calculateMaxFactoryUsage(star));
+    const totalPoints = workerUnits + (staffedFactories * FACTORY_OUTPUT);
+
     const budget = star.budget ?? createBalancedColonyBudget();
     const portion = budgetItem ? budget.items[budgetItem].percentage / 100 : 1;
-    return Math.max(1, Math.floor(star.population)) * portion;
+    return totalPoints * portion;
 }
 
 export const getNewShipsFromStar = (star: Star, faction: Faction): Ship[] | undefined => {
@@ -77,7 +87,6 @@ export const getNewShipsFromStar = (star: Star, faction: Faction): Ship[] | unde
 
 export const runColonyConstruction = (star: Star, faction: Faction, fleets: Fleet[]) => {
     const newShips = getNewShipsFromStar(star, faction);
-
     if (newShips) {
         // TO DO - let the player pick which fleet gets the new ships ?
         const factionsFleetsHere = fleets.filter(fleet =>
@@ -91,10 +100,33 @@ export const runColonyConstruction = (star: Star, faction: Faction, fleets: Flee
             firstFleet.ships.push(...newShips)
         }
     }
+
+
+    const factoryProduction = (star.factoryConstructionProgress ?? 0) + calculateConstructionPoints(star, 'industry');
+    const factoriesAdded = Math.floor(factoryProduction / FACTORY_COST);
+    star.factories = star.factories + factoriesAdded; // TO DO - limit total factories
+    star.factoryConstructionProgress = factoryProduction % FACTORY_COST;
 }
 
 export const runColonyGrowth = (star: Star) => {
     star.population = Math.min(MAX_POPULATION, star.population + GROWTH_RATE)
+}
+
+export const createColony = (star: Star, faction: Faction) => {
+    star.factionId = faction.id;
+    star.population = 1
+    star.budget = createBudgetWithAllIn('industry');
+    star.factoryConstructionProgress = 0
+    star.shipConstructionProgress = 0
+    star.shipDesignToConstruct = 0
+}
+
+const removeColony = (star: Star) => {
+    star.factionId = undefined;
+    star.population = 0;
+    star.budget = undefined;
+    star.shipConstructionProgress = 0;
+    star.factoryConstructionProgress = 0;
 }
 
 export const bombColony = (bombingFaction: Faction, fleet: Fleet, bombedFaction: Faction, star: Star, turnNumber: number): BombingReport => {
@@ -106,8 +138,7 @@ export const bombColony = (bombingFaction: Faction, fleet: Fleet, bombedFaction:
     star.population -= populationDamage
 
     if (star.population <= 0) {
-        star.factionId = undefined;
-        star.population = 0
+        removeColony(star)
     }
 
     const report: BombingReport = {

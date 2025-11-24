@@ -1,5 +1,4 @@
-import { createBudgetWithAllIn } from "../lib/colony-budget";
-import { removeOneColonyShip, bombColony } from "../lib/colony-operations";
+import { bombColony, createColony, removeOneColonyShip } from "../lib/colony-operations";
 import { getBattleAt } from "../lib/derived-state";
 import type { GameState, Star } from "../lib/model";
 import { findById } from "../lib/util";
@@ -34,9 +33,7 @@ export const reduceFleetOrderAction = (state: GameState, action: FleetOrderActio
 
             const colonyShipUsed = removeOneColonyShip(fleet, faction)
             if (colonyShipUsed) {
-                star.factionId = faction.id
-                star.population = 1
-                star.budget = createBudgetWithAllIn('industry');
+                createColony(star, faction)
             }
 
             return {
