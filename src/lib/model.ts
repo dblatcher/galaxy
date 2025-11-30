@@ -1,4 +1,5 @@
 import type { ColonyBudget } from "./colony-budget";
+import type { FactionTechs, TechId } from "./tech-list";
 
 export type XY = {
     x: number;
@@ -23,6 +24,9 @@ export type Faction = {
     color: string;
     playerType: 'LOCAL' | 'CPU' | 'REMOTE';
     shipDesigns: ShipDesign[];
+    tech: FactionTechs;
+    researchPoints: number;
+    reasearchGoal?: TechId;
 }
 
 export type Galaxy = {
@@ -111,6 +115,8 @@ export type Dialog = {
     role: 'battles'
 } | {
     role: 'reports'
+} | {
+    role: 'tech'
 }
 
 export type BattleParameters = {

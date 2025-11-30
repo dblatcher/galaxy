@@ -1,5 +1,5 @@
 import { createBalancedColonyBudget, createBudgetWithAllIn } from "./colony-budget";
-import type { Galaxy, Fleet, Faction, GameState, ShipDesign, Ship } from "./model"
+import type { Faction, Fleet, Galaxy, GameState, Ship, ShipDesign } from "./model";
 
 
 const baseShips = (): Ship[] => [{
@@ -58,11 +58,26 @@ const FACTION_ID = {
     Uraninian: 3,
 } as const
 
+
+const factionDefaults: Omit<Faction, 'name' | 'id' | 'color'> = {
+    shipDesigns: [...baseDesigns()],
+    tech: {},
+    playerType: 'CPU',
+    researchPoints: 0,
+}
+
 const initialFactions: [Faction, ...Faction[]] = [
-    { id: FACTION_ID.Zorblaxian, name: 'Zorblaxian', color: 'lime', playerType: 'LOCAL', shipDesigns: [...baseDesigns()] },
-    { id: FACTION_ID.Magrathian, name: 'Magrathian', color: 'crimson', playerType: 'CPU', shipDesigns: baseDesigns() },
-    { id: FACTION_ID.Martian, name: 'Martian', color: 'pink', playerType: 'CPU', shipDesigns: baseDesigns() },
-    { id: FACTION_ID.Uraninian, name: 'Uraninian', color: 'skyblue', playerType: 'CPU', shipDesigns: baseDesigns() },
+    {
+        ...factionDefaults,
+        playerType: 'LOCAL',
+        id: FACTION_ID.Zorblaxian, name: 'Zorblaxian', color: 'lime',
+        tech: {
+            solarSails: true
+        }
+    },
+    { ...factionDefaults, id: FACTION_ID.Magrathian, name: 'Magrathian', color: 'crimson' },
+    { ...factionDefaults, id: FACTION_ID.Martian, name: 'Martian', color: 'pink', },
+    { ...factionDefaults, id: FACTION_ID.Uraninian, name: 'Uraninian', color: 'skyblue' },
 ]
 
 const STAR_ID = {

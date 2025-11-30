@@ -4,6 +4,7 @@ import "./modal.css"
 import { FleetsControl } from "./FleetsControl"
 import { BattleControl } from "./BattlesControl"
 import { ReportsPanel } from "./ReportsPanel"
+import { TechPanel } from "./TechPanel"
 
 
 export const Modal = () => {
@@ -20,6 +21,7 @@ export const Modal = () => {
             {dialog?.role === 'fleets' && <FleetsControl />}
             {dialog?.role === 'battles' && <BattleControl />}
             {dialog?.role=== 'reports' && <ReportsPanel />}
+            {dialog?.role=== 'tech' && <TechPanel />}
         </dialog>
     )
 }
