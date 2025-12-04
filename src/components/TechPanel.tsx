@@ -6,10 +6,7 @@ import { ModalLayout } from "./ModalLayout"
 
 
 export const TechPanel = () => {
-    const { gameState: { reports }, activeFaction } = useGameStateContext()
-    if (reports.length === 0) {
-        return null
-    }
+    const { activeFaction } = useGameStateContext()
 
     const techsKnown: Tech[] = Object.entries(activeFaction.tech).flatMap(([techId, has]) => {
         if (!has) {
@@ -21,6 +18,7 @@ export const TechPanel = () => {
     return (
         <ModalLayout title={'reports'}>
             <FactionName faction={activeFaction} after=" Tech" />
+            <p>points {activeFaction.researchPoints}</p>
             <ul>
                 {techsKnown.map(tech => (
                     <li key={tech.name}>{tech.name}</li>
