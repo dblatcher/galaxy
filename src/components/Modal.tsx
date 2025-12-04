@@ -13,15 +13,19 @@ export const Modal = () => {
         dispatch({ type: 'close-dialog' })
     }
 
-    return (
+    return (<>
+        {!!dialog && (
+            <div className="overlay"></div>
+        )}
         <dialog className="game-modal"
             onClose={handleClose}
             open={!!dialog}
             closedby='any'>
             {dialog?.role === 'fleets' && <FleetsControl />}
             {dialog?.role === 'battles' && <BattleControl />}
-            {dialog?.role=== 'reports' && <ReportsPanel />}
-            {dialog?.role=== 'tech' && <TechPanel />}
+            {dialog?.role === 'reports' && <ReportsPanel />}
+            {dialog?.role === 'tech' && <TechPanel />}
         </dialog>
+    </>
     )
 }
