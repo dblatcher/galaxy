@@ -78,6 +78,10 @@ button.small {
   font-size: small;
 }
 
+button[disabled] {
+  background-color: #6a6a6a;
+}
+
 /* TO DO - allow for light mode? */
 /* 
 @media (prefers-color-scheme: light) {
