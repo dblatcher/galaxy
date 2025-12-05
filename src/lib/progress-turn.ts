@@ -1,6 +1,6 @@
 import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
 import { autoResolveAllBattles } from "./auto-battles";
-import { runColonyConstruction, runColonyGrowth } from "./colony-operations";
+import { calculateConstructionPoints, runColonyConstruction, runColonyGrowth } from "./colony-operations";
 import { takeCpuTurn } from "./cpu-turn";
 import { factionHasBattlesOrCanBomb } from "./fleet-operations";
 import type { Faction, Fleet, GameState, Ship } from "./model";
@@ -46,6 +46,8 @@ const updateColonies = (gameState: GameState) => {
         if (faction) {
             runColonyConstruction(star, faction, fleets);
             runColonyGrowth(star);
+            const researchPoints = calculateConstructionPoints(star, 'research')
+            faction.researchPoints += researchPoints
         }
     })
 }
