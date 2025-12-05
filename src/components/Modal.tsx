@@ -1,4 +1,4 @@
-import type { ReactEventHandler } from "react"
+import type { ReactEventHandler, ReactNode } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import "./modal.css"
 import { FleetsControl } from "./FleetsControl"
@@ -28,4 +28,16 @@ export const Modal = () => {
         </dialog>
     </>
     )
+}
+
+export const NondismissableModal = ({ children }: { children?: ReactNode }) => {
+    return (<>
+        <div className="overlay"></div>
+        <dialog className="game-modal"
+            open={true}
+            closedby='none'>
+
+            {children}
+        </dialog>
+    </>)
 }

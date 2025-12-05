@@ -1,4 +1,5 @@
-import type { Battle, Fleet, GameState } from "./model";
+import type { Battle, Faction, Fleet, GameState } from "./model";
+import { techIds } from "./tech-list";
 import { findById, isSet, removeDuplicates, splitArray } from "./util";
 
 
@@ -36,6 +37,9 @@ export const getAllBattles = (gameState: GameState): Battle[] => {
     return battles
 }
 
+export const pickTechRequired = (faction: Faction) => 
+    faction.playerType === 'LOCAL' && !faction.reasearchGoal && !techIds.every((techKey) => faction.tech[techKey] === true)
+
 
 export const getDerivedState = (gameState: GameState) => {
     const { galaxy, focusedStarId, activeFactionId, factions } = gameState;
@@ -47,5 +51,7 @@ export const getDerivedState = (gameState: GameState) => {
 
     const activeFaction = findById(activeFactionId, factions) ?? factions[0];
 
-    return { activeStarId, focusedStar, battles, activeFactionBattles, battlesWithoutActiveFaction, activeFaction }
+    const showPickTech = pickTechRequired(activeFaction)
+
+    return { activeStarId, focusedStar, battles, activeFactionBattles, battlesWithoutActiveFaction, activeFaction, showPickTech }
 }

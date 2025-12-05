@@ -9,6 +9,8 @@ import { factionHasBattlesOrCanBomb } from "../lib/fleet-operations"
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { isSet } from "../lib/util"
+import type { TechId } from "../lib/tech-list"
+import { reduceFactionAction, type FactionAction } from "../actions/faction-action"
 
 
 
@@ -32,7 +34,7 @@ type SpaceBattleActions = {
     report: BattleReport,
 };
 
-export type Action = ColonyControlAction | FleetDialogAction | SelectionAction | FleetOrderAction | SpaceBattleActions |
+export type Action = ColonyControlAction | FleetDialogAction | SelectionAction | FleetOrderAction | SpaceBattleActions | FactionAction |
 {
     type: 'next-turn'
 } | {
@@ -131,6 +133,8 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                     ? { role: 'battles' }
                     : undefined
             }
+        case "faction:pick-tech-goal":
+            return reduceFactionAction(state, action);
     }
 
 }

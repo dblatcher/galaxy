@@ -2,12 +2,13 @@ import { useGameStateContext } from '../../hooks/useGameStateContext'
 import { SideMenu } from './SideMenu'
 import { GalaxyMap } from './GalaxyMap'
 import { GameFlowButtons } from './GameFlowButtons'
-import { Modal } from '../Modal'
+import { Modal, NondismissableModal } from '../Modal'
 import { FactionName } from '../display-values'
+import { PickTechPanel } from '../PickTechPanel'
 
 
 export const GalaticView = () => {
-    const { gameState, activeFaction } = useGameStateContext()
+    const { gameState, activeFaction, showPickTech } = useGameStateContext()
     return (
         <main className='game-main'>
             <section className='title-section'>
@@ -25,6 +26,13 @@ export const GalaticView = () => {
                 </div>
             </section>
             <Modal />
+
+
+            {showPickTech && (
+                <NondismissableModal>
+                    <PickTechPanel />
+                </NondismissableModal>
+            )}
         </main>
     )
 }

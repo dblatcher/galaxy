@@ -71,6 +71,7 @@ const initialFactions: [Faction, ...Faction[]] = [
         ...factionDefaults,
         playerType: 'LOCAL',
         id: FACTION_ID.Zorblaxian, name: 'Zorblaxian', color: 'lime',
+        // reasearchGoal:'solarSails',
         tech: {
             solarSails: true
         }
@@ -124,20 +125,20 @@ const initialFleets: Fleet[] = [
         factionId: FACTION_ID.Martian,
         ships: baseShips(),
     },
-    {
-        id: nextIdFor('fleet'),
-        orbitingStarId: STAR_ID.Arcturus,
-        destinationStarId: undefined,
-        location: {
-            x: 10,
-            y: 15
-        },
-        factionId: FACTION_ID.Zorblaxian,
-        ships: [
-            { designId: 2, damage: 0 },
-            { designId: 2, damage: 1 },
-        ],
-    },
+    // {
+    //     id: nextIdFor('fleet'),
+    //     orbitingStarId: STAR_ID.Arcturus,
+    //     destinationStarId: undefined,
+    //     location: {
+    //         x: 10,
+    //         y: 15
+    //     },
+    //     factionId: FACTION_ID.Zorblaxian,
+    //     ships: [
+    //         { designId: 2, damage: 0 },
+    //         { designId: 2, damage: 1 },
+    //     ],
+    // },
     {
         id: nextIdFor('fleet'),
         orbitingStarId: STAR_ID.Arcturus,
@@ -151,16 +152,16 @@ const initialFleets: Fleet[] = [
             { designId: 0, damage: 0 },
         ],
     },
-    {
-        id: nextIdFor('fleet'),
-        location: {
-            x: 120,
-            y: 30
-        },
-        destinationStarId: STAR_ID.Junke,
-        factionId: FACTION_ID.Zorblaxian,
-        ships: baseShips(),
-    },
+    // {
+    //     id: nextIdFor('fleet'),
+    //     location: {
+    //         x: 120,
+    //         y: 30
+    //     },
+    //     destinationStarId: STAR_ID.Junke,
+    //     factionId: FACTION_ID.Zorblaxian,
+    //     ships: baseShips(),
+    // },
     {
         id: nextIdFor('fleet'),
         orbitingStarId: STAR_ID.Zorblax,
@@ -206,15 +207,15 @@ const initialFleets: Fleet[] = [
             { designId: 1, damage: 0 },
         ]
     },
-    {
-        id: nextIdFor('fleet'),
-        orbitingStarId: STAR_ID.Junke,
-        factionId: FACTION_ID.Zorblaxian,
-        location: { x: 0, y: 0 },
-        ships: [
-            { designId: 2, damage: 0 }
-        ]
-    }
+    // {
+    //     id: nextIdFor('fleet'),
+    //     orbitingStarId: STAR_ID.Junke,
+    //     factionId: FACTION_ID.Zorblaxian,
+    //     location: { x: 0, y: 0 },
+    //     ships: [
+    //         { designId: 2, damage: 0 }
+    //     ]
+    // }
 ]
 
 export const initalState: GameState = {
@@ -227,7 +228,7 @@ export const initalState: GameState = {
     reports: [
         { reportType: 'message', turnNumber: 1, message: 'Game started' }
     ],
-    dialog: {
-        role: 'battles'
-    }
+    // dialog: {
+    //     role: 'pick-tech'
+    // }
 }

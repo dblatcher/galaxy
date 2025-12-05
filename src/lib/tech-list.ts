@@ -22,5 +22,8 @@ export const ALL_TECHS = {
     },
 } satisfies Record<string, Tech>;
 
+
 export type TechId = keyof typeof ALL_TECHS;
 export type FactionTechs = Partial<Record<TechId, boolean>>;
+export const techIds = Object.keys(ALL_TECHS) as TechId[];
+
