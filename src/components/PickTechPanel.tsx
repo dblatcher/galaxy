@@ -1,5 +1,6 @@
 import { useGameStateContext } from "../hooks/useGameStateContext"
-import { ALL_TECHS, techIds, type Tech, type TechId } from "../lib/tech-list"
+import { getAvailableResearchGoals, getKnownTechIds } from "../lib/tech-checks"
+import { ALL_TECHS, type Tech } from "../lib/tech-list"
 import { FactionName } from "./display-values"
 import { ModalLayout } from "./ModalLayout"
 
@@ -7,22 +8,9 @@ import { ModalLayout } from "./ModalLayout"
 
 export const PickTechPanel = () => {
     const { activeFaction, dispatch } = useGameStateContext()
-    const techsIdsKnown: TechId[] = Object.entries(activeFaction.tech).flatMap(([techId, has]) => {
-        if (!has) {
-            return []
-        }
-        return techId as TechId
-    })
+    const techsIdsKnown = getKnownTechIds(activeFaction)
     const techsKnown: Tech[] = techsIdsKnown.map(id => ALL_TECHS[id]);
-
-
-    const availableTechGoals: TechId[] = techIds.filter(techId => {
-        if (techsIdsKnown.includes(techId)) {
-            return false
-        }
-        const tech = ALL_TECHS[techId];
-        return tech.prerequisites.every(prereqId => techsIdsKnown.includes(prereqId as TechId))
-    })
+    const availableTechGoals = getAvailableResearchGoals(activeFaction)
 
     return (
         <ModalLayout title={'Pick research goal'} cannotClose>

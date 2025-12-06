@@ -1,5 +1,5 @@
 import type { Battle, Faction, Fleet, GameState } from "./model";
-import { techIds } from "./tech-list";
+import { getAvailableResearchGoals } from "./tech-checks";
 import { findById, isSet, removeDuplicates, splitArray } from "./util";
 
 
@@ -37,8 +37,8 @@ export const getAllBattles = (gameState: GameState): Battle[] => {
     return battles
 }
 
-export const pickTechRequired = (faction: Faction) => 
-    faction.playerType === 'LOCAL' && !faction.reasearchGoal && !techIds.every((techKey) => faction.tech[techKey] === true)
+export const pickTechRequired = (faction: Faction) =>
+    faction.playerType === 'LOCAL' && !faction.reasearchGoal && getAvailableResearchGoals(faction).length > 0
 
 
 export const getDerivedState = (gameState: GameState) => {
