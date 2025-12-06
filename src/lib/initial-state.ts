@@ -94,7 +94,9 @@ const initialGalaxy: Galaxy = {
     stars: [
         { x: 100, y: 75, id: STAR_ID.Arcturus, name: 'Arcturus', factionId: FACTION_ID.Magrathian, population: 2, factories: 0 },
         { x: 30, y: 45, id: STAR_ID.Kunitio, name: 'Kunitio', population: 0, factories: 0 },
-        { x: 130, y: 35, id: STAR_ID.Junke, name: 'Junke', factionId: FACTION_ID.Martian, shipDesignToConstruct: 0, population: 3.2, factories: 0 },
+        { x: 130, y: 35, id: STAR_ID.Junke, name: 'Junke', factionId: FACTION_ID.Martian, shipDesignToConstruct: 0, population: 3.2, factories: 5,
+            budget: createBudgetWithAllIn('research')
+         },
         { x: 120, y: 45, id: STAR_ID.Maddow, name: 'Maddow', population: 0, factories: 0 },
         {
             x: 60, y: 25, id: STAR_ID.Zorblax, name: 'Zorblax',

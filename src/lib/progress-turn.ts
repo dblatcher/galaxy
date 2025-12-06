@@ -5,6 +5,7 @@ import { takeCpuTurn } from "./cpu-turn";
 import { factionHasBattlesOrCanBomb } from "./fleet-operations";
 import type { Faction, Fleet, GameState, Ship } from "./model";
 import { findById, isSet, mapOnId } from "./util";
+import { ALL_TECHS } from "./tech-list";
 
 const SPEED = 4;
 const CLOSE_ENOUGH = 5
@@ -65,6 +66,11 @@ const startNewTurn = (oldGameState: GameState): GameState => {
         fleet.ships.forEach(resetShip)
     })
     updateColonies(gameState)
+
+    factions.forEach(faction => {
+        console.log( faction.name, faction.researchPoints, '/', faction.reasearchGoal ? ALL_TECHS[faction.reasearchGoal].cost : '[none]',)
+        // TO DO - add completed research to faction tech
+    })
 
     const [firstFaction] = factions
 

@@ -1,7 +1,15 @@
 import { gameStateReducer, type Action } from "../hooks/useGameStateReducer";
 import type { Faction, GameState } from "./model";
+import { getAvailableResearchGoals } from "./tech-checks";
+import type { TechId } from "./tech-list";
 import { findById, isSet } from "./util";
 
+
+const pickNextTech = (faction: Faction): TechId | undefined => {
+    // TO DO - proper decision logic
+    const choices = getAvailableResearchGoals(faction);
+    return choices.pop()
+}
 
 export const takeCpuTurn = (faction: Faction, oldGameState: GameState): GameState => {
     // TO DO = CPU decision logi
@@ -31,6 +39,13 @@ export const takeCpuTurn = (faction: Faction, oldGameState: GameState): GameStat
             act({ type: 'pick-destination', target: destinationStar })
         }
     })
+
+    if (!faction.reasearchGoal) {
+        const newGoal = pickNextTech(faction);
+        if (newGoal) {
+            act({ type: 'faction:pick-tech-goal', factionId: faction.id, techId: newGoal })
+        }
+    }
 
     return gameState
 }
