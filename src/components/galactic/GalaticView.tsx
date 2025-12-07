@@ -5,14 +5,20 @@ import { GameFlowButtons } from './GameFlowButtons'
 import { Modal, NondismissableModal } from '../Modal'
 import { FactionName } from '../display-values'
 import { PickTechPanel } from '../PickTechPanel'
+import { BreakthroughPanel } from '../BreakthroughPanel'
 
 
 export const GalaticView = () => {
-    const { gameState, activeFaction, showPickTech } = useGameStateContext()
+    const { gameState, activeFaction, showPickTech, } = useGameStateContext()
+    const { turnNumber, techToAnnounce } = gameState
+
+    const [techIdToShow] = techToAnnounce.filter(item => item.factionId === activeFaction.id).map(item => item.techId);
+
+
     return (
         <main className='game-main'>
             <section className='title-section'>
-                <h2><FactionName faction={activeFaction} /> turn {gameState.turnNumber}</h2>
+                <h2><FactionName faction={activeFaction} /> turn {turnNumber}</h2>
                 <GameFlowButtons />
             </section>
             <section className='center-section'>
@@ -27,13 +33,19 @@ export const GalaticView = () => {
             </section>
             <Modal />
 
+            {!!techIdToShow && (
+                <NondismissableModal>
+                    <BreakthroughPanel techId={techIdToShow}/>
+                </NondismissableModal>
 
-            {showPickTech && (
+            )}
+
+            {(!techIdToShow && showPickTech) && (
                 <NondismissableModal>
                     <PickTechPanel />
                 </NondismissableModal>
             )}
-        </main>
+        </main >
     )
 }
 

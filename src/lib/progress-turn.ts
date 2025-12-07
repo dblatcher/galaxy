@@ -67,8 +67,23 @@ const startNewTurn = (oldGameState: GameState): GameState => {
     })
     updateColonies(gameState)
 
+    const techToAnnounce: GameState['techToAnnounce'] = []
+
     factions.forEach(faction => {
-        console.log( faction.name, faction.researchPoints, '/', faction.reasearchGoal ? ALL_TECHS[faction.reasearchGoal].cost : '[none]',)
+
+        const { reasearchGoal } = faction
+        if (!reasearchGoal) {
+            return
+        }
+        const goal = ALL_TECHS[reasearchGoal];
+
+        if (faction.researchPoints >= goal.cost) {
+            faction.reasearchGoal = undefined
+            faction.researchPoints = faction.researchPoints - goal.cost
+            faction.tech[reasearchGoal] = true
+            techToAnnounce.push({ factionId: faction.id, techId: reasearchGoal })
+        }
+
         // TO DO - add completed research to faction tech
     })
 
@@ -76,6 +91,7 @@ const startNewTurn = (oldGameState: GameState): GameState => {
 
     return {
         activeFactionId: firstFaction.id,
+        techToAnnounce,
         galaxy,
         fleets,
         factions,

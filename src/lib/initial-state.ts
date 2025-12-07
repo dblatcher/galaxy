@@ -230,6 +230,12 @@ export const initalState: GameState = {
     reports: [
         { reportType: 'message', turnNumber: 1, message: 'Game started' }
     ],
+    techToAnnounce: [
+        {
+            factionId: FACTION_ID.Zorblaxian,
+            techId: 'solarSails'
+        }
+    ]
     // dialog: {
     //     role: 'pick-tech'
     // }

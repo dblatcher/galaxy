@@ -130,6 +130,7 @@ export type GameState = {
     activeFactionId: number
     galaxy: Galaxy
     starsWhereBattlesFoughtAlready: number[]
+    techToAnnounce: { factionId: number, techId: TechId }[]
     fleets: Fleet[]
     factions: [Faction, ...Faction[]]
     focusedStarId?: number

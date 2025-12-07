@@ -1,5 +1,6 @@
 import { useReducer } from "react"
 import { reduceColonyAction, type ColonyControlAction } from "../actions/colony-control-actions"
+import { reduceFactionAction, type FactionAction } from "../actions/faction-action"
 import { reduceFleetDialogAction, type FleetDialogAction } from "../actions/fleet-dialog-actions"
 import { reduceFleetOrderAction, type FleetOrderAction } from "../actions/fleet-order-actions"
 import { autoResolveBattle } from "../lib/auto-battles"
@@ -9,8 +10,6 @@ import { factionHasBattlesOrCanBomb } from "../lib/fleet-operations"
 import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { isSet } from "../lib/util"
-import type { TechId } from "../lib/tech-list"
-import { reduceFactionAction, type FactionAction } from "../actions/faction-action"
 
 
 
@@ -134,6 +133,7 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                     : undefined
             }
         case "faction:pick-tech-goal":
+        case "faction:clear-breakthrough-announcement":
             return reduceFactionAction(state, action);
     }
 

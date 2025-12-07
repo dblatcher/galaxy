@@ -6,6 +6,10 @@ export type FactionAction = {
     type: 'faction:pick-tech-goal',
     techId: TechId,
     factionId: number,
+} | {
+    type: 'faction:clear-breakthrough-announcement',
+    techId: TechId,
+    factionId: number,
 };
 
 export const reduceFactionAction = (state: GameState, action: FactionAction): GameState => {
@@ -23,6 +27,13 @@ export const reduceFactionAction = (state: GameState, action: FactionAction): Ga
             return {
                 ...state,
                 factions
+            }
+        }
+        case "faction:clear-breakthrough-announcement": {
+            return {
+                ...state,
+                factions,
+                techToAnnounce: state.techToAnnounce.filter(item => item.factionId !== action.factionId || item.techId !== action.techId)
             }
         }
     }
