@@ -7,7 +7,7 @@ import { autoResolveBattle } from "../lib/auto-battles"
 import { updateFleetsFromBattleReport } from "../lib/battle-operations"
 import { getBattleAt } from "../lib/derived-state"
 import { factionHasBattlesOrCanBomb } from "../lib/fleet-operations"
-import type { BattleReport, Dialog, Fleet, GameState, Star } from "../lib/model"
+import type { BattleReport, Dialog, Fleet, GameState, ShipDesign, Star } from "../lib/model"
 import { progressTurn } from "../lib/progress-turn"
 import { isSet } from "../lib/util"
 
@@ -33,15 +33,30 @@ type SpaceBattleActions = {
     report: BattleReport,
 };
 
-export type Action = ColonyControlAction | FleetDialogAction | SelectionAction | FleetOrderAction | SpaceBattleActions | FactionAction |
-{
-    type: 'next-turn'
+type ShipDesignerActions = {
+    type: 'designer:start',
 } | {
-    type: 'open-dialog'
-    dialog: Dialog
-} | {
-    type: 'close-dialog'
-};
+    type: 'designer:result',
+    shipDesign?: ShipDesign,
+    factionId: number,
+}
+
+export type Action =
+    ColonyControlAction |
+    FleetDialogAction |
+    SelectionAction |
+    FleetOrderAction |
+    SpaceBattleActions |
+    FactionAction |
+    ShipDesignerActions |
+    {
+        type: 'next-turn'
+    } | {
+        type: 'open-dialog'
+        dialog: Dialog
+    } | {
+        type: 'close-dialog'
+    };
 
 export const gameStateReducer = (state: GameState, action: Action): GameState => {
     if (state.dialog) {
@@ -135,6 +150,25 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
         case "faction:pick-tech-goal":
         case "faction:clear-breakthrough-announcement":
             return reduceFactionAction(state, action);
+
+        case "designer:result": {
+
+            console.log(action)
+            // TO DO - merge new design into faction
+
+            return {
+                ...state,
+                subProgram: undefined
+            }
+        }
+        case "designer:start":
+            return {
+                ...state,
+                subProgram: {
+                    type: 'ship-designer',
+                }
+
+            }
     }
 
 }

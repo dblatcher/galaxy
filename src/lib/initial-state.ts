@@ -71,10 +71,8 @@ const initialFactions: [Faction, ...Faction[]] = [
         ...factionDefaults,
         playerType: 'LOCAL',
         id: FACTION_ID.Zorblaxian, name: 'Zorblaxian', color: 'lime',
-        // reasearchGoal:'solarSails',
-        tech: {
-            solarSails: true
-        }
+        reasearchGoal: 'solarSails',
+        tech: {}
     },
     { ...factionDefaults, id: FACTION_ID.Magrathian, name: 'Magrathian', color: 'crimson' },
     { ...factionDefaults, id: FACTION_ID.Martian, name: 'Martian', color: 'pink', },
@@ -94,9 +92,10 @@ const initialGalaxy: Galaxy = {
     stars: [
         { x: 100, y: 75, id: STAR_ID.Arcturus, name: 'Arcturus', factionId: FACTION_ID.Magrathian, population: 2, factories: 0 },
         { x: 30, y: 45, id: STAR_ID.Kunitio, name: 'Kunitio', population: 0, factories: 0 },
-        { x: 130, y: 35, id: STAR_ID.Junke, name: 'Junke', factionId: FACTION_ID.Martian, shipDesignToConstruct: 0, population: 3.2, factories: 5,
+        {
+            x: 130, y: 35, id: STAR_ID.Junke, name: 'Junke', factionId: FACTION_ID.Martian, shipDesignToConstruct: 0, population: 3.2, factories: 5,
             budget: createBudgetWithAllIn('research')
-         },
+        },
         { x: 120, y: 45, id: STAR_ID.Maddow, name: 'Maddow', population: 0, factories: 0 },
         {
             x: 60, y: 25, id: STAR_ID.Zorblax, name: 'Zorblax',
@@ -230,12 +229,10 @@ export const initalState: GameState = {
     reports: [
         { reportType: 'message', turnNumber: 1, message: 'Game started' }
     ],
-    techToAnnounce: [
-        {
-            factionId: FACTION_ID.Zorblaxian,
-            techId: 'solarSails'
-        }
-    ]
+    techToAnnounce: [],
+    subProgram: {
+        type: 'ship-designer'
+    }
     // dialog: {
     //     role: 'pick-tech'
     // }

@@ -124,6 +124,10 @@ export type BattleParameters = {
     starId: number,
 }
 
+export type DesignerParameters = {
+    type: 'ship-designer'
+}
+
 
 export type GameState = {
     turnNumber: number
@@ -137,5 +141,5 @@ export type GameState = {
     selectedFleetId?: number
     reports: Report[]
     dialog?: Dialog
-    subProgram?: BattleParameters
+    subProgram?: BattleParameters | DesignerParameters
 }

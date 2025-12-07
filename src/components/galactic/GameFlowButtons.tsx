@@ -21,6 +21,9 @@ export const GameFlowButtons = () => {
                     value={activeFaction.researchPoints}
                     max={researchGoal?.cost ?? 0} />
             </button>
+            <button onClick={() => dispatch({ type: 'designer:start' })}>
+                Design Ships
+            </button>
             <button disabled={gameState.reports.length === 0}
                 onClick={() => dispatch({ type: 'open-dialog', dialog: { role: 'reports' } })}
             >Reports</button>

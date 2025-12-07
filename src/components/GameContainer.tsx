@@ -5,6 +5,7 @@ import { initalState } from '../lib/initial-state'
 import { findById } from '../lib/util'
 import { BattleApp } from './battle/BattleApp'
 import { GalaticView } from './galactic/GalaticView'
+import { DesignApp } from './designer.tsx/DesignApp'
 
 
 export const GameContainer = () => {
@@ -24,6 +25,9 @@ export const GameContainer = () => {
         <GameStateContext.Provider value={{ gameState, dispatch }}>
             {gameState.subProgram?.type === 'battle' && (
                 <BattleApp params={gameState.subProgram} />
+            )}
+            {gameState.subProgram?.type==='ship-designer' && (
+                <DesignApp />
             )}
             {!gameState.subProgram && (
                 <GalaticView />
