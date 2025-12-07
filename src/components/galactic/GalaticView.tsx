@@ -2,10 +2,10 @@ import { useGameStateContext } from '../../hooks/useGameStateContext'
 import { SideMenu } from './SideMenu'
 import { GalaxyMap } from './GalaxyMap'
 import { GameFlowButtons } from './GameFlowButtons'
-import { Modal, NondismissableModal } from '../Modal'
+import { DismissableModal, DialogsModal, NondismissableModal } from '../Modal'
 import { FactionName } from '../display-values'
 import { PickTechPanel } from '../PickTechPanel'
-import { BreakthroughPanel } from '../BreakthroughPanel'
+import { BreakthroughModal } from '../BreakthroughModal'
 
 
 export const GalaticView = () => {
@@ -31,13 +31,10 @@ export const GalaticView = () => {
                     <SideMenu />
                 </div>
             </section>
-            <Modal />
+            <DialogsModal />
 
             {!!techIdToShow && (
-                <NondismissableModal>
-                    <BreakthroughPanel techId={techIdToShow}/>
-                </NondismissableModal>
-
+                <BreakthroughModal techId={techIdToShow} />
             )}
 
             {(!techIdToShow && showPickTech) && (
