@@ -152,12 +152,14 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             return reduceFactionAction(state, action);
 
         case "designer:result": {
-
-            console.log(action)
-            // TO DO - merge new design into faction
-
+            const factions = structuredClone(state.factions)
+            const faction = factions.find(faction => faction.id === action.factionId)
+            if (action.shipDesign) {
+                faction?.shipDesigns.push(action.shipDesign)
+            }
             return {
                 ...state,
+                factions,
                 subProgram: undefined
             }
         }
@@ -167,7 +169,6 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
                 subProgram: {
                     type: 'ship-designer',
                 }
-
             }
     }
 
