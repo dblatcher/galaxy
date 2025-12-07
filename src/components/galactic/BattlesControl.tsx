@@ -1,7 +1,7 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
 import { BattleList } from "./BattleListings"
 import { BomberListing } from "./BomberListing"
-import { ModalLayout } from "./ModalLayout"
+import { ModalLayout } from "../ModalLayout"
 
 
 export const BattleControl = () => {

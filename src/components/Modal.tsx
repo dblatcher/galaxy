@@ -2,9 +2,9 @@ import type { ReactEventHandler, ReactNode } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import "./modal.css"
 import { FleetsControl } from "./FleetsControl"
-import { BattleControl } from "./BattlesControl"
-import { ReportsPanel } from "./ReportsPanel"
-import { TechPanel } from "./TechPanel"
+import { BattleControl } from "./galactic/BattlesControl"
+import { ReportsPanel } from "./galactic/ReportsPanel"
+import { TechPanel } from "./galactic/TechPanel"
 
 
 export const DialogsModal = () => {

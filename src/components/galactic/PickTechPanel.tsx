@@ -1,8 +1,8 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
-import { getAvailableResearchGoals, getKnownTechIds } from "../lib/tech-checks"
-import { ALL_TECHS, type Tech } from "../lib/tech-list"
-import { FactionName } from "./display-values"
-import { ModalLayout } from "./ModalLayout"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { getAvailableResearchGoals, getKnownTechIds } from "../../lib/tech-checks"
+import { ALL_TECHS, type Tech } from "../../lib/tech-list"
+import { FactionName } from "../display-values"
+import { ModalLayout } from "../ModalLayout"
 
 
 

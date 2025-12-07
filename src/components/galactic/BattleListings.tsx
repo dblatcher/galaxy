@@ -1,6 +1,6 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
-import type { Battle } from "../lib/model"
-import { lookUpName } from "../lib/util"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
+import type { Battle } from "../../lib/model"
+import { lookUpName } from "../../lib/util"
 
 export const BattleList = ({ title, battles, forActivePlayer }: { title: string, battles: Battle[], forActivePlayer?: boolean }) => {
 

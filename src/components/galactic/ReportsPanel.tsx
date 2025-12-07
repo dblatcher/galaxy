@@ -1,9 +1,9 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
-import { FactionName, Population } from "./display-values"
-import { getDesignMap } from "../lib/fleet-operations"
-import type { Report } from "../lib/model"
-import { findById, isSet, lookUpName, mapOnId, splitArray } from "../lib/util"
-import { ModalLayout } from "./ModalLayout"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { FactionName, Population } from "../display-values"
+import { getDesignMap } from "../../lib/fleet-operations"
+import type { Report } from "../../lib/model"
+import { findById, isSet, lookUpName, mapOnId, splitArray } from "../../lib/util"
+import { ModalLayout } from "../ModalLayout"
 
 
 export const ReportDisplay = ({ report }: { report: Report }) => {

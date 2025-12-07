@@ -1,8 +1,8 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
-import { FactionName } from "./display-values"
-import { findFleetsReadyToBomb } from "../lib/fleet-operations"
-import { findById } from "../lib/util"
-import { FleetBox } from "./FleetBox"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { FactionName } from "../display-values"
+import { findFleetsReadyToBomb } from "../../lib/fleet-operations"
+import { findById } from "../../lib/util"
+import { FleetBox } from "../FleetBox"
 import { ReportDisplay } from "./ReportsPanel"
 
 

@@ -1,11 +1,11 @@
 import { useGameStateContext } from '../../hooks/useGameStateContext'
-import { SideMenu } from './SideMenu'
+import { BreakthroughModal } from './BreakthroughModal'
+import { DialogsModal, NondismissableModal } from '../Modal'
+import { FactionName } from '../display-values'
 import { GalaxyMap } from './GalaxyMap'
 import { GameFlowButtons } from './GameFlowButtons'
-import { DismissableModal, DialogsModal, NondismissableModal } from '../Modal'
-import { FactionName } from '../display-values'
-import { PickTechPanel } from '../PickTechPanel'
-import { BreakthroughModal } from '../BreakthroughModal'
+import { PickTechPanel } from './PickTechPanel'
+import { SideMenu } from './SideMenu'
 
 
 export const GalaticView = () => {

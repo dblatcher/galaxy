@@ -1,8 +1,8 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
-import { ALL_TECHS, type TechId } from "../lib/tech-list"
-import { FactionName } from "./display-values"
-import { DismissableModal } from "./Modal"
-import { ModalLayout } from "./ModalLayout"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { ALL_TECHS, type TechId } from "../../lib/tech-list"
+import { FactionName } from "../display-values"
+import { DismissableModal } from "../Modal"
+import { ModalLayout } from "../ModalLayout"
 
 
 

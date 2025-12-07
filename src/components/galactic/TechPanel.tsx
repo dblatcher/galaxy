@@ -1,8 +1,8 @@
-import { useGameStateContext } from "../hooks/useGameStateContext"
-import { ALL_TECHS, type Tech, type TechId } from "../lib/tech-list"
-import { FactionName } from "./display-values"
-import { ModalLayout } from "./ModalLayout"
-import { ProgressBar } from "./ProgressBar"
+import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { ALL_TECHS, type Tech, type TechId } from "../../lib/tech-list"
+import { FactionName } from "../display-values"
+import { ModalLayout } from "../ModalLayout"
+import { ProgressBar } from "../ProgressBar"
 
 
 
