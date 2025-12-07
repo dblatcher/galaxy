@@ -17,11 +17,15 @@ export const GameStateContext = createContext<{ gameState: GameState, dispatch: 
                 name: "",
                 color: "",
                 playerType: "LOCAL",
-                shipDesigns: []
+                shipDesigns: [],
+                researchPoints: 0,
+                tech: {},
             }
         ],
         reports: [],
         activeFactionId: 0,
+        starsWhereBattlesFoughtAlready: [],
+        techToAnnounce: []
     },
     dispatch() { },
 });
