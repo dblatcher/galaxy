@@ -20,6 +20,7 @@ export const GalaticView = () => {
             <section className='title-section'>
                 <h2><FactionName faction={activeFaction} /> turn {turnNumber}</h2>
                 <GameFlowButtons />
+  
             </section>
             <section className='center-section'>
 

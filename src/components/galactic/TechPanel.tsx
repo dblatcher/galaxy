@@ -1,4 +1,5 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { getCurrentGoalTech } from "../../lib/tech-checks"
 import { ALL_TECHS, type Tech, type TechId } from "../../lib/tech-list"
 import { FactionName } from "../display-values"
 import { ModalLayout } from "../ModalLayout"
@@ -15,8 +16,7 @@ export const TechPanel = () => {
         }
         return ALL_TECHS[techId as TechId]
     })
-
-    const researchGoal: Tech | undefined = activeFaction.reasearchGoal && ALL_TECHS[activeFaction.reasearchGoal];
+    const researchGoal = getCurrentGoalTech(activeFaction);
 
     return (
         <ModalLayout title={'Technology'}>
