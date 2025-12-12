@@ -28,7 +28,7 @@ export const DesignApp = () => {
             }
             case "set-pattern": {
                 state.design.pattern = action.pattern;
-                state.design.constructionCost = ALL_PATTERNS[action.pattern].baseCost;
+                state.design.hp = ALL_PATTERNS[action.pattern].baseHp;
                 return state
             }
         }
@@ -38,7 +38,6 @@ export const DesignApp = () => {
             name: '',
             hp: 3,
             atk: 10,
-            constructionCost: 20,
             pattern: 'small',
             specials: {
 

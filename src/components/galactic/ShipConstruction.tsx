@@ -1,5 +1,6 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext";
 import type { Star } from "../../lib/model";
+import { getConstructionCost } from "../../lib/ship-design-helpers";
 import { findById } from "../../lib/util";
 import { ProgressBar } from "../ProgressBar";
 
@@ -23,7 +24,7 @@ export const ShipConstruction = ({ star }: Props) => {
 
     const shipConstrucionProgress = {
         value: star.shipConstructionProgress ?? 0,
-        max: currentDesign?.constructionCost ?? 0,
+        max: currentDesign ? getConstructionCost(currentDesign) : 0,
     }
 
     return (

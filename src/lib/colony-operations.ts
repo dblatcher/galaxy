@@ -1,6 +1,7 @@
 import { createBalancedColonyBudget, createBudgetWithAllIn, type ColonyBudgetItem } from "./colony-budget";
 import { addNewFleet, getDesignMap } from "./fleet-operations";
 import type { BombingReport, Faction, Fleet, Ship, Star } from "./model";
+import { getConstructionCost } from "./ship-design-helpers";
 import { filterInPlace, findById, isSet } from "./util";
 
 const MAX_POPULATION = 10
@@ -73,14 +74,15 @@ export const getNewShipsFromStar = (star: Star, faction: Faction): Ship[] | unde
     }
     const { shipConstructionProgress = 0 } = star
     const newProgress = calculateConstructionPoints(star, 'ships') + shipConstructionProgress;
+    const constructionCost = getConstructionCost(design)
 
-    if (newProgress < design.constructionCost) {
+    if (newProgress < constructionCost) {
         star.shipConstructionProgress = newProgress
         return undefined
     }
 
-    const numberOfShips = Math.floor(newProgress / design.constructionCost);
-    star.shipConstructionProgress = newProgress % design.constructionCost;
+    const numberOfShips = Math.floor(newProgress / constructionCost);
+    star.shipConstructionProgress = newProgress % constructionCost;
     const newShips: Ship[] = new Array(numberOfShips).fill(undefined).map(_ => ({ designId: design.id, damage: 0 }))
     return newShips;
 }

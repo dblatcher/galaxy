@@ -44,7 +44,6 @@ export type ShipDesign = {
     id: number
     name: string
     pattern: PatternId
-    constructionCost: number;
     hp: number;
     atk: number;
     specials: {
