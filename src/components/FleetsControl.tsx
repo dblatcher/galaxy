@@ -6,6 +6,7 @@ import { findById, isSet, lookUpName, removeDuplicates, splitArray } from "../li
 import { FleetIcon } from "./FleetSymbol"
 import { ModalLayout } from "./ModalLayout"
 import { ToggleableBox } from "./ToggleableBox"
+import { enhanceShipDesign } from "../lib/ship-design-helpers"
 
 
 type SelectedShips = Record<number, number[]>;
@@ -66,13 +67,14 @@ export const FleetsControl = () => {
                         {fleet.ships.map((ship, shipIndex) => {
                             const design = designMap[ship.designId];
                             if (!design) { return <div key={shipIndex}>!missing design {ship.designId}</div> }
+                            const { hp, name } = enhanceShipDesign(design)
 
                             return <ToggleableBox key={shipIndex} checked={isSelected(shipIndex, fleet.id)}
                                 setChecked={checked => checked ? selectShip(shipIndex, fleet.id) : deselectShip(shipIndex, fleet.id)}
                             >
                                 <FleetIcon color={activeFaction.color} size={15} />
-                                {design.name}
-                                <span>{design.hp - ship.damage}/{design.hp}</span>
+                                {name}
+                                <span>{hp - ship.damage}/{hp}</span>
                             </ToggleableBox>
                         })}
                     </div>

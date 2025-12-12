@@ -28,7 +28,6 @@ export const DesignApp = () => {
             }
             case "set-pattern": {
                 state.design.pattern = action.pattern;
-                state.design.hp = ALL_PATTERNS[action.pattern].baseHp;
                 return state
             }
         }
@@ -36,7 +35,6 @@ export const DesignApp = () => {
     }, {
         design: {
             name: '',
-            hp: 3,
             atk: 10,
             pattern: 'small',
             specials: {

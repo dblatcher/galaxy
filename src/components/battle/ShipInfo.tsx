@@ -1,4 +1,5 @@
 import type { Faction, Ship } from "../../lib/model"
+import { enhanceShipDesign } from "../../lib/ship-design-helpers"
 import { FleetIcon } from "../FleetSymbol"
 
 
@@ -14,10 +15,11 @@ export const ShipProfile = ({ ship, faction }: Props) => {
     if (!design) {
         return <div>NO DESIGN</div>
     }
+    const {hp, name} = enhanceShipDesign(design)
 
     return <div>
         <FleetIcon color={faction.color} />
-        <span>{design.name}</span>
-        <span>{design.hp - ship.damage}/{design.hp}</span>
+        <span>{name}</span>
+        <span>{hp - ship.damage}/{hp}</span>
     </div>
 }
