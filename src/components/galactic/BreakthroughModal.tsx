@@ -1,5 +1,5 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext"
-import { ALL_TECHS, type TechId } from "../../lib/tech-list"
+import { ALL_TECHS, type TechId } from "../../data/tech-list"
 import { FactionName } from "../display-values"
 import { DismissableModal } from "../Modal"
 import { ModalLayout } from "../ModalLayout"

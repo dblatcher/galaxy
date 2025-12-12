@@ -1,5 +1,5 @@
 import type { GameState } from "../lib/model";
-import type { TechId } from "../lib/tech-list";
+import type { TechId } from "../data/tech-list";
 import { findById } from "../lib/util";
 
 export type FactionAction = {

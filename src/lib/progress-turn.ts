@@ -5,7 +5,7 @@ import { takeCpuTurn } from "./cpu-turn";
 import { factionHasBattlesOrCanBomb } from "./fleet-operations";
 import type { Faction, Fleet, GameState, Ship } from "./model";
 import { findById, isSet, mapOnId } from "./util";
-import { ALL_TECHS } from "./tech-list";
+import { ALL_TECHS } from "../data/tech-list";
 
 const SPEED = 4;
 const CLOSE_ENOUGH = 5

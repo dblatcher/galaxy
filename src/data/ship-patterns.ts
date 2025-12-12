@@ -1,4 +1,4 @@
-import type { TechId } from "../lib/tech-list";
+import type { TechId } from "./tech-list";
 
 export type ShipPattern = {
     name: string;

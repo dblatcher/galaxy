@@ -1,6 +1,6 @@
 import type { PatternId } from "../data/ship-patterns";
 import type { ColonyBudget } from "./colony-budget";
-import type { FactionTechs, TechId } from "./tech-list";
+import type { FactionTechs, TechId } from "../data/tech-list";
 
 export type XY = {
     x: number;

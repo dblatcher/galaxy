@@ -1,6 +1,6 @@
 import { useGameStateContext } from "../../hooks/useGameStateContext"
 import { getCurrentGoalTech } from "../../lib/tech-checks"
-import { ALL_TECHS, type Tech, type TechId } from "../../lib/tech-list"
+import { ALL_TECHS, type Tech, type TechId } from "../../data/tech-list"
 import { FactionName } from "../display-values"
 import { ModalLayout } from "../ModalLayout"
 import { ProgressBar } from "../ProgressBar"

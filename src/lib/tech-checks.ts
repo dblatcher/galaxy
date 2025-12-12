@@ -1,5 +1,5 @@
 import type { Faction } from "./model";
-import { type TechId, techIds, ALL_TECHS, type Tech } from "./tech-list";
+import { type TechId, techIds, ALL_TECHS, type Tech } from "../data/tech-list";
 
 export const getKnownTechIds = (faction: Faction): TechId[] => Object.entries(faction.tech).flatMap(([techId, has]) => {
     if (!has) {
