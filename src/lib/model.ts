@@ -1,3 +1,4 @@
+import type { PatternId } from "../data/ship-patterns";
 import type { ColonyBudget } from "./colony-budget";
 import type { FactionTechs, TechId } from "./tech-list";
 
@@ -42,6 +43,7 @@ export type Line = {
 export type ShipDesign = {
     id: number
     name: string
+    pattern: PatternId
     constructionCost: number;
     hp: number;
     atk: number;

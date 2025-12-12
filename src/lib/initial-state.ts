@@ -16,6 +16,7 @@ const baseDesigns = (): ShipDesign[] => {
             atk: 1,
             constructionCost: 3,
             specials: {},
+            pattern: 'small',
         },
         {
             id: 1,
@@ -25,7 +26,8 @@ const baseDesigns = (): ShipDesign[] => {
             constructionCost: 10,
             specials: {
                 colonise: true
-            }
+            },
+            pattern: 'big',
         },
         {
             id: 2,
@@ -35,7 +37,8 @@ const baseDesigns = (): ShipDesign[] => {
             constructionCost: 10,
             specials: {
                 bomb: true
-            }
+            },
+            pattern: 'medium'
         },
     ]
 };

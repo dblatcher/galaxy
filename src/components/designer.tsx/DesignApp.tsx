@@ -1,39 +1,71 @@
-import { useState } from "react"
+import { useReducer } from "react"
+import { ALL_PATTERNS, type PatternId } from "../../data/ship-patterns"
 import { useGameStateContext } from "../../hooks/useGameStateContext"
-import { nextId } from "../../lib/util"
 import type { ShipDesign } from "../../lib/model"
+import { nextId } from "../../lib/util"
+import { DesignStats } from "./DesignStats"
 
 
+type DesignAction =
+    { type: 'set-name', name: string } |
+    { type: 'set-pattern', pattern: PatternId };
+
+type DesignState = {
+    design: Omit<ShipDesign, 'id'>
+}
 
 export const DesignApp = () => {
-    const { dispatch, activeFaction } = useGameStateContext()
+    const { dispatch: dispatchGameState, activeFaction } = useGameStateContext()
 
-    const [name, setName] = useState('')
-    const [size, setSize] = useState(1)
-    const constructionCost = size * 20;
-    const hp = size * 3;
+    const [state, dispatch] = useReducer((prevState: DesignState, action: DesignAction,) => {
 
-    const getDesign = () => {
-        if (!name || activeFaction.shipDesigns.some(ship => ship.name===name)) {
+        const state = structuredClone(prevState)
+
+        switch (action.type) {
+            case 'set-name': {
+                state.design.name = action.name;
+                return state
+            }
+            case "set-pattern": {
+                state.design.pattern = action.pattern;
+                state.design.constructionCost = ALL_PATTERNS[action.pattern].baseCost;
+                return state
+            }
+        }
+
+    }, {
+        design: {
+            name: '',
+            hp: 3,
+            atk: 10,
+            constructionCost: 20,
+            pattern: 'small',
+            specials: {
+
+            }
+        }
+    })
+
+
+
+
+    const getDesign = (): ShipDesign | undefined => {
+        const { name } = state.design
+        if (!name || activeFaction.shipDesigns.some(ship => ship.name === name)) {
             return undefined
         }
         return {
             id: nextId(activeFaction.shipDesigns),
-            name,
-            constructionCost,
-            hp,
-            atk: 10,
-            specials: {
-                colonise: undefined,
-                bomb: undefined
-            }
+            ...state.design
         }
     }
+
+
 
     const maybeDesign: ShipDesign | undefined = getDesign()
 
     const conclude = () => {
-        dispatch({
+        dispatchGameState({
             type: 'designer:result',
             factionId: activeFaction.id,
             shipDesign: maybeDesign,
@@ -41,7 +73,7 @@ export const DesignApp = () => {
     }
 
     const cancel = () => {
-        dispatch({
+        dispatchGameState({
             type: 'designer:result',
             factionId: activeFaction.id,
         })
@@ -54,25 +86,23 @@ export const DesignApp = () => {
             <fieldset>
                 <label>
                     name
-                    <input type="text" value={name} placeholder="design name" onChange={({ target }) => setName(target.value)} />
+                    <input type="text"
+                        value={state.design.name}
+                        placeholder="design name"
+                        onChange={({ target }) => dispatch({ type: 'set-name', name: target.value })}
+                    />
                 </label>
                 <label>
                     size
-                    <select value={size} onChange={({ target }) => setSize(Number(target.value))}>
-                        <option value={1}>small</option>
-                        <option value={2}>medium</option>
-                        <option value={3}>large</option>
-                        <option value={4}>huge</option>
+                    <select value={state.design.pattern} onChange={({ target }) => dispatch({ type: 'set-pattern', pattern: target.value as PatternId })}>
+                        {Object.entries(ALL_PATTERNS).map(([id, pattern]) => (
+                            <option value={id} key={id}>{pattern.name}</option>
+                        ))}
                     </select>
                 </label>
             </fieldset>
 
-            <article>
-                <p>Name: {name}</p>
-                <p>hp: {hp}</p>
-                <p>constructionCost: {constructionCost}</p>
-            </article>
-
+            <DesignStats design={state.design} />
 
 
             <button disabled={!maybeDesign} onClick={conclude}>conclude</button>
