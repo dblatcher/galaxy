@@ -12,27 +12,27 @@ const baseDesigns = (): ShipDesign[] => {
         {
             id: 0,
             name: 'scout',
-            atk: 1,
             specials: {},
             pattern: 'small',
+            slots: [],
         },
         {
             id: 1,
             name: 'colony ship',
-            atk: 0,
             specials: {
                 colonise: true
             },
             pattern: 'big',
+            slots: ['projectileGun', 'projectileGun'],
         },
         {
             id: 2,
             name: 'bomber',
-            atk: 1,
             specials: {
                 bomb: true
             },
-            pattern: 'medium'
+            pattern: 'medium',
+            slots: ['projectileGun'],
         },
     ]
 };

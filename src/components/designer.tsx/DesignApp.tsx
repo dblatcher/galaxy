@@ -4,11 +4,14 @@ import { useGameStateContext } from "../../hooks/useGameStateContext"
 import type { ShipDesign } from "../../lib/model"
 import { nextId } from "../../lib/util"
 import { DesignStats } from "./DesignStats"
+import { EquipmentSelect } from "./EquipmentSelect"
+import type { EquipmentId } from "../../data/ship-equipment"
 
 
 type DesignAction =
     { type: 'set-name', name: string } |
-    { type: 'set-pattern', pattern: PatternId };
+    { type: 'set-pattern', pattern: PatternId } |
+    { type: 'fill-slot', slotIndex: number, equipment: EquipmentId | undefined };
 
 type DesignState = {
     design: Omit<ShipDesign, 'id'>
@@ -27,7 +30,18 @@ export const DesignApp = () => {
                 return state
             }
             case "set-pattern": {
+                const { slots: oldSlots } = state.design
                 state.design.pattern = action.pattern;
+
+                const newSlots: ShipDesign['slots'] = new Array(ALL_PATTERNS[action.pattern].slotCount);
+                newSlots.fill(undefined)
+                newSlots.splice(0, oldSlots.length, ...oldSlots.slice(0, newSlots.length))
+
+                state.design.slots = newSlots
+                return state
+            }
+            case "fill-slot": {
+                state.design.slots[action.slotIndex] = action.equipment
                 return state
             }
         }
@@ -35,11 +49,11 @@ export const DesignApp = () => {
     }, {
         design: {
             name: '',
-            atk: 10,
             pattern: 'small',
             specials: {
 
-            }
+            },
+            slots: [undefined]
         }
     })
 
@@ -98,6 +112,16 @@ export const DesignApp = () => {
                     </select>
                 </label>
             </fieldset>
+
+            <section>
+                <ol>
+                    {state.design.slots.map((equipmentInSlot, slotIndex) => (
+                        <li key={slotIndex}>
+                            <EquipmentSelect value={equipmentInSlot} setValue={(equipment) => dispatch({ type: 'fill-slot', slotIndex, equipment })} />
+                        </li>
+                    ))}
+                </ol>
+            </section>
 
             <DesignStats design={state.design} />
 

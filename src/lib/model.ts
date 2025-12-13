@@ -1,6 +1,7 @@
 import type { PatternId } from "../data/ship-patterns";
 import type { ColonyBudget } from "./colony-budget";
 import type { FactionTechs, TechId } from "../data/tech-list";
+import type { EquipmentId } from "../data/ship-equipment";
 
 export type XY = {
     x: number;
@@ -44,11 +45,11 @@ export type ShipDesign = {
     id: number
     name: string
     pattern: PatternId
-    atk: number;
     specials: {
         colonise?: boolean
         bomb?: boolean
     }
+    slots: (undefined | EquipmentId)[]
 }
 
 export type Ship = {
