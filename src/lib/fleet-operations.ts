@@ -1,5 +1,6 @@
 import { getAllBattles } from "./derived-state"
-import type { Star, Ship, Fleet, GameState, Faction, ShipDesign } from "./model"
+import type { Star, Ship, Fleet, GameState, Faction } from "./model"
+import { enhanceShipDesign, type EnhancedShipDesign } from "./ship-design-helpers"
 import { filterInPlace, findById, isSet, nextId, splitArray } from "./util"
 
 
@@ -77,9 +78,9 @@ export const factionHasBattlesOrCanBomb = (factionId: number, gameState: GameSta
 }
 
 export const getDesignMap = (faction?: Faction) => {
-    const designMap: Record<string, ShipDesign> = {}
+    const designMap: Record<string, EnhancedShipDesign> = {}
     faction?.shipDesigns.forEach(design => {
-        designMap[design.id] = design
+        designMap[design.id] = enhanceShipDesign(design)
     })
     return designMap
 }

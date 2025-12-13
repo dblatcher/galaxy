@@ -1,7 +1,7 @@
 import { ALL_PATTERNS } from "../data/ship-patterns"
 import type { ShipDesign } from "./model"
 
-type EnhancedShipDesign = ShipDesign & {
+export type EnhancedShipDesign = ShipDesign & {
     constructionCost: number;
     hp: number;
 }

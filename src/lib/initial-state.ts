@@ -12,7 +12,6 @@ const baseDesigns = (): ShipDesign[] => {
         {
             id: 0,
             name: 'scout',
-            hp: 3,
             atk: 1,
             specials: {},
             pattern: 'small',
@@ -20,7 +19,6 @@ const baseDesigns = (): ShipDesign[] => {
         {
             id: 1,
             name: 'colony ship',
-            hp: 10,
             atk: 0,
             specials: {
                 colonise: true
@@ -30,7 +28,6 @@ const baseDesigns = (): ShipDesign[] => {
         {
             id: 2,
             name: 'bomber',
-            hp: 5,
             atk: 1,
             specials: {
                 bomb: true

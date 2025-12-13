@@ -44,7 +44,6 @@ export type ShipDesign = {
     id: number
     name: string
     pattern: PatternId
-    hp: number;
     atk: number;
     specials: {
         colonise?: boolean
