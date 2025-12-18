@@ -3,8 +3,9 @@ import { type EquipmentId } from "../../data/ship-equipment"
 import { ALL_PATTERNS, type PatternId } from "../../data/ship-patterns"
 import { useGameStateContext } from "../../hooks/useGameStateContext"
 import type { ShipDesign } from "../../lib/model"
-import { getAvailableEquipment } from "../../lib/tech-checks"
+import { getAvailableEquipment, getAvailablePatterns } from "../../lib/tech-checks"
 import { nextId } from "../../lib/util"
+import { TypedSelect } from "../TypedSelect"
 import { DesignStats } from "./DesignStats"
 import { EquipmentSelect } from "./EquipmentSelect"
 
@@ -83,7 +84,8 @@ export const DesignApp = () => {
         })
     }
 
-    const availableEquipment = getAvailableEquipment(activeFaction)
+    const availableEquipment = getAvailableEquipment(activeFaction);
+    const availablePatterns = getAvailablePatterns(activeFaction);
 
     return (
         <main>
@@ -98,24 +100,22 @@ export const DesignApp = () => {
                         onChange={({ target }) => dispatch({ type: 'set-name', name: target.value })}
                     />
                 </label>
-                <label>
-                    size
-                    <select value={state.design.pattern} onChange={({ target }) => dispatch({ type: 'set-pattern', pattern: target.value as PatternId })}>
-                        {Object.entries(ALL_PATTERNS).map(([id, pattern]) => (
-                            <option value={id} key={id}>{pattern.name}</option>
-                        ))}
-                    </select>
-                </label>
+                <TypedSelect label="size"
+                    optionIds={availablePatterns}
+                    value={state.design.pattern}
+                    setValue={pattern => dispatch({ type: 'set-pattern', pattern })}
+                    getName={id => ALL_PATTERNS[id].name}
+                />
             </fieldset>
 
             <section>
                 <ol>
                     {state.design.slots.map((equipmentInSlot, slotIndex) => (
                         <li key={slotIndex}>
-                            <EquipmentSelect 
+                            <EquipmentSelect
                                 availableEquipment={availableEquipment}
-                                value={equipmentInSlot} 
-                                setValue={(equipment) => dispatch({ type: 'fill-slot', slotIndex, equipment })} 
+                                value={equipmentInSlot}
+                                setValue={(equipment) => dispatch({ type: 'fill-slot', slotIndex, equipment })}
                             />
                         </li>
                     ))}

@@ -4,7 +4,7 @@ export type ShipPattern = {
     name: string;
     baseCost: number;
     baseHp: number;
-    prerequisites?: TechId;
+    prerequisite?: TechId;
     slotCount: number;
 }
 
@@ -13,21 +13,21 @@ export const ALL_PATTERNS = {
         name: 'small',
         baseCost: 20,
         baseHp: 3,
-        prerequisites: undefined,
+        prerequisite: undefined,
         slotCount: 1,
     },
     medium: {
         name: 'medium',
         baseCost: 100,
         baseHp: 10,
-        prerequisites: undefined,
+        prerequisite: undefined,
         slotCount: 3,
     },
     big: {
         name: 'big',
         baseCost: 200,
         baseHp: 25,
-        prerequisites: 'solarSails',
+        prerequisite: 'solarSails',
         slotCount: 7
     },
 } satisfies Record<string, ShipPattern>;
