@@ -3,11 +3,12 @@ import { ALL_EQUIPMENT, equipmentIds, type EquipmentId } from "../../data/ship-e
 interface Props {
     value: EquipmentId | undefined
     setValue: { (value: EquipmentId | undefined): void }
+    availableEquipment: EquipmentId[]
 }
 
 const UNDEF_TOKEN = "-_-"
 
-export const EquipmentSelect = ({ value, setValue }: Props) => {
+export const EquipmentSelect = ({ value, setValue, availableEquipment }: Props) => {
 
     const equipment = value && ALL_EQUIPMENT[value];
 
@@ -18,8 +19,8 @@ export const EquipmentSelect = ({ value, setValue }: Props) => {
             setValue(newValue)
         }}>
             <option value={UNDEF_TOKEN} >[none]</option>
-            {Object.entries(ALL_EQUIPMENT).map(([id, equipment]) => (
-                <option value={id} key={id}>{equipment.name}</option>
+            {availableEquipment.map((id) => (
+                <option value={id} key={id}>{ALL_EQUIPMENT[id].name}</option>
             ))}
         </select>
     </div>

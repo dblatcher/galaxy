@@ -69,7 +69,9 @@ const initialFactions: [Faction, ...Faction[]] = [
         playerType: 'LOCAL',
         id: FACTION_ID.Zorblaxian, name: 'Zorblaxian', color: 'lime',
         reasearchGoal: 'solarSails',
-        tech: {}
+        tech: {
+            lasers: true
+        }
     },
     { ...factionDefaults, id: FACTION_ID.Magrathian, name: 'Magrathian', color: 'crimson' },
     { ...factionDefaults, id: FACTION_ID.Martian, name: 'Martian', color: 'pink', },

@@ -1,11 +1,12 @@
 import { useReducer } from "react"
+import { type EquipmentId } from "../../data/ship-equipment"
 import { ALL_PATTERNS, type PatternId } from "../../data/ship-patterns"
 import { useGameStateContext } from "../../hooks/useGameStateContext"
 import type { ShipDesign } from "../../lib/model"
+import { getAvailableEquipment } from "../../lib/tech-checks"
 import { nextId } from "../../lib/util"
 import { DesignStats } from "./DesignStats"
 import { EquipmentSelect } from "./EquipmentSelect"
-import type { EquipmentId } from "../../data/ship-equipment"
 
 
 type DesignAction =
@@ -21,9 +22,7 @@ export const DesignApp = () => {
     const { dispatch: dispatchGameState, activeFaction } = useGameStateContext()
 
     const [state, dispatch] = useReducer((prevState: DesignState, action: DesignAction,) => {
-
         const state = structuredClone(prevState)
-
         switch (action.type) {
             case 'set-name': {
                 state.design.name = action.name;
@@ -45,19 +44,14 @@ export const DesignApp = () => {
                 return state
             }
         }
-
     }, {
         design: {
             name: '',
             pattern: 'small',
-            specials: {
-
-            },
+            specials: {},
             slots: [undefined]
         }
     })
-
-
 
 
     const getDesign = (): ShipDesign | undefined => {
@@ -70,7 +64,6 @@ export const DesignApp = () => {
             ...state.design
         }
     }
-
 
 
     const maybeDesign: ShipDesign | undefined = getDesign()
@@ -89,6 +82,8 @@ export const DesignApp = () => {
             factionId: activeFaction.id,
         })
     }
+
+    const availableEquipment = getAvailableEquipment(activeFaction)
 
     return (
         <main>
@@ -117,14 +112,17 @@ export const DesignApp = () => {
                 <ol>
                     {state.design.slots.map((equipmentInSlot, slotIndex) => (
                         <li key={slotIndex}>
-                            <EquipmentSelect value={equipmentInSlot} setValue={(equipment) => dispatch({ type: 'fill-slot', slotIndex, equipment })} />
+                            <EquipmentSelect 
+                                availableEquipment={availableEquipment}
+                                value={equipmentInSlot} 
+                                setValue={(equipment) => dispatch({ type: 'fill-slot', slotIndex, equipment })} 
+                            />
                         </li>
                     ))}
                 </ol>
             </section>
 
             <DesignStats design={state.design} />
-
 
             <button disabled={!maybeDesign} onClick={conclude}>conclude</button>
             <button onClick={cancel}>cancel</button>

@@ -1,5 +1,6 @@
 import type { Faction } from "./model";
 import { type TechId, techIds, ALL_TECHS, type Tech } from "../data/tech-list";
+import { ALL_EQUIPMENT, equipmentIds, type EquipmentId } from "../data/ship-equipment";
 
 export const getKnownTechIds = (faction: Faction): TechId[] => Object.entries(faction.tech).flatMap(([techId, has]) => {
     if (!has) {
@@ -20,3 +21,8 @@ export const getAvailableResearchGoals = (faction: Faction): TechId[] => {
         return tech.prerequisites.every(prereqId => techsIdsKnown.includes(prereqId as TechId))
     })
 }
+
+export const getAvailableEquipment = (faction: Faction): EquipmentId[] => equipmentIds.filter(equipmentId => {
+    const equip = ALL_EQUIPMENT[equipmentId];
+    return equip.prerequisite ? !!faction.tech[equip.prerequisite] : true
+})

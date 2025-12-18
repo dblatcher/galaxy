@@ -20,6 +20,11 @@ export const ALL_TECHS = {
         cost: 20,
         prerequisites: ['solarSails']
     },
+    photonBombardment: {
+        name: 'photon bombardment',
+        cost: 30,
+        prerequisites: ['solarSails', 'lasers']
+    }
 } satisfies Record<string, Tech>;
 
 
