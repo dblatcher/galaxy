@@ -1,13 +1,15 @@
+import { ALL_EQUIPMENT } from "../data/ship-equipment";
 import { createBalancedColonyBudget, createBudgetWithAllIn, type ColonyBudgetItem } from "./colony-budget";
 import { addNewFleet, getDesignMap } from "./fleet-operations";
 import type { BombingReport, Faction, Fleet, Ship, Star } from "./model";
 import { getConstructionCost } from "./ship-design-helpers";
-import { filterInPlace, findById, isSet } from "./util";
+import { diceRoll, filterInPlace, findById, isSet } from "./util";
 
 const MAX_POPULATION = 10
 const GROWTH_RATE = .1
 const FACTORY_COST = 5
 const FACTORY_OUTPUT = 2
+const POPULATION_DAMAGE_PER_BOMB_POINT = .04
 
 
 export const findColonisingFleets = (star: Star, fleets: Fleet[], faction: Faction): Fleet[] => {
@@ -131,11 +133,32 @@ const removeColony = (star: Star) => {
     star.factoryConstructionProgress = 0;
 }
 
+const determineDamage = (bombers: Ship[], faction: Faction): { populationDamage: number } => {
+
+    const designMap = getDesignMap(faction)
+
+    const bombs = bombers
+        .map(ship => designMap[ship.designId])
+        .flatMap(design => design.slots)
+        .flatMap(slot => slot ? ALL_EQUIPMENT[slot] : [])
+        .flatMap(equipment => equipment.info.type === 'bomb' ? equipment.info : [])
+
+    const damage = {
+        populationDamage: 0
+    }
+
+    bombs.forEach(bomb => {
+        bomb.damage.forEach(die => damage.populationDamage += diceRoll(die) * POPULATION_DAMAGE_PER_BOMB_POINT)
+    })
+
+    return damage
+}
+
 export const bombColony = (bombingFaction: Faction, fleet: Fleet, bombedFaction: Faction, star: Star, turnNumber: number): BombingReport => {
     const bombers = getShipsThatCouldBomb(fleet, bombingFaction, star)
     bombers.forEach(ship => ship.hasBombed = true)
+    const { populationDamage } = determineDamage(bombers, bombingFaction)
 
-    const populationDamage = bombers.length * .25;
     const startingPopulation = star.population;
     star.population -= populationDamage
 

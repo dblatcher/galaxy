@@ -3,7 +3,7 @@ export function findById<T extends { id: number }>(id: number | undefined, list:
     return list.find(_ => _.id === id)
 }
 
-export function mapOnId<T extends { id: number }>(list: T[]): Record<string, T|undefined> {
+export function mapOnId<T extends { id: number }>(list: T[]): Record<string, T | undefined> {
     const map: Record<string, T> = {}
     list.forEach(item => {
         map[item.id] = item
@@ -36,3 +36,5 @@ export function filterInPlace<T>(list: T[], predicate: { (item: T, index: number
 export function removeDuplicates(list: number[]): number[] {
     return list.reduce<number[]>((acc, next) => (acc.includes(next)) ? acc : [...acc, next], [])
 }
+
+export const diceRoll = (max: number): number => Math.floor(Math.random() * max) + 1
