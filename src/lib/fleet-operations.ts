@@ -55,7 +55,7 @@ export const findFleetsReadyToBomb = (state: GameState, faction: Faction): Fleet
                 isSet(star.factionId) &&
                 star.factionId !== faction.id &&
                 !battles.some(battle => battle.star === star?.id) &&
-                fleet.ships.some(ship => designs[ship.designId]?.specials.bomb && !ship.hasBombed)
+                fleet.ships.some(ship => designs[ship.designId]?.hasBombs && !ship.hasBombed)
         })
 }
 

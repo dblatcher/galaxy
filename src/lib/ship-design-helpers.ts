@@ -5,6 +5,7 @@ import type { ShipDesign } from "./model"
 export type EnhancedShipDesign = ShipDesign & {
     constructionCost: number;
     hp: number;
+    hasBombs: boolean;
 }
 
 const getConstructionCost = (design: ShipDesign): number =>
@@ -18,6 +19,7 @@ const enhanceShipDesign = (design: ShipDesign): EnhancedShipDesign => {
         ...design,
         constructionCost: getConstructionCost(design),
         hp: getHp(design),
+        hasBombs: design.slots.some(equipmentId => equipmentId && ALL_EQUIPMENT[equipmentId]?.info.type==='bomb')
     }
 }
 

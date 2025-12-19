@@ -49,7 +49,7 @@ export const getShipsThatCouldBomb = (fleet: Fleet, faction: Faction, star: Star
     const inRightPlace = fleet.factionId === faction.id && // correct faction
         fleet.orbitingStarId === star.id && // right star
         isSet(star.factionId) && star.factionId !== fleet.factionId// at colony of other faction
-    return inRightPlace ? fleet.ships.filter(ship => designs[ship.designId]?.specials.bomb && !ship.hasBombed) : [];
+    return inRightPlace ? fleet.ships.filter(ship => designs[ship.designId]?.hasBombs && !ship.hasBombed) : [];
 }
 
 // TO DO - faction advances will allow for higher productivity
