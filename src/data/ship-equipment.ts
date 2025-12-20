@@ -21,7 +21,7 @@ export type ShipEquipment = {
     isBig?: boolean;
 }
 
-export const ALL_EQUIPMENT = {
+const ALL_EQUIPMENT = {
     projectileGun: {
         name: 'projectile gun',
         baseCost: 5,

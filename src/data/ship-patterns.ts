@@ -9,7 +9,7 @@ export type ShipPattern = {
     canHaveBigEquipment?: boolean;
 }
 
-export const ALL_PATTERNS = {
+const ALL_PATTERNS = {
     small: {
         name: 'small',
         baseCost: 20,

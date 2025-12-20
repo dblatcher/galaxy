@@ -1,6 +1,6 @@
+import { getTech, type Tech, type TechId } from "../../data/tech-list"
 import { useGameStateContext } from "../../hooks/useGameStateContext"
 import { getCurrentGoalTech } from "../../lib/tech-checks"
-import { ALL_TECHS, type Tech, type TechId } from "../../data/tech-list"
 import { FactionName } from "../display-values"
 import { ModalLayout } from "../ModalLayout"
 import { ProgressBar } from "../ProgressBar"
@@ -14,7 +14,7 @@ export const TechPanel = () => {
         if (!has) {
             return []
         }
-        return ALL_TECHS[techId as TechId]
+        return getTech(techId as TechId)
     })
     const researchGoal = getCurrentGoalTech(activeFaction);
 

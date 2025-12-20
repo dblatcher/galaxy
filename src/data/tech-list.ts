@@ -4,7 +4,7 @@ export type Tech = {
     cost: number;
 }
 
-export const ALL_TECHS = {
+const ALL_TECHS = {
     lasers: {
         name: 'lasers',
         cost: 10,
@@ -32,3 +32,13 @@ export type TechId = keyof typeof ALL_TECHS;
 export type FactionTechs = Partial<Record<TechId, boolean>>;
 export const techIds = Object.keys(ALL_TECHS) as TechId[];
 
+export const getMaybeTech = (id: TechId | undefined): Tech | undefined => {
+    if (!id) {
+        return undefined
+    }
+    return ALL_TECHS[id]
+}
+
+export const getTech = (id: TechId): Tech  => {
+    return ALL_TECHS[id]
+}

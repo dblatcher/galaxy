@@ -1,11 +1,11 @@
 import { getDistance, getHeadingFrom, getXYVector, translate } from "typed-geometry";
+import { getTech } from "../data/tech-list";
 import { autoResolveAllBattles } from "./auto-battles";
 import { calculateConstructionPoints, runColonyConstruction, runColonyGrowth } from "./colony-operations";
 import { takeCpuTurn } from "./cpu-turn";
 import { factionHasBattlesOrCanBomb } from "./fleet-operations";
 import type { Faction, Fleet, GameState, Ship } from "./model";
 import { findById, isSet, mapOnId } from "./util";
-import { ALL_TECHS } from "../data/tech-list";
 
 const SPEED = 4;
 const CLOSE_ENOUGH = 5
@@ -75,7 +75,7 @@ const startNewTurn = (oldGameState: GameState): GameState => {
         if (!reasearchGoal) {
             return
         }
-        const goal = ALL_TECHS[reasearchGoal];
+        const goal = getTech(reasearchGoal);
 
         if (faction.researchPoints >= goal.cost) {
             faction.reasearchGoal = undefined

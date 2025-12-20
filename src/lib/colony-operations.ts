@@ -1,4 +1,4 @@
-import { ALL_EQUIPMENT } from "../data/ship-equipment";
+import { getEquipment } from "../data/ship-equipment";
 import { createBalancedColonyBudget, createBudgetWithAllIn, type ColonyBudgetItem } from "./colony-budget";
 import { addNewFleet, getDesignMap } from "./fleet-operations";
 import type { BombingReport, Faction, Fleet, Ship, Star } from "./model";
@@ -140,7 +140,7 @@ const determineDamage = (bombers: Ship[], faction: Faction): { populationDamage:
     const bombs = bombers
         .map(ship => designMap[ship.designId])
         .flatMap(design => design.slots)
-        .flatMap(slot => slot ? ALL_EQUIPMENT[slot] : [])
+        .flatMap(maybeEquipmentId => maybeEquipmentId ? getEquipment(maybeEquipmentId) : [])
         .flatMap(equipment => equipment.info.type === 'bomb' ? equipment.info : [])
 
     const damage = {

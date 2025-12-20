@@ -1,6 +1,6 @@
+import { getTech } from "../../data/tech-list"
 import { useGameStateContext } from "../../hooks/useGameStateContext"
 import { getAvailableResearchGoals, getKnownTechIds } from "../../lib/tech-checks"
-import { ALL_TECHS, type Tech } from "../../data/tech-list"
 import { FactionName } from "../display-values"
 import { ModalLayout } from "../ModalLayout"
 
@@ -9,7 +9,7 @@ import { ModalLayout } from "../ModalLayout"
 export const PickTechPanel = () => {
     const { activeFaction, dispatch } = useGameStateContext()
     const techsIdsKnown = getKnownTechIds(activeFaction)
-    const techsKnown: Tech[] = techsIdsKnown.map(id => ALL_TECHS[id]);
+    const techsKnown = techsIdsKnown.map(getTech);
     const availableTechGoals = getAvailableResearchGoals(activeFaction)
 
     return (
@@ -25,7 +25,7 @@ export const PickTechPanel = () => {
                             techId,
                             factionId: activeFaction.id,
                         })}>
-                            {ALL_TECHS[techId].name} ({ALL_TECHS[techId].cost} points)
+                            {getTech(techId).name} ({getTech(techId).cost} points)
                         </button>
                     </li>
                 ))}

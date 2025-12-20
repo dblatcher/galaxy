@@ -1,7 +1,7 @@
+import { equipmentIds, getEquipment, type EquipmentId } from "../data/ship-equipment";
+import { getPattern, patternIds, type PatternId } from "../data/ship-patterns";
+import { getMaybeTech, getTech, techIds, type TechId } from "../data/tech-list";
 import type { Faction } from "./model";
-import { type TechId, techIds, ALL_TECHS, type Tech } from "../data/tech-list";
-import { ALL_EQUIPMENT, equipmentIds, type EquipmentId } from "../data/ship-equipment";
-import { ALL_PATTERNS, patternIds, type PatternId } from "../data/ship-patterns";
 
 export const getKnownTechIds = (faction: Faction): TechId[] => Object.entries(faction.tech).flatMap(([techId, has]) => {
     if (!has) {
@@ -10,7 +10,7 @@ export const getKnownTechIds = (faction: Faction): TechId[] => Object.entries(fa
     return techId as TechId
 })
 
-export const getCurrentGoalTech = (faction: Faction): Tech | undefined => faction.reasearchGoal && ALL_TECHS[faction.reasearchGoal];
+export const getCurrentGoalTech = (faction: Faction) => getMaybeTech(faction.reasearchGoal);
 
 export const getAvailableResearchGoals = (faction: Faction): TechId[] => {
     const techsIdsKnown = getKnownTechIds(faction);
@@ -18,17 +18,17 @@ export const getAvailableResearchGoals = (faction: Faction): TechId[] => {
         if (techsIdsKnown.includes(techId)) {
             return false
         }
-        const tech = ALL_TECHS[techId];
+        const tech = getTech(techId);
         return tech.prerequisites.every(prereqId => techsIdsKnown.includes(prereqId as TechId))
     })
 }
 
 export const getAvailableEquipment = (faction: Faction): EquipmentId[] => equipmentIds.filter(equipmentId => {
-    const equip = ALL_EQUIPMENT[equipmentId];
+    const equip = getEquipment(equipmentId);
     return equip.prerequisite ? !!faction.tech[equip.prerequisite] : true
 })
 
 export const getAvailablePatterns = (faction: Faction): PatternId[] => patternIds.filter(id => {
-    const equip = ALL_PATTERNS[id];
-    return equip.prerequisite ? !!faction.tech[equip.prerequisite] : true
+    const pattern = getPattern(id);
+    return pattern.prerequisite ? !!faction.tech[pattern.prerequisite] : true
 })

@@ -1,4 +1,4 @@
-import { ALL_EQUIPMENT, getMaybeEquipment, type EquipmentId } from "../../data/ship-equipment"
+import { getEquipment, getMaybeEquipment, type EquipmentId } from "../../data/ship-equipment"
 import { TypedSelect } from "../TypedSelect"
 
 interface Props {
@@ -18,6 +18,6 @@ export const EquipmentSelect = ({ value, setValue, availableEquipment, canUseBig
         value={value}
         setValue={(id:EquipmentId) => setValue(id)}
         unset={() => setValue(undefined)}
-        getName={id => ALL_EQUIPMENT[id].name}
+        getName={id => getEquipment(id).name}
     />
 }
