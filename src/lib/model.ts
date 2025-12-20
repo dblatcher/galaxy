@@ -45,9 +45,6 @@ export type ShipDesign = {
     id: number
     name: string
     pattern: PatternId
-    specials: {
-        colonise?: boolean
-    }
     slots: (undefined | EquipmentId)[]
 }
 

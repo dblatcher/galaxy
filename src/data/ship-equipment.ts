@@ -8,6 +8,8 @@ type EquipmentInfo = {
     type: 'bomb',
     damage: number[],
 } | {
+    type: 'colonise'
+} | {
     type: 'other'
 }
 
@@ -70,7 +72,7 @@ export const ALL_EQUIPMENT = {
         name: 'colony module',
         baseCost: 200,
         info: {
-            type: 'other'
+            type: 'colonise'
         },
         isBig: true
     }
@@ -84,5 +86,9 @@ export const getMaybeEquipment = (id: EquipmentId | undefined): ShipEquipment | 
     if (!id) {
         return undefined
     }
+    return ALL_EQUIPMENT[id]
+}
+
+export const getEquipment = (id: EquipmentId): ShipEquipment  => {
     return ALL_EQUIPMENT[id]
 }

@@ -58,7 +58,6 @@ export const DesignApp = () => {
         design: {
             name: '',
             pattern: 'small',
-            specials: {},
             slots: [undefined]
         }
     })
