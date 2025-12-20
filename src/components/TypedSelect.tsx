@@ -12,7 +12,7 @@ const UNDEF_TOKEN = "-_-_-"
 
 export const TypedSelect = <Id extends string>({ value, setValue, optionIds, getName, label, unset }: Props<Id>) => {
 
-    const selectControl = <select value={value} onChange={({ target }) => {
+    const selectControl = <select key={value} value={value} onChange={({ target }) => {
         const newValue = optionIds.includes(target.value as Id) ? target.value as Id : undefined;
         if (newValue) {
             setValue(newValue)
@@ -29,7 +29,7 @@ export const TypedSelect = <Id extends string>({ value, setValue, optionIds, get
     </select>
 
     if (label) {
-        return <label>
+        return <label key={value}>
             <span>{label}</span>
             {selectControl}
         </label>

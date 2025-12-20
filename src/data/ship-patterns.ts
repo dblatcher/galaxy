@@ -6,6 +6,7 @@ export type ShipPattern = {
     baseHp: number;
     prerequisite?: TechId;
     slotCount: number;
+    canHaveBigEquipment?: boolean;
 }
 
 export const ALL_PATTERNS = {
@@ -27,8 +28,9 @@ export const ALL_PATTERNS = {
         name: 'big',
         baseCost: 200,
         baseHp: 25,
-        prerequisite: 'solarSails',
-        slotCount: 7
+        prerequisite: undefined,
+        slotCount: 5,
+        canHaveBigEquipment: true,
     },
 } satisfies Record<string, ShipPattern>;
 
@@ -36,3 +38,6 @@ export const ALL_PATTERNS = {
 export type PatternId = keyof typeof ALL_PATTERNS;
 export const patternIds = Object.keys(ALL_PATTERNS) as PatternId[];
 
+export const getPattern = (id: PatternId): ShipPattern => {
+    return ALL_PATTERNS[id]
+}

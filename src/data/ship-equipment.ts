@@ -1,6 +1,5 @@
 import type { TechId } from "./tech-list";
 
-
 type EquipmentInfo = {
     type: 'beam',
     damage: number[],
@@ -17,6 +16,7 @@ export type ShipEquipment = {
     baseCost: number;
     prerequisite?: TechId;
     info: EquipmentInfo;
+    isBig?: boolean;
 }
 
 export const ALL_EQUIPMENT = {
@@ -66,9 +66,23 @@ export const ALL_EQUIPMENT = {
             type: 'other'
         }
     },
+    colonyModule: {
+        name: 'colony module',
+        baseCost: 200,
+        info: {
+            type: 'other'
+        },
+        isBig: true
+    }
 } satisfies Record<string, ShipEquipment>;
 
 
 export type EquipmentId = keyof typeof ALL_EQUIPMENT;
 export const equipmentIds = Object.keys(ALL_EQUIPMENT) as EquipmentId[];
 
+export const getMaybeEquipment = (id: EquipmentId | undefined): ShipEquipment | undefined => {
+    if (!id) {
+        return undefined
+    }
+    return ALL_EQUIPMENT[id]
+}

@@ -1,6 +1,6 @@
 import { useReducer } from "react"
-import { type EquipmentId } from "../../data/ship-equipment"
-import { ALL_PATTERNS, type PatternId } from "../../data/ship-patterns"
+import { getMaybeEquipment, type EquipmentId } from "../../data/ship-equipment"
+import { getPattern, type PatternId } from "../../data/ship-patterns"
 import { useGameStateContext } from "../../hooks/useGameStateContext"
 import type { ShipDesign } from "../../lib/model"
 import { getAvailableEquipment, getAvailablePatterns } from "../../lib/tech-checks"
@@ -32,11 +32,20 @@ export const DesignApp = () => {
             case "set-pattern": {
                 const { slots: oldSlots } = state.design
                 state.design.pattern = action.pattern;
+                const newPattern = getPattern(action.pattern)
 
-                const newSlots: ShipDesign['slots'] = new Array(ALL_PATTERNS[action.pattern].slotCount);
+                const newSlots: ShipDesign['slots'] = new Array(newPattern.slotCount);
                 newSlots.fill(undefined)
                 newSlots.splice(0, oldSlots.length, ...oldSlots.slice(0, newSlots.length))
 
+                if (!newPattern.canHaveBigEquipment) {
+                    for (let i = 0; i < newSlots.length; i++) {
+                        const equip = getMaybeEquipment(newSlots[i]);
+                        if (equip?.isBig) {
+                            newSlots[i] = undefined
+                        }
+                    }
+                }
                 state.design.slots = newSlots
                 return state
             }
@@ -86,6 +95,7 @@ export const DesignApp = () => {
 
     const availableEquipment = getAvailableEquipment(activeFaction);
     const availablePatterns = getAvailablePatterns(activeFaction);
+    const canUseBigEquipment = getPattern(state.design.pattern).canHaveBigEquipment;
 
     return (
         <main>
@@ -104,7 +114,7 @@ export const DesignApp = () => {
                     optionIds={availablePatterns}
                     value={state.design.pattern}
                     setValue={pattern => dispatch({ type: 'set-pattern', pattern })}
-                    getName={id => ALL_PATTERNS[id].name}
+                    getName={id => getPattern(id).name}
                 />
             </fieldset>
 
@@ -113,6 +123,7 @@ export const DesignApp = () => {
                     {state.design.slots.map((equipmentInSlot, slotIndex) => (
                         <li key={slotIndex}>
                             <EquipmentSelect
+                                canUseBigEquipment={!!canUseBigEquipment}
                                 availableEquipment={availableEquipment}
                                 value={equipmentInSlot}
                                 setValue={(equipment) => dispatch({ type: 'fill-slot', slotIndex, equipment })}
