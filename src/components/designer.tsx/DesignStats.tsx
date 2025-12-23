@@ -1,19 +1,62 @@
-import type { ShipDesign } from "../../lib/model"
-import { enhanceShipDesign } from "../../lib/ship-design-helpers"
+import { getMaybeEquipment } from "../../data/ship-equipment";
+import type { Faction, ShipDesign } from "../../lib/model";
+import { enhanceShipDesign } from "../../lib/ship-design-helpers";
+import { FleetIcon } from "../FleetSymbol";
 
 interface Props {
-    design: Omit<ShipDesign, 'id'>
+  design: Omit<ShipDesign, "id">;
+  faction?: Faction;
 }
 
-export const DesignStats = ({ design }: Props) => {
-    const { name, hp, pattern, constructionCost } = enhanceShipDesign( { ...design, id: -1 })
+const sum = (numbers: number[]) => numbers.reduce((p, c) => p + c, 0);
 
-    return <article style={{
-        border: '1px solid white'
-    }}>
-        <p>Name: {name}</p>
-        <p>pattern: {pattern}</p>
-        <p>hp: {hp}</p>
-        <p>constructionCost: {constructionCost}</p>
+const DamageOutput = ({ dice }: { dice: number[] }) => {
+  return dice.length > 0 ? (
+    <span>
+      {dice.length} - {sum(dice)}
+    </span>
+  ) : (
+    <span>N/A</span>
+  );
+};
+
+export const DesignStats = ({ design, faction }: Props) => {
+  const { name, hp, pattern, constructionCost, slots } = enhanceShipDesign({
+    ...design,
+    id: -1,
+  });
+
+  const bombDamageDice = slots
+    .map(getMaybeEquipment)
+    .flatMap((equipment) =>
+      equipment?.info.type === "bomb" ? equipment.info.damage : []
+    );
+  const beamDamageDice = slots
+    .map(getMaybeEquipment)
+    .flatMap((equipment) =>
+      equipment?.info.type === "beam" ? equipment.info.damage : []
+    );
+
+  return (
+    <article className="ship-profile">
+      <header>
+        <FleetIcon color={faction?.color} />
+        <div style={{ color: faction?.color }}>{name || "[no name]"}</div>
+      </header>
+      <section>
+        <div>pattern: {pattern}</div>
+        <div>hp: {hp}</div>
+        <div>constructionCost: {constructionCost}</div>
+      </section>
+      <section>
+        <div>
+          Bomb Damage: <DamageOutput dice={bombDamageDice} />
+        </div>
+
+        <div>
+          Beam Damage: <DamageOutput dice={beamDamageDice} />
+        </div>
+      </section>
     </article>
-}
+  );
+};
