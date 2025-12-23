@@ -117,43 +117,40 @@ export const DesignApp = () => {
       </header>
 
       <div className="row">
-        <div>
-          <fieldset>
-            <label>
-              name
-              <input
-                type="text"
-                value={state.design.name}
-                placeholder="design name"
-                onChange={({ target }) =>
-                  dispatch({ type: "set-name", name: target.value })
-                }
-              />
-            </label>
-            <TypedSelect
-              label="size"
-              optionIds={availablePatterns}
-              value={state.design.pattern}
-              setValue={(pattern) => dispatch({ type: "set-pattern", pattern })}
-              getName={(id) => getPattern(id).name}
+        <div className="design-inputs">
+          <label>
+            <span>name</span>
+            <input
+              type="text"
+              value={state.design.name}
+              placeholder="design name"
+              onChange={({ target }) =>
+                dispatch({ type: "set-name", name: target.value })
+              }
             />
-          </fieldset>
+          </label>
+          <TypedSelect
+            label="size"
+            optionIds={availablePatterns}
+            value={state.design.pattern}
+            setValue={(pattern) => dispatch({ type: "set-pattern", pattern })}
+            getName={(id) => getPattern(id).name}
+          />
 
           <fieldset>
-            <ol>
-              {state.design.slots.map((equipmentInSlot, slotIndex) => (
-                <li key={slotIndex}>
-                  <EquipmentSelect
-                    canUseBigEquipment={!!canUseBigEquipment}
-                    availableEquipment={availableEquipment}
-                    value={equipmentInSlot}
-                    setValue={(equipment) =>
-                      dispatch({ type: "fill-slot", slotIndex, equipment })
-                    }
-                  />
-                </li>
-              ))}
-            </ol>
+            <legend>equipment</legend>
+
+            {state.design.slots.map((equipmentInSlot, slotIndex) => (
+              <EquipmentSelect
+                key={slotIndex}
+                canUseBigEquipment={!!canUseBigEquipment}
+                availableEquipment={availableEquipment}
+                value={equipmentInSlot}
+                setValue={(equipment) =>
+                  dispatch({ type: "fill-slot", slotIndex, equipment })
+                }
+              />
+            ))}
           </fieldset>
           <div>
             <button disabled={!maybeDesign} onClick={conclude}>
@@ -164,7 +161,6 @@ export const DesignApp = () => {
         </div>
         <DesignStats design={state.design} faction={activeFaction} />
       </div>
-
     </main>
   );
 };
