@@ -60,6 +60,23 @@
   margin-bottom: .5rem;
 }
 
+.ship-profile {
+  border: 1px solid red;
+  text-align: left;
+}
+.ship-profile>header {
+  border-bottom: 1px dotted red;
+  padding: .5rem;
+  margin-bottom: .5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ship-profile>section {
+  padding: .25rem .5rem;
+}
+
 .panel-content {
   padding: 0 4px;
 }
