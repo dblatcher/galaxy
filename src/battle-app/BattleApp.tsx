@@ -3,6 +3,7 @@ import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { BattleParameters } from "../lib/model"
 import { ShipProfile } from "./ShipInfo"
 import { dispatchBattleAction, getInitialState, type ShipPosition } from "./battle-state-reducer"
+import { BattleMap } from "./BattleMap"
 
 
 interface Props {
@@ -67,7 +68,9 @@ export const BattleApp = ({ params }: Props) => {
                         )}
                     </div>
                 ))}
+
             </div>
+                <BattleMap scale={3} battleState={battleState}/>
             <button onClick={conclude}>conclude</button>
         </main>
     )

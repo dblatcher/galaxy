@@ -9,7 +9,7 @@ type ShipLocationByFleet = Record<number, ShipPosition[]>
 type ShipLocationsByFaction = Record<number, ShipLocationByFleet>;
 
 
-type BattleState = {
+export type BattleState = {
     sides: {
         faction: Faction;
         fleets: Fleet[];
@@ -17,7 +17,7 @@ type BattleState = {
     locations: ShipLocationsByFaction
 }
 
-type BattleAction = {
+export type BattleAction = {
     type: 'apply-damage',
     factionId: number,
     fleetId: number,
@@ -28,12 +28,14 @@ export const getInitialState = (starId: number, gameState: GameState): BattleSta
     const initialBattle = getBattleAt(starId, gameState);
     const sides = initialBattle ? populateBattleSides(initialBattle, gameState) : [];
     const locations: ShipLocationsByFaction = {};
-    sides.forEach(side => {
+    sides.forEach((side, sideIndex) => {
         const factionData: ShipLocationByFleet = {}
-        side.fleets.forEach(fleet => {
+        let shipY = 0
+        side.fleets.forEach((fleet) => {
             factionData[fleet.id] = shuffleArray(fleet.ships)
-                .map((_ship, index) =>
-                    xy(1, 2 + index))
+                .map((_ship, shipIndex) =>
+                    xy((100 * sideIndex) + 50, (1 + shipY + shipIndex) * 50))
+            shipY = shipY + fleet.ships.length
         })
         locations[side.faction.id] = factionData
     })

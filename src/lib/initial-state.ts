@@ -124,20 +124,20 @@ const initialFleets: Fleet[] = [
         factionId: FACTION_ID.Martian,
         ships: baseShips(),
     },
-    // {
-    //     id: nextIdFor('fleet'),
-    //     orbitingStarId: STAR_ID.Arcturus,
-    //     destinationStarId: undefined,
-    //     location: {
-    //         x: 10,
-    //         y: 15
-    //     },
-    //     factionId: FACTION_ID.Zorblaxian,
-    //     ships: [
-    //         { designId: 2, damage: 0 },
-    //         { designId: 2, damage: 1 },
-    //     ],
-    // },
+    {
+        id: nextIdFor('fleet'),
+        orbitingStarId: STAR_ID.Arcturus,
+        destinationStarId: undefined,
+        location: {
+            x: 10,
+            y: 15
+        },
+        factionId: FACTION_ID.Zorblaxian,
+        ships: [
+            { designId: 2, damage: 0 },
+            { designId: 2, damage: 1 },
+        ],
+    },
     {
         id: nextIdFor('fleet'),
         orbitingStarId: STAR_ID.Arcturus,
