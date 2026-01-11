@@ -1,6 +1,6 @@
-import type { Faction, Ship } from "../../lib/model"
-import { enhanceShipDesign } from "../../lib/ship-design-helpers"
-import { FleetIcon } from "../FleetSymbol"
+import type { Faction, Ship } from "../lib/model"
+import { enhanceShipDesign } from "../lib/ship-design-helpers"
+import { FleetIcon } from "../components/FleetSymbol"
 
 
 interface Props {

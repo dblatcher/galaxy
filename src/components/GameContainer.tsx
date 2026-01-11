@@ -3,9 +3,9 @@ import { GameStateContext } from '../context/gameStateContext'
 import { useGameStateReducer } from '../hooks/useGameStateReducer'
 import { initalState } from '../lib/initial-state'
 import { findById } from '../lib/util'
-import { BattleApp } from './battle/BattleApp'
+import { BattleApp } from '../battle-app/BattleApp'
 import { GalaticView } from './galactic/GalaticView'
-import { DesignApp } from './designer.tsx/DesignApp'
+import { DesignApp } from '../designer-app/DesignApp'
 
 
 export const GameContainer = () => {

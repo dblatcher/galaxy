@@ -1,5 +1,5 @@
-import type { ShipDesign } from "../../lib/model"
-import { enhanceShipDesign } from "../../lib/ship-design-helpers"
+import type { ShipDesign } from "../lib/model"
+import { enhanceShipDesign } from "../lib/ship-design-helpers"
 
 interface Props {
     design: Omit<ShipDesign, 'id'>

@@ -1,5 +1,5 @@
-import { getEquipment, getMaybeEquipment, type EquipmentId } from "../../data/ship-equipment"
-import { TypedSelect } from "../TypedSelect"
+import { getEquipment, getMaybeEquipment, type EquipmentId } from "../data/ship-equipment"
+import { TypedSelect } from "../components/TypedSelect"
 
 interface Props {
     value: EquipmentId | undefined

@@ -1,11 +1,11 @@
 import { Fragment, useState } from "react"
-import { useGameStateContext } from "../../hooks/useGameStateContext"
-import { populateBattleSides } from "../../lib/battle-operations"
-import { getBattleAt } from "../../lib/derived-state"
-import type { BattleParameters } from "../../lib/model"
+import { useGameStateContext } from "../hooks/useGameStateContext"
+import { populateBattleSides } from "../lib/battle-operations"
+import { getBattleAt } from "../lib/derived-state"
+import type { BattleParameters } from "../lib/model"
 import { ShipProfile } from "./ShipInfo"
 import { xy, type XY } from "typed-geometry"
-import { shuffleArray } from "../../lib/util"
+import { shuffleArray } from "../lib/util"
 
 
 interface Props {
