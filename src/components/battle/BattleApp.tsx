@@ -4,11 +4,17 @@ import { populateBattleSides } from "../../lib/battle-operations"
 import { getBattleAt } from "../../lib/derived-state"
 import type { BattleParameters } from "../../lib/model"
 import { ShipProfile } from "./ShipInfo"
+import { xy, type XY } from "typed-geometry"
+import { shuffleArray } from "../../lib/util"
 
 
 interface Props {
     params: BattleParameters
 }
+
+type ShipPosition = XY;
+type ShipLocationByFleet = Record<number, ShipPosition[]>
+type ShipLocationsByFaction = Record<number, ShipLocationByFleet>;
 
 export const BattleApp = ({ params }: Props) => {
     const { gameState, dispatch } = useGameStateContext()
@@ -17,6 +23,22 @@ export const BattleApp = ({ params }: Props) => {
         const initialBattle = getBattleAt(params.starId, gameState)
         return initialBattle ? populateBattleSides(initialBattle, gameState) : []
     })
+
+    const [shipLocations] = useState<ShipLocationsByFaction>(() => {
+        const allData: ShipLocationsByFaction = {}
+        sides.forEach(side => {
+            const factionData: ShipLocationByFleet = {}
+            side.fleets.forEach(fleet => {
+                factionData[fleet.id] = shuffleArray(fleet.ships).map((_ship, index) => xy(1, 2 + index))
+            })
+            allData[side.faction.id] = factionData
+        })
+        return allData
+    })
+
+    const lookUpLocation = (factionId: number, fleetId: number, shipIndex: number): ShipPosition | undefined => {
+        return shipLocations[factionId]?.[fleetId]?.[shipIndex]
+    }
 
     const applyDamage = (factionId: number, fleetId: number, shipIndex: number) => {
         setSides(oldSides => {
@@ -55,7 +77,15 @@ export const BattleApp = ({ params }: Props) => {
                             <Fragment key={fleet.id}>
                                 {fleet.ships.map((ship, index) => (
                                     <div key={index} style={{ display: 'flex', gap: 5 }}>
-                                        <ShipProfile faction={side.faction} ship={ship} />
+                                        <div>
+                                            <ShipProfile faction={side.faction} ship={ship} />
+                                            <div>
+                                                [
+                                                {lookUpLocation(side.faction.id, fleet.id, index)!.x},
+                                                {lookUpLocation(side.faction.id, fleet.id, index)!.y}
+                                                ]
+                                            </div>
+                                        </div>
                                         <button onClick={() => applyDamage(side.faction.id, fleet.id, index)}>damage</button>
                                     </div>
 

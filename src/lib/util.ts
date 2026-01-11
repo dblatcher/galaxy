@@ -38,3 +38,13 @@ export function removeDuplicates(list: number[]): number[] {
 }
 
 export const diceRoll = (max: number): number => Math.floor(Math.random() * max) + 1
+
+export function shuffleArray<T>(array: T[]): T[] {
+  const holdingPile = array.splice(0, array.length);
+  let index;
+  while (holdingPile.length > 0) {
+    index = Math.floor(Math.random() * holdingPile.length);
+    array.push(...holdingPile.splice(index, 1));
+  }
+  return array;
+}

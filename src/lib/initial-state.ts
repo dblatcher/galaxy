@@ -27,6 +27,12 @@ const baseDesigns = (): ShipDesign[] => {
             pattern: 'medium',
             slots: ['projectileGun', 'explosiveBombs', 'explosiveBombs'],
         },
+        {
+            id: 3,
+            name: 'destroyer',
+            pattern: 'medium',
+            slots: ['projectileGun', 'projectileGun', 'projectileGun'],
+        },
     ]
 };
 
@@ -145,6 +151,21 @@ const initialFleets: Fleet[] = [
             { designId: 0, damage: 0 },
         ],
     },
+    {
+        id: nextIdFor('fleet'),
+        orbitingStarId: STAR_ID.Arcturus,
+        destinationStarId: undefined,
+        location: {
+            x: 10,
+            y: 15
+        },
+        factionId: FACTION_ID.Zorblaxian,
+        ships: [
+            { designId: 0, damage: 0 },
+            { designId: 0, damage: 0 },
+            { designId: 3, damage: 0 },
+        ],
+    },
     // {
     //     id: nextIdFor('fleet'),
     //     location: {
@@ -223,7 +244,8 @@ export const initalState: GameState = {
     ],
     techToAnnounce: [],
     subProgram: {
-        type: 'ship-designer'
+        type: 'battle',
+        starId: STAR_ID.Arcturus
     }
     // dialog: {
     //     role: 'pick-tech'
