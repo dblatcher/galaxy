@@ -2,7 +2,7 @@ import { Fragment, useReducer } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { BattleParameters } from "../lib/model"
 import { ShipProfile } from "./ShipInfo"
-import { dispatchBattleAction, getInitialState, type ShipPosition } from "./battle-state-reducer"
+import { dispatchBattleAction, getInitialState, type ShipState } from "./battle-state-reducer"
 import { BattleMap } from "./BattleMap"
 
 
@@ -18,7 +18,7 @@ export const BattleApp = ({ params }: Props) => {
         getInitialState(params.starId, gameState)
     )
 
-    const lookUpLocation = (factionId: number, fleetId: number, shipIndex: number): ShipPosition | undefined => {
+    const lookUpShip = (factionId: number, fleetId: number, shipIndex: number): ShipState | undefined => {
         return battleState.locations[factionId]?.[fleetId]?.[shipIndex]
     }
 
@@ -40,27 +40,39 @@ export const BattleApp = ({ params }: Props) => {
             <div style={{ display: 'flex', gap: 20 }}>
                 {battleState.sides.map(side => (
                     <div key={side.faction.id}>
-                        <h3>{side.faction.name}</h3>
+                        <h3>
+                            {side.faction.name}
+                            {side.faction.id === battleState.activeFaction && "*"}
+                        </h3>
 
                         {side.fleets.map(fleet =>
                             <Fragment key={fleet.id}>
                                 {fleet.ships.map((ship, index) => (
                                     <div key={index} style={{ display: 'flex', gap: 5 }}>
-                                        <div>
-                                            <ShipProfile faction={side.faction} ship={ship} />
-                                            <div>
-                                                [
-                                                {lookUpLocation(side.faction.id, fleet.id, index)!.x},
-                                                {lookUpLocation(side.faction.id, fleet.id, index)!.y}
-                                                ]
-                                            </div>
-                                        </div>
+                                        <button
+                                            disabled={side.faction.id !== battleState.activeFaction}
+                                            onClick={() => dispatch({
+                                                type: 'select-ship',
+                                                factionId: side.faction.id,
+                                                fleetId: fleet.id,
+                                                shipIndex: index
+                                            })}
+                                        >select</button>
                                         <button onClick={() => dispatch({
                                             type: 'apply-damage',
                                             factionId: side.faction.id,
                                             fleetId: fleet.id,
                                             shipIndex: index
                                         })}>damage</button>
+                                        <div>
+                                            <ShipProfile faction={side.faction} ship={ship} />
+                                            <div>
+                                                [
+                                                {lookUpShip(side.faction.id, fleet.id, index)!.position.x},
+                                                {lookUpShip(side.faction.id, fleet.id, index)!.position.y}
+                                                ]
+                                            </div>
+                                        </div>
                                     </div>
 
                                 ))}
@@ -70,7 +82,7 @@ export const BattleApp = ({ params }: Props) => {
                 ))}
 
             </div>
-                <BattleMap scale={3} battleState={battleState}/>
+            <BattleMap scale={3} battleState={battleState} />
             <button onClick={conclude}>conclude</button>
         </main>
     )

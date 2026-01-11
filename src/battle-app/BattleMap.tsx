@@ -1,6 +1,6 @@
 import { FleetSymbol } from "../components/FleetSymbol"
 import { enhanceShipDesign } from "../lib/ship-design-helpers"
-import type { BattleState, ShipPosition } from "./battle-state-reducer"
+import type { BattleState, ShipState } from "./battle-state-reducer"
 
 interface Props {
     scale: number
@@ -8,15 +8,13 @@ interface Props {
 }
 
 const mapMargin = 25
-
 const width = 400;
 const height = 300
 
 
 export const BattleMap = ({ scale, battleState }: Props) => {
-    const { sides, locations } = battleState
-
-    const lookUpLocation = (factionId: number, fleetId: number, shipIndex: number): ShipPosition | undefined => {
+    const { sides, locations, activeFaction, activeShip } = battleState
+    const lookUpShipState = (factionId: number, fleetId: number, shipIndex: number): ShipState | undefined => {
         return locations[factionId]?.[fleetId]?.[shipIndex]
     }
 
@@ -28,14 +26,14 @@ export const BattleMap = ({ scale, battleState }: Props) => {
             borderColor: 'red',
             borderStyle: 'dotted',
             borderWidth: 1,
-            backgroundColor:'black',
+            backgroundColor: 'black',
         }}>
             {sides.map(side =>
                 side.fleets.map(fleet =>
-                    fleet.ships.map((ship, index) => {
-                        const shipLocation = lookUpLocation(side.faction.id, fleet.id, index)
-                        if (!shipLocation) {
-                            console.error('MISSING location', [side.faction.id, fleet.id, index], battleState)
+                    fleet.ships.map((ship, shipIndex) => {
+                        const shipState = lookUpShipState(side.faction.id, fleet.id, shipIndex)
+                        if (!shipState) {
+                            console.error('MISSING location', [side.faction.id, fleet.id, shipIndex], battleState)
                             return null
                         }
 
@@ -44,11 +42,19 @@ export const BattleMap = ({ scale, battleState }: Props) => {
                             console.error('MISSING DESIGN', ship, side.faction)
                             return null
                         }
-                        const { name } = enhanceShipDesign(design)
+                        const { name, hp } = enhanceShipDesign(design)
 
-                        return <g data-side={side.faction.name} data-ship-type={name}>
-                            <FleetSymbol color={side.faction.color} location={shipLocation} />
-                            <text x={shipLocation.x} y={shipLocation.y} fontSize={5} fill="white">{name}</text>
+                        if (ship.damage >= hp) {
+                            return null
+                        }
+                        const isSelected = activeFaction === side.faction.id && activeShip?.fleetId == fleet.id && activeShip.shipIndex === shipIndex
+                        const { position } = shipState
+                        return <g
+                            key={`${side.faction.id}-${fleet.id}-${shipIndex}`}
+                            data-side={side.faction.name}
+                            data-ship-type={name}>
+                            <FleetSymbol color={side.faction.color} location={position} />
+                            <text {...position} fontSize={5} fill="white">{name} {isSelected && "*"}</text>
                         </g>
                     })
                 )
