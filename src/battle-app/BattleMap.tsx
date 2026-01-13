@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { getInstance } from "./helpers"
+import { getInstance, getShipState } from "./helpers"
 import type { BattleState } from "./model"
 import { ShipOnMap } from "./ShipOnMap"
 import type { XY } from "../lib/model"
@@ -17,6 +17,8 @@ const height = 300
 export const BattleMap = ({ scale, battleState }: Props) => {
     const { sides, shipStates, activeFaction, activeShip } = battleState
     const [clickedPoint, setClickedPoint] = useState<XY>()
+
+    const stateOfActiveShip = activeShip && getShipState(activeFaction, activeShip?.fleetId,activeShip?.shipIndex, shipStates)
 
     return (
         <svg
@@ -54,7 +56,22 @@ export const BattleMap = ({ scale, battleState }: Props) => {
                     })
                 )
             )}
+            {stateOfActiveShip && <circle 
+                cx={stateOfActiveShip.position.x} 
+                cy={stateOfActiveShip.position.y} 
+                r={stateOfActiveShip.remainingMovement} 
+                stroke="yellow"
+                fill="none"
+                strokeDasharray={"1,3"}
+            />}
             {clickedPoint && <circle cx={clickedPoint.x} cy={clickedPoint.y} r={4} stroke="white" />}
-        </svg>
+
+            {(stateOfActiveShip && clickedPoint) && <line stroke="grey"
+                x1={stateOfActiveShip.position.x} 
+                y1={stateOfActiveShip.position.y}
+                x2={clickedPoint.x}
+                y2={clickedPoint.y}
+            />}
+        </svg> 
     )
 }

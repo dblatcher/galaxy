@@ -2,6 +2,16 @@ import type { Ship, Faction } from "../lib/model";
 import { enhanceShipDesign } from "../lib/ship-design-helpers";
 import type { ShipInstanceInfo, ShipStatesByFaction } from "./model";
 
+
+export const getShipState = (
+    factionId: number,
+    fleetId: number,
+    shipIndex: number,
+    shipsByFaction: ShipStatesByFaction
+) => {
+    return shipsByFaction[factionId]?.[fleetId]?.[shipIndex]
+}
+
 export const getInstance = (
     ship: Ship,
     faction: Faction,
