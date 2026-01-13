@@ -54,5 +54,11 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
                 activeShip: { fleetId, shipIndex }
             }
         }
+        case "clear-selected-ship": {
+            return {
+                ...state,
+                activeShip: undefined,
+            }
+        }
     }
 }

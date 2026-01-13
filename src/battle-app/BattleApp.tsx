@@ -51,7 +51,7 @@ export const BattleApp = ({ params }: Props) => {
 
                                     return <ShipControls
                                         shipInstance={shipInstance}
-                                        isSelected={false}
+                                        isSelected={battleState.activeShip?.fleetId === shipInstance.fleetId && battleState.activeShip?.shipIndex === shipInstance.shipIndex}
                                         dispatch={dispatch}
                                         isActiveFaction={battleState.activeFaction === shipInstance.faction.id}
                                     />

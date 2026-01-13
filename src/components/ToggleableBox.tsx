@@ -4,6 +4,7 @@ interface Props {
     children?: ReactNode
     checked?: boolean
     setChecked?: { (checked: boolean): void }
+    disabled?: boolean
 }
 
 const containerStyle: CSSProperties = {
@@ -18,8 +19,7 @@ const containerStyle: CSSProperties = {
 }
 
 
-export const ToggleableBox = ({ children, checked, setChecked }: Props) => {
-
+export const ToggleableBox = ({ children, checked, setChecked, disabled }: Props) => {
 
     return <label style={{
         ...containerStyle,
@@ -28,10 +28,13 @@ export const ToggleableBox = ({ children, checked, setChecked }: Props) => {
         cursor: 'pointer',
     }}>
         <input type="checkbox"
+            disabled={disabled}
             style={{ visibility: 'hidden', position: 'absolute' }}
             checked={!!checked}
-            onChange={
-                ({ target: { checked } }) => setChecked?.(checked)}
+            onChange={disabled
+                ? undefined
+                : ({ target: { checked } }) => setChecked?.(checked)
+            }
         />
         {children}
     </label>

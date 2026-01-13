@@ -29,6 +29,8 @@ export type BattleAction = {
     factionId: number,
     fleetId: number,
     shipIndex: number
+} | {
+    type: 'clear-selected-ship'
 };
 
 export type ShipInstanceInfo = {
