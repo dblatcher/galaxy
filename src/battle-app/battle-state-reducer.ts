@@ -24,7 +24,7 @@ export const getInitialState = (starId: number, gameState: GameState): BattleSta
 
     return {
         sides,
-        locations,
+        shipStates: locations,
         activeFaction: sides[0].faction.id,
     }
 }

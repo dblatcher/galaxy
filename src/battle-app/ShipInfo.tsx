@@ -1,25 +1,24 @@
-import type { Faction, Ship } from "../lib/model"
-import { enhanceShipDesign } from "../lib/ship-design-helpers"
 import { FleetIcon } from "../components/FleetSymbol"
-
+import type { ShipInstanceInfo } from "./model"
 
 interface Props {
-    ship: Ship
-    faction: Faction
+    shipInstance: ShipInstanceInfo
 }
 
-export const ShipProfile = ({ ship, faction }: Props) => {
+export const ShipInfo = ({ shipInstance }: Props) => {
 
-    const design = faction.shipDesigns.find(design => design.id == ship.designId)
-
-    if (!design) {
-        return <div>NO DESIGN</div>
-    }
-    const {hp, name} = enhanceShipDesign(design)
+    const { faction, ship, state } = shipInstance
+    const { hp, name } = shipInstance.design;
 
     return <div>
-        <FleetIcon color={faction.color} />
-        <span>{name}</span>
-        <span>{hp - ship.damage}/{hp}</span>
+        <div>
+            <FleetIcon color={faction.color} />
+            <span>{name}</span>
+            <span>{hp - ship.damage}/{hp}</span>
+        </div>
+        <div>
+            [{state.position.x},{state.position.y}]
+            moves: {state.remainingMovement}
+        </div>
     </div>
 }

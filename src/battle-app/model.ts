@@ -1,4 +1,5 @@
-import type { Faction, Fleet, XY } from "../lib/model";
+import type { Faction, Fleet, Ship, XY } from "../lib/model";
+import type { EnhancedShipDesign } from "../lib/ship-design-helpers";
 
 export type ShipState = {
     position: XY,
@@ -13,7 +14,7 @@ export type BattleState = {
         faction: Faction;
         fleets: Fleet[];
     }[];
-    locations: ShipStatesByFaction;
+    shipStates: ShipStatesByFaction;
     activeFaction: number;
     activeShip?: { fleetId: number, shipIndex: number };
 }
@@ -29,3 +30,12 @@ export type BattleAction = {
     fleetId: number,
     shipIndex: number
 };
+
+export type ShipInstanceInfo = {
+    ship: Ship;
+    state: ShipState;
+    design: EnhancedShipDesign;
+    faction: Faction;
+    fleetId: number;
+    shipIndex: number;
+}

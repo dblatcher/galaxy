@@ -3,14 +3,12 @@ import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { BattleParameters } from "../lib/model"
 import { dispatchBattleAction, getInitialState } from "./battle-state-reducer"
 import { BattleMap } from "./BattleMap"
-import type { ShipState } from "./model"
-import { ShipProfile } from "./ShipInfo"
-
+import { getInstance } from "./helpers"
+import { ShipControls } from "./ShipControls"
 
 interface Props {
     params: BattleParameters
 }
-
 
 export const BattleApp = ({ params }: Props) => {
     const { gameState, dispatch: gameStateDispatch } = useGameStateContext()
@@ -18,10 +16,6 @@ export const BattleApp = ({ params }: Props) => {
         dispatchBattleAction,
         getInitialState(params.starId, gameState)
     )
-
-    const lookUpShipState = (factionId: number, fleetId: number, shipIndex: number): ShipState | undefined => {
-        return battleState.locations[factionId]?.[fleetId]?.[shipIndex]
-    }
 
     const conclude = () => {
         gameStateDispatch({
@@ -36,7 +30,10 @@ export const BattleApp = ({ params }: Props) => {
 
     return (
         <main>
-            <p>Battle</p>
+            <header>
+                <h1>Battle</h1>
+                <button onClick={conclude}>conclude</button>
+            </header>
 
             <div style={{ display: 'flex', gap: 20 }}>
                 {battleState.sides.map(side => (
@@ -48,45 +45,24 @@ export const BattleApp = ({ params }: Props) => {
 
                         {side.fleets.map(fleet =>
                             <Fragment key={fleet.id}>
-                                {fleet.ships.map((ship, index) => (
-                                    <div key={index} style={{ display: 'flex', gap: 5 }}>
-                                        <button
-                                            disabled={side.faction.id !== battleState.activeFaction}
-                                            onClick={() => dispatch({
-                                                type: 'select-ship',
-                                                factionId: side.faction.id,
-                                                fleetId: fleet.id,
-                                                shipIndex: index
-                                            })}
-                                        >select</button>
-                                        <button onClick={() => dispatch({
-                                            type: 'apply-damage',
-                                            factionId: side.faction.id,
-                                            fleetId: fleet.id,
-                                            shipIndex: index
-                                        })}>damage</button>
-                                        <div>
-                                            <ShipProfile faction={side.faction} ship={ship} />
-                                            <div>
-                                                [
-                                                {lookUpShipState(side.faction.id, fleet.id, index)!.position.x},
-                                                {lookUpShipState(side.faction.id, fleet.id, index)!.position.y}
-                                                ]
-                                                moves: {lookUpShipState(side.faction.id, fleet.id, index)!.remainingMovement}
-                                            </div>
-                                        </div>
-                                    </div>
+                                {fleet.ships.map((ship, shipIndex) => {
+                                    const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, battleState.shipStates)
+                                    if (!shipInstance) { return null }
 
-                                ))}
+                                    return <ShipControls
+                                        shipInstance={shipInstance}
+                                        isSelected={false}
+                                        dispatch={dispatch}
+                                        isActiveFaction={battleState.activeFaction === shipInstance.faction.id}
+                                    />
+
+                                })}
                             </Fragment>
                         )}
                     </div>
                 ))}
-
             </div>
             <BattleMap scale={3} battleState={battleState} />
-            <button onClick={conclude}>conclude</button>
         </main>
     )
-
 }
