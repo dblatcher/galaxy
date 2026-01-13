@@ -1,9 +1,10 @@
 import { Fragment, useReducer } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { BattleParameters } from "../lib/model"
-import { ShipProfile } from "./ShipInfo"
-import { dispatchBattleAction, getInitialState, type ShipState } from "./battle-state-reducer"
+import { dispatchBattleAction, getInitialState } from "./battle-state-reducer"
 import { BattleMap } from "./BattleMap"
+import type { ShipState } from "./model"
+import { ShipProfile } from "./ShipInfo"
 
 
 interface Props {
@@ -18,7 +19,7 @@ export const BattleApp = ({ params }: Props) => {
         getInitialState(params.starId, gameState)
     )
 
-    const lookUpShip = (factionId: number, fleetId: number, shipIndex: number): ShipState | undefined => {
+    const lookUpShipState = (factionId: number, fleetId: number, shipIndex: number): ShipState | undefined => {
         return battleState.locations[factionId]?.[fleetId]?.[shipIndex]
     }
 
@@ -68,9 +69,10 @@ export const BattleApp = ({ params }: Props) => {
                                             <ShipProfile faction={side.faction} ship={ship} />
                                             <div>
                                                 [
-                                                {lookUpShip(side.faction.id, fleet.id, index)!.position.x},
-                                                {lookUpShip(side.faction.id, fleet.id, index)!.position.y}
+                                                {lookUpShipState(side.faction.id, fleet.id, index)!.position.x},
+                                                {lookUpShipState(side.faction.id, fleet.id, index)!.position.y}
                                                 ]
+                                                moves: {lookUpShipState(side.faction.id, fleet.id, index)!.remainingMovement}
                                             </div>
                                         </div>
                                     </div>

@@ -1,6 +1,6 @@
 import { FleetSymbol } from "../components/FleetSymbol"
 import { enhanceShipDesign } from "../lib/ship-design-helpers"
-import type { BattleState, ShipState } from "./battle-state-reducer"
+import type { BattleState, ShipState } from "./model"
 
 interface Props {
     scale: number

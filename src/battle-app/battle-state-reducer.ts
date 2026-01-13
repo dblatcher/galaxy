@@ -1,36 +1,8 @@
-import { type XY, xy } from "typed-geometry";
+import { xy } from "typed-geometry";
 import { populateBattleSides } from "../lib/battle-operations";
 import { getBattleAt } from "../lib/derived-state";
-import type { Faction, Fleet, GameState } from "../lib/model";
-
-export type ShipState = {
-    position: XY,
-};
-type ShipStatesByFleet = Record<number, ShipState[]>
-type ShipStatesByFaction = Record<number, ShipStatesByFleet>;
-
-
-export type BattleState = {
-    sides: {
-        faction: Faction;
-        fleets: Fleet[];
-    }[];
-    locations: ShipStatesByFaction;
-    activeFaction: number;
-    activeShip?: { fleetId: number, shipIndex: number };
-}
-
-export type BattleAction = {
-    type: 'apply-damage',
-    factionId: number,
-    fleetId: number,
-    shipIndex: number
-} | {
-    type: 'select-ship',
-    factionId: number,
-    fleetId: number,
-    shipIndex: number
-};
+import type { GameState } from "../lib/model";
+import type { BattleAction, BattleState, ShipStatesByFaction, ShipStatesByFleet } from "./model";
 
 export const getInitialState = (starId: number, gameState: GameState): BattleState => {
     const initialBattle = getBattleAt(starId, gameState);
@@ -42,7 +14,8 @@ export const getInitialState = (starId: number, gameState: GameState): BattleSta
         side.fleets.forEach((fleet) => {
             factionData[fleet.id] = fleet.ships
                 .map((_ship, shipIndex) => ({
-                    position: xy((100 * sideIndex) + 50, (1 + shipY + shipIndex) * 50)
+                    position: xy((100 * sideIndex) + 50, (1 + shipY + shipIndex) * 50),
+                    remainingMovement: 100
                 }));
             shipY = shipY + fleet.ships.length
         })
