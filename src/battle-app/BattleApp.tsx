@@ -49,7 +49,7 @@ export const BattleApp = ({ params }: Props) => {
                                     const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, battleState.shipStates)
                                     if (!shipInstance) { return null }
 
-                                    return <ShipControls
+                                    return <ShipControls key={shipIndex}
                                         shipInstance={shipInstance}
                                         isSelected={battleState.activeShip?.fleetId === shipInstance.fleetId && battleState.activeShip?.shipIndex === shipInstance.shipIndex}
                                         dispatch={dispatch}
@@ -62,7 +62,7 @@ export const BattleApp = ({ params }: Props) => {
                     </div>
                 ))}
             </div>
-            <BattleMap scale={3} battleState={battleState} />
+            <BattleMap scale={2} battleState={battleState} />
         </main>
     )
 }
