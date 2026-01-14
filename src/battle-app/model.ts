@@ -31,6 +31,10 @@ export type BattleAction = {
     shipIndex: number
 } | {
     type: 'clear-selected-ship'
+} | {
+    type: 'move-ship',
+    location: XY,
+    distance: number,
 };
 
 export type ShipInstanceInfo = {

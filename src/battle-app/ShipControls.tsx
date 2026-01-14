@@ -13,7 +13,7 @@ export const ShipControls = ({
     shipInstance: ShipInstanceInfo,
     isActiveFaction: boolean,
     isSelected: boolean,
-    dispatch: ActionDispatch<[action: BattleAction]>
+    dispatch: ActionDispatch<[action: BattleAction]>,
 }) => {
     const { faction, fleetId, shipIndex } = shipInstance
 

@@ -5,10 +5,13 @@ import type { ShipInstanceInfo, ShipStatesByFaction } from "./model";
 
 export const getShipState = (
     factionId: number,
-    fleetId: number,
-    shipIndex: number,
+    fleetId: number | undefined,
+    shipIndex: number | undefined,
     shipsByFaction: ShipStatesByFaction
 ) => {
+    if (typeof fleetId === 'undefined' || typeof shipIndex === 'undefined') {
+        return undefined
+    }
     return shipsByFaction[factionId]?.[fleetId]?.[shipIndex]
 }
 

@@ -3,6 +3,7 @@ import { populateBattleSides } from "../lib/battle-operations";
 import { getBattleAt } from "../lib/derived-state";
 import type { GameState } from "../lib/model";
 import type { BattleAction, BattleState, ShipStatesByFaction, ShipStatesByFleet } from "./model";
+import { getShipState } from "./helpers";
 
 export const getInitialState = (starId: number, gameState: GameState): BattleState => {
     const initialBattle = getBattleAt(starId, gameState);
@@ -58,6 +59,20 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             return {
                 ...state,
                 activeShip: undefined,
+            }
+        }
+        case "move-ship": {
+            const { activeFaction, activeShip, shipStates } = state;
+            const shipStateToChange = getShipState(activeFaction, activeShip?.fleetId, activeShip?.shipIndex, shipStates)
+
+            if (shipStateToChange) {
+                shipStateToChange.position.x = action.location.x;
+                shipStateToChange.position.y = action.location.y;
+                shipStateToChange.remainingMovement = shipStateToChange.remainingMovement - action.distance
+            }
+
+            return {
+                ...state
             }
         }
     }

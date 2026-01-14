@@ -62,7 +62,10 @@ export const BattleApp = ({ params }: Props) => {
                     </div>
                 ))}
             </div>
-            <BattleMap scale={2} battleState={battleState} />
+            <BattleMap
+                dispatch={dispatch}
+                scale={2}
+                battleState={battleState} />
         </main>
     )
 }
