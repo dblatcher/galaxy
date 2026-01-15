@@ -1,4 +1,4 @@
-import { xy } from "typed-geometry";
+import { xy, _DEG, getHeadingFrom } from "typed-geometry";
 import { populateBattleSides } from "../lib/battle-operations";
 import { getBattleAt } from "../lib/derived-state";
 import type { GameState } from "../lib/model";
@@ -16,7 +16,8 @@ export const getInitialState = (starId: number, gameState: GameState): BattleSta
             factionData[fleet.id] = fleet.ships
                 .map((_ship, shipIndex) => ({
                     position: xy((100 * sideIndex) + 50, (1 + shipY + shipIndex) * 50),
-                    remainingMovement: 100
+                    remainingMovement: 100,
+                    heading: sideIndex % 2 ? _DEG * 270 : _DEG * 90,
                 }));
             shipY = shipY + fleet.ships.length
         })
@@ -27,6 +28,7 @@ export const getInitialState = (starId: number, gameState: GameState): BattleSta
         sides,
         shipStates: locations,
         activeFaction: sides[0].faction.id,
+        targetAction: 'move',
     }
 }
 
@@ -65,14 +67,23 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             const { activeFaction, activeShip, shipStates } = state;
             const shipStateToChange = getShipState(activeFaction, activeShip?.fleetId, activeShip?.shipIndex, shipStates)
 
+            const oldPostion = shipStateToChange ? { ...shipStateToChange.position } : xy(0, 0);
+
             if (shipStateToChange) {
                 shipStateToChange.position.x = action.location.x;
                 shipStateToChange.position.y = action.location.y;
                 shipStateToChange.remainingMovement = shipStateToChange.remainingMovement - action.distance
+                shipStateToChange.heading = getHeadingFrom(oldPostion, action.location)
             }
 
             return {
                 ...state
+            }
+        }
+        case "set-target-mode": {
+            return {
+                ...state,
+                targetAction: action.mode
             }
         }
     }

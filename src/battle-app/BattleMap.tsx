@@ -1,15 +1,13 @@
-import { useState, type ActionDispatch, type MouseEvent } from "react"
-import { getInstance, getShipState } from "./helpers"
-import type { BattleAction, BattleState } from "./model"
-import { ShipOnMap } from "./ShipOnMap"
-import type { XY } from "../lib/model"
+import { useState, type MouseEvent } from "react"
 import { getDistance } from "typed-geometry"
+import type { XY } from "../lib/model"
+import { useBattleState } from "./battle-state-context"
+import { getInstance, getShipState } from "./helpers"
+import { ShipOnMap } from "./ShipOnMap"
 
 
 interface Props {
     scale: number
-    battleState: BattleState
-    dispatch: ActionDispatch<[action: BattleAction]>
 }
 
 const mapMargin = 25
@@ -17,23 +15,26 @@ const width = 400;
 const height = 300
 
 
-export const BattleMap = ({ scale, battleState, dispatch }: Props) => {
+export const BattleMap = ({ scale }: Props) => {
+    const { battleState, dispatch } = useBattleState()
     const { sides, shipStates, activeFaction, activeShip } = battleState
-    const [clickedPoint, setClickedPoint] = useState<XY>()
+    const [targetPoint, setTargetPoint] = useState<XY>()
 
     const stateOfActiveShip = activeShip && getShipState(activeFaction, activeShip?.fleetId, activeShip?.shipIndex, shipStates)
 
-    const handleClickOnMap = (event: MouseEvent<SVGElement>) => {
+    const findPointOnMap = (event: MouseEvent<SVGElement>) => {
         const rect = event.currentTarget.getBoundingClientRect()
         const raw = { x: event.clientX - rect.x, y: event.clientY - rect.y }
         const adjust = (v: number) => Math.round((v / scale) - mapMargin)
-        const pointOnMap = {
+        return {
             x: adjust(raw.x),
             y: adjust(raw.y)
         }
+    }
 
+    const handleClickOnMap = (event: MouseEvent<SVGElement>) => {
+        const pointOnMap = findPointOnMap(event)
         if (!stateOfActiveShip) {
-            setClickedPoint(pointOnMap)
             return
         }
         const distance = getDistance(pointOnMap, stateOfActiveShip?.position)
@@ -43,14 +44,18 @@ export const BattleMap = ({ scale, battleState, dispatch }: Props) => {
                 location: pointOnMap,
                 distance,
             })
-        } else {
-            setClickedPoint(pointOnMap)
         }
+    }
+
+    const handleMoveOnMap = (event: MouseEvent<SVGElement>) => {
+        const pointOnMap = findPointOnMap(event)
+        setTargetPoint(pointOnMap)
     }
 
     return (
         <svg
             onClick={handleClickOnMap}
+            onMouseMove={handleMoveOnMap}
             viewBox={`${-mapMargin} ${-mapMargin} ${width + 2 * mapMargin} ${height + 2 * mapMargin}`}
             style={{
                 width: (width + (mapMargin * 2)) * scale,
@@ -68,14 +73,15 @@ export const BattleMap = ({ scale, battleState, dispatch }: Props) => {
                         if (!shipInstance) {
                             return null
                         }
-                        return <ShipOnMap key={shipIndex}
+                        return <ShipOnMap
+                            key={shipIndex}
                             shipInstance={shipInstance}
                             isSelected={activeFaction === side.faction.id && activeShip?.fleetId == fleet.id && activeShip.shipIndex === shipIndex}
                         />
                     })
                 )
             )}
-            {stateOfActiveShip && <circle
+            {(battleState.targetAction === 'move' && stateOfActiveShip) && <circle
                 cx={stateOfActiveShip.position.x}
                 cy={stateOfActiveShip.position.y}
                 r={stateOfActiveShip.remainingMovement}
@@ -83,13 +89,20 @@ export const BattleMap = ({ scale, battleState, dispatch }: Props) => {
                 fill="none"
                 strokeDasharray={"1,3"}
             />}
-            {clickedPoint && <circle cx={clickedPoint.x} cy={clickedPoint.y} r={4} stroke="white" />}
+            {(battleState.targetAction === 'fire' && stateOfActiveShip) && <circle
+                cx={stateOfActiveShip.position.x}
+                cy={stateOfActiveShip.position.y}
+                r={50}
+                stroke="red"
+                fill="none"
+                strokeDasharray={"1,1"}
+            />}
 
-            {(stateOfActiveShip && clickedPoint) && <line stroke="grey"
+            {(stateOfActiveShip && targetPoint) && <line stroke="grey"
                 x1={stateOfActiveShip.position.x}
                 y1={stateOfActiveShip.position.y}
-                x2={clickedPoint.x}
-                y2={clickedPoint.y}
+                x2={targetPoint.x}
+                y2={targetPoint.y}
             />}
         </svg>
     )

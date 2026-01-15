@@ -18,7 +18,7 @@ export const ShipInfo = ({ shipInstance }: Props) => {
         </div>
         <div>
             [{state.position.x},{state.position.y}]
-            moves: {state.remainingMovement}
+            moves: {state.remainingMovement.toFixed(2)}
         </div>
     </div>
 }

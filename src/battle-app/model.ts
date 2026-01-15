@@ -4,6 +4,7 @@ import type { EnhancedShipDesign } from "../lib/ship-design-helpers";
 export type ShipState = {
     position: XY,
     remainingMovement: number
+    heading: number
 };
 
 export type ShipStatesByFleet = Record<number, ShipState[]>;
@@ -17,6 +18,7 @@ export type BattleState = {
     shipStates: ShipStatesByFaction;
     activeFaction: number;
     activeShip?: { fleetId: number, shipIndex: number };
+    targetAction?: 'move' | 'fire'
 }
 
 export type BattleAction = {
@@ -35,6 +37,9 @@ export type BattleAction = {
     type: 'move-ship',
     location: XY,
     distance: number,
+} | {
+    type: 'set-target-mode',
+    mode: 'move' | 'fire'
 };
 
 export type ShipInstanceInfo = {
