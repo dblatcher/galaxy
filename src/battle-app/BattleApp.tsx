@@ -64,8 +64,8 @@ export const BattleApp = ({ params }: Props) => {
                             )}
                         </div>
                     ))}
+                    <BattleMap scale={2} />
                 </div>
-                <BattleMap scale={2} />
             </main>
         </BattleStateContext.Provider>
     )

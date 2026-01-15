@@ -11,8 +11,8 @@ interface Props {
 }
 
 const mapMargin = 25
-const width = 400;
-const height = 300
+const width = 200;
+const height = 200
 
 
 export const BattleMap = ({ scale }: Props) => {

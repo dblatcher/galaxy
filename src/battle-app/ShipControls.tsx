@@ -22,7 +22,7 @@ export const ShipControls = ({
             factionId: faction.id,
             fleetId: fleetId,
             shipIndex: shipIndex
-        })}>damage</button>
+        })}>Dmg</button>
 
         <ToggleableBox
             disabled={!isActiveFaction}

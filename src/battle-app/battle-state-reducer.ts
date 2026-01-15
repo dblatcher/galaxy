@@ -15,7 +15,7 @@ export const getInitialState = (starId: number, gameState: GameState): BattleSta
         side.fleets.forEach((fleet) => {
             factionData[fleet.id] = fleet.ships
                 .map((_ship, shipIndex) => ({
-                    position: xy((100 * sideIndex) + 50, (1 + shipY + shipIndex) * 50),
+                    position: xy((100 * sideIndex) + 50, (1 + shipY + shipIndex) * 30),
                     remainingMovement: 100,
                     heading: sideIndex % 2 ? _DEG * 270 : _DEG * 90,
                 }));
@@ -66,13 +66,12 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
         case "move-ship": {
             const { activeFaction, activeShip, shipStates } = state;
             const shipStateToChange = getShipState(activeFaction, activeShip?.fleetId, activeShip?.shipIndex, shipStates)
-
             const oldPostion = shipStateToChange ? { ...shipStateToChange.position } : xy(0, 0);
 
             if (shipStateToChange) {
                 shipStateToChange.position.x = action.location.x;
                 shipStateToChange.position.y = action.location.y;
-                shipStateToChange.remainingMovement = shipStateToChange.remainingMovement - action.distance
+                shipStateToChange.remainingMovement = shipStateToChange.remainingMovement - Math.ceil(action.distance)
                 shipStateToChange.heading = getHeadingFrom(oldPostion, action.location)
             }
 
