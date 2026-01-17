@@ -4,6 +4,8 @@ import type { XY } from "../lib/model"
 import { useBattleState } from "./battle-state-context"
 import { getInstance, getShipState } from "./helpers"
 import { ShipOnMap } from "./ShipOnMap"
+import { RangeCircle } from "./RangeCircle"
+import { TargetLine } from "./TargetLine"
 
 
 interface Props {
@@ -30,8 +32,7 @@ export const BattleMap = ({ scale }: Props) => {
             x: adjust(raw.x),
             y: adjust(raw.y)
         }
-    }
-
+    }    
     const handleClickOnMap = (event: MouseEvent<SVGElement>) => {
         const pointOnMap = findPointOnMap(event)
         if (!stateOfActiveShip) {
@@ -81,29 +82,24 @@ export const BattleMap = ({ scale }: Props) => {
                     })
                 )
             )}
-            {(battleState.targetAction === 'move' && stateOfActiveShip) && <circle
-                cx={stateOfActiveShip.position.x}
-                cy={stateOfActiveShip.position.y}
-                r={stateOfActiveShip.remainingMovement}
-                stroke="yellow"
-                fill="none"
-                strokeDasharray={"1,3"}
-            />}
-            {(battleState.targetAction === 'fire' && stateOfActiveShip) && <circle
-                cx={stateOfActiveShip.position.x}
-                cy={stateOfActiveShip.position.y}
-                r={50}
-                stroke="red"
-                fill="none"
-                strokeDasharray={"1,1"}
-            />}
+            {(battleState.targetAction === 'move' && stateOfActiveShip) &&
+                <RangeCircle
+                    type="move"
+                    r={stateOfActiveShip.remainingMovement}
+                    position={stateOfActiveShip.position}
+                />}
+            {(battleState.targetAction === 'fire' && stateOfActiveShip) && <>
+                <RangeCircle
+                    type="fire"
+                    r={50}
+                    position={stateOfActiveShip.position} />
+                {targetPoint &&
+                    <TargetLine
+                        origin={stateOfActiveShip.position}
+                        targetPoint={targetPoint}
+                        range={50} />}
+            </>}
 
-            {(stateOfActiveShip && targetPoint) && <line stroke="grey"
-                x1={stateOfActiveShip.position.x}
-                y1={stateOfActiveShip.position.y}
-                x2={targetPoint.x}
-                y2={targetPoint.y}
-            />}
         </svg>
     )
 }
