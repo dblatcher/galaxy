@@ -2,9 +2,10 @@ import type { Faction, Fleet, Ship, XY } from "../lib/model";
 import type { EnhancedShipDesign } from "../lib/ship-design-helpers";
 
 export type ShipState = {
-    position: XY,
-    remainingMovement: number
-    heading: number
+    position: XY;
+    remainingMovement: number;
+    heading: number;
+    hasFired: boolean; // TO DO - model as array to track each weapon
 };
 
 export type ShipStatesByFleet = Record<number, ShipState[]>;
@@ -21,26 +22,28 @@ export type BattleState = {
     targetAction?: 'move' | 'fire'
 }
 
-export type BattleAction = {
-    type: 'apply-damage',
+export type ShipIdent = {
     factionId: number,
     fleetId: number,
     shipIndex: number
-} | {
-    type: 'select-ship',
-    factionId: number,
-    fleetId: number,
-    shipIndex: number
-} | {
-    type: 'clear-selected-ship'
-} | {
-    type: 'move-ship',
-    location: XY,
-    distance: number,
-} | {
-    type: 'set-target-mode',
-    mode: 'move' | 'fire'
-};
+}
+
+export type BattleAction =
+    { type: 'apply-damage' } & ShipIdent |
+    { type: 'select-ship' } & ShipIdent |
+    { type: 'clear-selected-ship' } |
+    {
+        type: 'move-ship',
+        location: XY,
+        distance: number,
+    } | {
+        type: 'set-target-mode',
+        mode: 'move' | 'fire'
+    } | {
+        type: 'attempt-fire',
+        target: ShipIdent,
+        attacker: ShipIdent,
+    };
 
 export type ShipInstanceInfo = {
     ship: Ship;
