@@ -1,11 +1,11 @@
 import { Fragment, useReducer } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { BattleParameters } from "../lib/model"
+import { BattleStateContext } from "./battle-state-context"
 import { dispatchBattleAction, getInitialState } from "./battle-state-reducer"
 import { BattleMap } from "./BattleMap"
 import { getInstance } from "./helpers"
 import { ShipControls } from "./ShipControls"
-import { BattleStateContext } from "./battle-state-context"
 import { TargetModeControl } from "./TargetModeControl"
 
 interface Props {

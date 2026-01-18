@@ -7,10 +7,11 @@ interface Props {
     shipInstance: ShipInstanceInfo,
     isSelected: boolean,
     isPlayerShip: boolean,
+    activeShipHasFired?: boolean,
     handleClickOnShip?: { (shipInstance: ShipInstanceInfo): void }
 }
 
-export const ShipOnMap = ({ shipInstance, isSelected, isPlayerShip, handleClickOnShip }: Props) => {
+export const ShipOnMap = ({ activeShipHasFired, shipInstance, isSelected, isPlayerShip, handleClickOnShip }: Props) => {
     const { ship, faction, fleetId, design, shipIndex } = shipInstance
     const { position, heading } = shipInstance.state
     const { name, hp } = design
@@ -54,7 +55,7 @@ export const ShipOnMap = ({ shipInstance, isSelected, isPlayerShip, handleClickO
             location={displayPosition ?? position}
             h={heading}
             onClick={onClick}
-            cursor={isPlayerShip ? 'pointer' : 'crosshair'}
+            cursor={isPlayerShip ? 'pointer' : activeShipHasFired ? 'not-allowed' : 'crosshair'}
         />
         <text {...translate(position, xy(-4, 8))} fontSize={5} fill="white" style={{ cursor: 'default' }} >{name}</text>
     </g>
