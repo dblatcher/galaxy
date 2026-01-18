@@ -50,7 +50,7 @@ export const BattleApp = ({ params }: Props) => {
                             {side.fleets.map(fleet =>
                                 <Fragment key={fleet.id}>
                                     {fleet.ships.map((ship, shipIndex) => {
-                                        const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, battleState.shipStates)
+                                        const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, battleState)
                                         if (!shipInstance) { return null }
 
                                         return <ShipControls key={shipIndex}

@@ -1,18 +1,34 @@
-import type { Ship, Faction } from "../lib/model";
+import type { Faction, Ship } from "../lib/model";
 import { enhanceShipDesign } from "../lib/ship-design-helpers";
-import type { ShipInstanceInfo, ShipStatesByFaction } from "./model";
+import type { BattleState, ShipIdent, ShipInstanceInfo, ShipState } from "./model";
 
-
-export const getShipState = (
+const getShipState = (
     factionId: number,
     fleetId: number | undefined,
     shipIndex: number | undefined,
-    shipsByFaction: ShipStatesByFaction
+    battleState: BattleState,
 ) => {
     if (typeof fleetId === 'undefined' || typeof shipIndex === 'undefined') {
         return undefined
     }
-    return shipsByFaction[factionId]?.[fleetId]?.[shipIndex]
+    return battleState.shipStates[factionId]?.[fleetId]?.[shipIndex]
+}
+
+const getActiveShipIdent = (battleState: BattleState): ShipIdent | undefined => {
+    const { activeShip, activeFaction } = battleState
+    return activeShip && {
+        factionId: activeFaction,
+        fleetId: activeShip.fleetId,
+        shipIndex: activeShip.shipIndex
+    }
+}
+
+
+export const getShipStateFromIdent = (
+    ident: ShipIdent,
+    battleState: BattleState,
+) => {
+    return getShipState(ident.factionId, ident.fleetId, ident.shipIndex, battleState)
 }
 
 export const getInstance = (
@@ -20,9 +36,9 @@ export const getInstance = (
     faction: Faction,
     fleetId: number,
     shipIndex: number,
-    shipsByFaction: ShipStatesByFaction
+    battleState: BattleState,
 ): ShipInstanceInfo | undefined => {
-    const state = shipsByFaction[faction.id]?.[fleetId]?.[shipIndex];
+    const state = battleState.shipStates[faction.id]?.[fleetId]?.[shipIndex];
     const design = faction.shipDesigns.find(design => design.id == ship.designId);
     if (!state || !design) {
         console.error('failed to get ship instance info', { ship, faction, fleetId, shipIndex, state, design })
@@ -36,4 +52,22 @@ export const getInstance = (
         fleetId,
         shipIndex,
     }
+}
+
+export const getShipFromIdent = (ident: ShipIdent, battleState: BattleState): Ship | undefined =>
+    battleState.sides.find(side => side.faction.id === ident.factionId)
+        ?.fleets.find(fleet => fleet.id === ident.fleetId)
+        ?.ships[ident.shipIndex];
+
+export const getActiveShipState = (battleState: BattleState): ShipState | undefined => {
+    const ident = getActiveShipIdent(battleState);
+    return ident && getShipState(ident.factionId, ident.fleetId, ident.shipIndex, battleState)
+}
+
+export const getActiveShipInstance = (battleState: BattleState): ShipInstanceInfo | undefined => {
+    const ident = getActiveShipIdent(battleState);
+    const ship = ident && getShipFromIdent(ident, battleState)
+    const faction = battleState.sides[battleState.activeFaction]?.faction
+    if (!ship || !faction) { return undefined }
+    return getInstance(ship, faction, ident.fleetId, ident.shipIndex, battleState)
 }

@@ -1,3 +1,5 @@
+import { getDistance, getHeadingFrom, getXYVector, translate, type XY } from "typed-geometry"
+
 export function findById<T extends { id: number }>(id: number | undefined, list: T[]): (T | undefined) {
     if (typeof id === 'undefined') { return undefined }
     return list.find(_ => _.id === id)
@@ -40,11 +42,18 @@ export function removeDuplicates(list: number[]): number[] {
 export const diceRoll = (max: number): number => Math.floor(Math.random() * max) + 1
 
 export function shuffleArray<T>(array: T[]): T[] {
-  const holdingPile = array.splice(0, array.length);
-  let index;
-  while (holdingPile.length > 0) {
-    index = Math.floor(Math.random() * holdingPile.length);
-    array.push(...holdingPile.splice(index, 1));
-  }
-  return array;
+    const holdingPile = array.splice(0, array.length);
+    let index;
+    while (holdingPile.length > 0) {
+        index = Math.floor(Math.random() * holdingPile.length);
+        array.push(...holdingPile.splice(index, 1));
+    }
+    return array;
+}
+
+
+export const limitDistance = (maxDistance: number, start: XY, end: XY) => {
+    const heading = getHeadingFrom(start, end);
+    const distance = getDistance(start, end)
+    return translate(start, getXYVector(Math.min(maxDistance, distance), heading))
 }

@@ -1,9 +1,9 @@
-import { xy, _DEG, getHeadingFrom, getDistance } from "typed-geometry";
+import { _DEG, getDistance, getHeadingFrom, xy } from "typed-geometry";
 import { populateBattleSides } from "../lib/battle-operations";
 import { getBattleAt } from "../lib/derived-state";
 import type { GameState } from "../lib/model";
-import type { BattleAction, BattleState, ShipStatesByFaction, ShipStatesByFleet, ShipIdent } from "./model";
-import { getShipState } from "./helpers";
+import { getActiveShipState, getShipFromIdent, getShipStateFromIdent } from "./helpers";
+import type { BattleAction, BattleState, ShipStatesByFaction, ShipStatesByFleet } from "./model";
 
 export const getInitialState = (starId: number, gameState: GameState): BattleState => {
     const initialBattle = getBattleAt(starId, gameState);
@@ -36,20 +36,10 @@ export const getInitialState = (starId: number, gameState: GameState): BattleSta
 export const dispatchBattleAction = (prevState: BattleState, action: BattleAction): BattleState => {
     const state = structuredClone(prevState);
 
-    const lookUpState = (ident: ShipIdent) => {
-        return getShipState(ident.factionId, ident.fleetId, ident.shipIndex, state.shipStates)
-    }
-
-    const lookUpShip = (ident: ShipIdent) => {
-        const { factionId, fleetId, shipIndex } = ident;
-        return state.sides.find(side => side.faction.id === factionId)
-            ?.fleets.find(fleet => fleet.id === fleetId)
-            ?.ships[shipIndex]
-    }
 
     switch (action.type) {
         case "apply-damage": {
-            const ship = lookUpShip(action)
+            const ship = getShipFromIdent(action, state)
             if (ship) {
                 ship.damage = ship.damage + 1
             }
@@ -73,15 +63,13 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             }
         }
         case "move-ship": {
-            const { activeFaction, activeShip, shipStates } = state;
-            const shipStateToChange = getShipState(activeFaction, activeShip?.fleetId, activeShip?.shipIndex, shipStates)
-            const oldPostion = shipStateToChange ? { ...shipStateToChange.position } : xy(0, 0);
+            const shipStateToChange = getActiveShipState(state)
 
             if (shipStateToChange) {
+                shipStateToChange.heading = getHeadingFrom({ ...shipStateToChange.position }, action.location)
                 shipStateToChange.position.x = action.location.x;
                 shipStateToChange.position.y = action.location.y;
                 shipStateToChange.remainingMovement = shipStateToChange.remainingMovement - Math.ceil(action.distance)
-                shipStateToChange.heading = getHeadingFrom(oldPostion, action.location)
             }
 
             return {
@@ -95,10 +83,9 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             }
         }
         case "attempt-fire": {
-            const targetShipState = lookUpState(action.target)
-            const attackerShipState = lookUpState(action.attacker)
-            const targetShip = lookUpShip(action.target)
-            console.log(targetShipState, attackerShipState)
+            const targetShipState = getShipStateFromIdent(action.target, state)
+            const attackerShipState = getShipStateFromIdent(action.attacker, state)
+            const targetShip = getShipFromIdent(action.target, state)
             if (attackerShipState?.hasFired || !targetShipState || !attackerShipState || !targetShip) {
                 return { ...state }
             }

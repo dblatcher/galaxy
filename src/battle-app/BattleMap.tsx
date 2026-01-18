@@ -1,12 +1,13 @@
 import { useState, type MouseEvent } from "react"
 import { getDistance } from "typed-geometry"
 import type { XY } from "../lib/model"
+import { limitDistance } from "../lib/util"
 import { useBattleState } from "./battle-state-context"
-import { getInstance, getShipState } from "./helpers"
-import { ShipOnMap } from "./ShipOnMap"
-import { RangeCircle } from "./RangeCircle"
-import { TargetLine } from "./TargetLine"
+import { getActiveShipState, getInstance } from "./helpers"
 import type { ShipInstanceInfo } from "./model"
+import { RangeCircle } from "./RangeCircle"
+import { ShipOnMap } from "./ShipOnMap"
+import { TargetLine } from "./TargetLine"
 
 
 interface Props {
@@ -20,10 +21,10 @@ const height = 200
 
 export const BattleMap = ({ scale }: Props) => {
     const { battleState, dispatch } = useBattleState()
-    const { sides, shipStates, activeFaction, activeShip, targetAction } = battleState
+    const { sides, activeFaction, activeShip, targetAction } = battleState
     const [targetPoint, setTargetPoint] = useState<XY>()
 
-    const stateOfActiveShip = activeShip && getShipState(activeFaction, activeShip?.fleetId, activeShip?.shipIndex, shipStates)
+    const stateOfActiveShip = getActiveShipState(battleState);
 
     const findPointOnMap = (event: MouseEvent<SVGElement>) => {
         const rect = event.currentTarget.getBoundingClientRect()
@@ -61,7 +62,7 @@ export const BattleMap = ({ scale }: Props) => {
                 fleetId: shipInstance.fleetId,
                 shipIndex: shipInstance.shipIndex
             })
-        } else if (targetAction === 'fire' && stateOfActiveShip) {
+        } else if (targetAction === 'fire' && activeShip) {
             return dispatch({
                 type: 'attempt-fire',
                 target: {
@@ -95,7 +96,7 @@ export const BattleMap = ({ scale }: Props) => {
             {sides.map(side =>
                 side.fleets.map(fleet =>
                     fleet.ships.map((ship, shipIndex) => {
-                        const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, shipStates)
+                        const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, battleState)
                         if (!shipInstance) {
                             return null
                         }
@@ -120,7 +121,10 @@ export const BattleMap = ({ scale }: Props) => {
                     position={stateOfActiveShip.position}
                 />
                 {targetPoint && !stateOfActiveShip.hasFired &&
-                    <RangeCircle type="fire" r={50} position={targetPoint} />
+                    <RangeCircle 
+                        type="fire" 
+                        r={50} 
+                        position={limitDistance(stateOfActiveShip.remainingMovement, stateOfActiveShip.position, targetPoint)} />
                 }
             </>}
             {(battleState.targetAction === 'fire' && stateOfActiveShip && !stateOfActiveShip.hasFired) && <>
