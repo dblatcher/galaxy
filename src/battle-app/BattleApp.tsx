@@ -1,4 +1,4 @@
-import { Fragment, useReducer } from "react"
+import { Fragment, useEffect, useReducer } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { BattleParameters } from "../lib/model"
 import { BattleStateContext } from "./battle-state-context"
@@ -18,6 +18,14 @@ export const BattleApp = ({ params }: Props) => {
         dispatchBattleAction,
         getInitialState(params.starId, gameState)
     )
+
+    
+    useEffect(() => {
+        const faction = battleState.sides.find(side => side.faction.id === battleState.activeFaction)?.faction;
+        console.log('it is now the turn of:', faction?.name, faction?.playerType)
+
+        // TO DO - if not local player, kick off the automation in real time
+    }, [battleState.activeFaction])
 
     const conclude = () => {
         gameStateDispatch({
@@ -66,6 +74,7 @@ export const BattleApp = ({ params }: Props) => {
                     ))}
                     <BattleMap scale={2} />
                 </div>
+                <button onClick={() => dispatch({ type: 'end-turn' })}>next turn</button>
             </main>
         </BattleStateContext.Provider>
     )

@@ -83,6 +83,7 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             }
         }
         case "attempt-fire": {
+            // TO DO - calculating range and damage should be outside the reducer - no RNG in an action
             const targetShipState = getShipStateFromIdent(action.target, state)
             const attackerShipState = getShipStateFromIdent(action.attacker, state)
             const targetShip = getShipFromIdent(action.target, state)
@@ -99,6 +100,29 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             attackerShipState.hasFired = true
             return {
                 ...state
+            }
+        }
+        case "end-turn": {
+            const { activeFaction, sides, shipStates } = state
+            const currentFactionIndex = sides.findIndex(side => side.faction.id === activeFaction);
+            const newSide = sides[currentFactionIndex + 1] ?? sides[0];
+
+            state.activeFaction = newSide.faction.id
+
+            Object.values(shipStates)
+                .forEach(factionShipState =>
+                    Object.values(factionShipState)
+                        .forEach(fleetShipStates =>
+                            fleetShipStates
+                                .forEach(shipState => {
+                                    shipState.hasFired === false;
+                                    shipState.remainingMovement = 100;
+                                })
+                        )
+                )
+
+            return {
+                ...state,
             }
         }
     }

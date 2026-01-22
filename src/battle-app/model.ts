@@ -43,6 +43,8 @@ export type BattleAction =
         type: 'attempt-fire',
         target: ShipIdent,
         attacker: ShipIdent,
+    } | {
+        type: 'end-turn'
     };
 
 export type ShipInstanceInfo = {
