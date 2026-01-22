@@ -103,14 +103,7 @@ export const BattleMap = ({ scale }: Props) => {
                         return <ShipOnMap
                             key={shipIndex}
                             handleClickOnShip={handleClickOnShip}
-                            activeShipHasFired={stateOfActiveShip?.hasFired}
                             shipInstance={shipInstance}
-                            isPlayerShip={activeFaction === shipInstance.faction.id}
-                            isSelected={
-                                activeFaction === shipInstance.faction.id &&
-                                activeShip?.fleetId == shipInstance.fleetId &&
-                                activeShip.shipIndex === shipInstance.shipIndex
-                            }
                         />
                     })
                 )
