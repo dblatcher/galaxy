@@ -2,7 +2,7 @@ import { _DEG, getDistance, getHeadingFrom, xy } from "typed-geometry";
 import { populateBattleSides } from "../lib/battle-operations";
 import { getBattleAt } from "../lib/derived-state";
 import type { GameState } from "../lib/model";
-import { getActiveShipState, getShipFromIdent, getShipStateFromIdent } from "./helpers";
+import { getShipFromIdent, getShipStateFromIdent } from "./helpers";
 import type { BattleAction, BattleState, ShipStatesByFaction, ShipStatesByFleet } from "./model";
 
 export const getInitialState = (starId: number, gameState: GameState): BattleState => {
@@ -39,14 +39,14 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
 
     switch (action.type) {
         case "apply-damage": {
-            const ship = getShipFromIdent(action, state)
+            const ship = getShipFromIdent(action.ident, state)
             if (ship) {
-                ship.damage = ship.damage + 1
+                ship.damage = ship.damage + action.amount
             }
             return state
         }
         case "select-ship": {
-            const { factionId, fleetId, shipIndex } = action;
+            const { factionId, fleetId, shipIndex } = action.ident;
             if (factionId !== state.activeFaction) {
                 return state
             }
@@ -65,7 +65,7 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
         case "move-ship": {
             const shipStateToChange = getShipStateFromIdent(action.ident, state)
 
-            
+
             if (shipStateToChange) {
                 const distance = Math.ceil(getDistance(shipStateToChange?.position, action.location))
                 shipStateToChange.heading = getHeadingFrom({ ...shipStateToChange.position }, action.location)

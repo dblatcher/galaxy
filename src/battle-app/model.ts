@@ -29,8 +29,8 @@ export type ShipIdent = {
 }
 
 export type BattleAction =
-    { type: 'apply-damage' } & ShipIdent |
-    { type: 'select-ship' } & ShipIdent |
+    { type: 'apply-damage', ident: ShipIdent, amount: number } |
+    { type: 'select-ship', ident: ShipIdent } |
     { type: 'clear-selected-ship' } |
     {
         type: 'set-target-mode',

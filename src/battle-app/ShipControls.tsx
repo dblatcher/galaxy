@@ -16,25 +16,22 @@ export const ShipControls = ({
     const { dispatch } = useBattleState()
     const { faction, fleetId, shipIndex } = shipInstance
 
-    return <div key={shipIndex} style={{ display: 'flex', gap: 5 }}>
-        <button onClick={() => dispatch({
-            type: 'apply-damage',
-            factionId: faction.id,
-            fleetId: fleetId,
-            shipIndex: shipIndex
-        })}>Dmg</button>
-
-        <ToggleableBox
-            disabled={!isActiveFaction}
-            checked={isSelected}
-            setChecked={(checked) => {
-                dispatch(checked
-                    ? { type: 'select-ship', factionId: faction.id, fleetId: fleetId, shipIndex: shipIndex }
-                    : { type: 'clear-selected-ship' }
-                )
-            }}>
-            <ShipInfo shipInstance={shipInstance} />
-        </ToggleableBox>
-    </div>
-
+    return <ToggleableBox key={shipIndex}
+        disabled={!isActiveFaction}
+        checked={isSelected}
+        setChecked={(checked) => {
+            dispatch(checked
+                ? {
+                    type: 'select-ship',
+                    ident: {
+                        factionId: faction.id,
+                        fleetId,
+                        shipIndex
+                    }
+                }
+                : { type: 'clear-selected-ship' }
+            )
+        }}>
+        <ShipInfo shipInstance={shipInstance} />
+    </ToggleableBox>
 }
