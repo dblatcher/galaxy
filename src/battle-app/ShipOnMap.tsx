@@ -27,9 +27,10 @@ export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
     const updateDisplayPosition = useCallback(() => {
         requestAnimationFrame(() => {
             setDisplayPosition(displayPosition => {
+                if (position.x === displayPosition.x && position.y === displayPosition.y) { return displayPosition }
                 const distance = getDistance(displayPosition, position)
                 const heading = getHeadingFrom(displayPosition, position)
-                if (distance < 2) {
+                if (distance < 1) {
                     return position
                 }
                 return translate(displayPosition, getXYVector(.75, heading))

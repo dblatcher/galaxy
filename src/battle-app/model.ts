@@ -33,12 +33,12 @@ export type BattleAction =
     { type: 'select-ship' } & ShipIdent |
     { type: 'clear-selected-ship' } |
     {
-        type: 'move-ship',
-        location: XY,
-        distance: number,
-    } | {
         type: 'set-target-mode',
         mode: 'move' | 'fire'
+    } | {
+        type: 'move-ship',
+        location: XY,
+        ident: ShipIdent
     } | {
         type: 'attempt-fire',
         target: ShipIdent,

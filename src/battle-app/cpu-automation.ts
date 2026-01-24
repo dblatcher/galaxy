@@ -1,0 +1,50 @@
+import { type ActionDispatch } from "react"
+import { getDistance, translate } from "typed-geometry"
+import { getActiveSide } from "./helpers"
+import type { BattleAction, BattleState, ShipIdent, ShipState } from "./model"
+
+
+const delay = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const startCpuPlayerAutomation = async (battleState: BattleState, dispatch: ActionDispatch<[action: BattleAction]>) => {
+    const side = getActiveSide(battleState);
+    if (!side) {
+        return
+    }
+    const fleets = battleState.shipStates[side.faction.id];
+    const identAndStates: { ident: ShipIdent, shipState: ShipState }[] =
+        Object.entries(fleets).flatMap(([fleetId, shipArray]) => {
+            return shipArray.flatMap((shipState, shipIndex) => {
+                return {
+                    shipState,
+                    ident: {
+                        factionId: side.faction.id,
+                        fleetId: Number(fleetId),
+                        shipIndex,
+                    }
+                }
+            })
+        })
+
+    const valuesForTiming = {
+        greatestDistance: 0
+    }
+
+    identAndStates.forEach(({ ident, shipState }) => {
+        const y = Math.floor((Math.random() * 20) - 10)
+        const newLocation = translate(shipState.position, { x: -20, y });
+        const distance = getDistance(shipState.position, newLocation);
+        valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
+        dispatch({
+            type: 'move-ship',
+            ident,
+            location: newLocation
+        })
+    })
+    const calculateAnimationTime = (greatestDistance: number): number => {
+        return 10 * (greatestDistance / .75)
+    }
+    await delay(calculateAnimationTime(valuesForTiming.greatestDistance))
+
+    dispatch(({ type: 'end-turn' }))
+}

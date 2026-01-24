@@ -4,9 +4,10 @@ import type { BattleParameters } from "../lib/model"
 import { BattleStateContext } from "./battle-state-context"
 import { dispatchBattleAction, getInitialState } from "./battle-state-reducer"
 import { BattleMap } from "./BattleMap"
-import { getInstance } from "./helpers"
+import { getActiveFaction, getInstance } from "./helpers"
 import { ShipControls } from "./ShipControls"
 import { TargetModeControl } from "./TargetModeControl"
+import { startCpuPlayerAutomation } from "./cpu-automation"
 
 interface Props {
     params: BattleParameters
@@ -19,11 +20,14 @@ export const BattleApp = ({ params }: Props) => {
         getInitialState(params.starId, gameState)
     )
 
-    
-    useEffect(() => {
-        const faction = battleState.sides.find(side => side.faction.id === battleState.activeFaction)?.faction;
-        console.log('it is now the turn of:', faction?.name, faction?.playerType)
+    const isNotLocalPlayerTurn = getActiveFaction(battleState)?.playerType !== 'LOCAL'
 
+    useEffect(() => {
+        const faction = getActiveFaction(battleState);
+        console.log('it is now the turn of:', faction?.name, faction?.playerType)
+        if (faction?.playerType === 'CPU') {
+            startCpuPlayerAutomation(battleState, dispatch)
+        }
         // TO DO - if not local player, kick off the automation in real time
     }, [battleState.activeFaction])
 
@@ -72,9 +76,11 @@ export const BattleApp = ({ params }: Props) => {
                             )}
                         </div>
                     ))}
-                    <BattleMap scale={2} />
+                    <BattleMap scale={2} isNotLocalPlayerTurn={isNotLocalPlayerTurn} />
                 </div>
-                <button onClick={() => dispatch({ type: 'end-turn' })}>next turn</button>
+                <button
+                    disabled={isNotLocalPlayerTurn}
+                    onClick={() => dispatch({ type: 'end-turn' })}>next turn</button>
             </main>
         </BattleStateContext.Provider>
     )

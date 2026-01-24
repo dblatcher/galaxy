@@ -63,13 +63,15 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             }
         }
         case "move-ship": {
-            const shipStateToChange = getActiveShipState(state)
+            const shipStateToChange = getShipStateFromIdent(action.ident, state)
 
+            
             if (shipStateToChange) {
+                const distance = Math.ceil(getDistance(shipStateToChange?.position, action.location))
                 shipStateToChange.heading = getHeadingFrom({ ...shipStateToChange.position }, action.location)
                 shipStateToChange.position.x = action.location.x;
                 shipStateToChange.position.y = action.location.y;
-                shipStateToChange.remainingMovement = shipStateToChange.remainingMovement - Math.ceil(action.distance)
+                shipStateToChange.remainingMovement = shipStateToChange.remainingMovement - distance
             }
 
             return {

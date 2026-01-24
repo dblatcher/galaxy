@@ -3,7 +3,7 @@ import { getDistance } from "typed-geometry"
 import type { XY } from "../lib/model"
 import { limitDistance } from "../lib/util"
 import { useBattleState } from "./battle-state-context"
-import { getActiveShipState, getInstance } from "./helpers"
+import { getActiveShipIdent, getActiveShipState, getInstance } from "./helpers"
 import type { ShipInstanceInfo } from "./model"
 import { RangeCircle } from "./RangeCircle"
 import { ShipOnMap } from "./ShipOnMap"
@@ -12,6 +12,7 @@ import { TargetLine } from "./TargetLine"
 
 interface Props {
     scale: number
+    isNotLocalPlayerTurn: boolean
 }
 
 const mapMargin = 25
@@ -19,7 +20,7 @@ const width = 200;
 const height = 200
 
 
-export const BattleMap = ({ scale }: Props) => {
+export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
     const { battleState, dispatch } = useBattleState()
     const { sides, activeFaction, activeShip, targetAction } = battleState
     const [targetPoint, setTargetPoint] = useState<XY>()
@@ -36,8 +37,12 @@ export const BattleMap = ({ scale }: Props) => {
         }
     }
     const handleClickOnMap = (event: MouseEvent<SVGElement>) => {
+        if (isNotLocalPlayerTurn) {
+            return
+        }
         const pointOnMap = findPointOnMap(event)
-        if (!stateOfActiveShip) {
+        const ident = getActiveShipIdent(battleState)
+        if (!stateOfActiveShip || !ident) {
             return
         }
         const distance = getDistance(pointOnMap, stateOfActiveShip?.position)
@@ -45,7 +50,7 @@ export const BattleMap = ({ scale }: Props) => {
             dispatch({
                 type: 'move-ship',
                 location: pointOnMap,
-                distance,
+                ident,
             })
         }
     }
@@ -55,6 +60,9 @@ export const BattleMap = ({ scale }: Props) => {
     }
 
     const handleClickOnShip = (shipInstance: ShipInstanceInfo) => {
+        if (isNotLocalPlayerTurn) {
+            return
+        }
         if (shipInstance.faction.id === activeFaction) {
             return dispatch({
                 type: 'select-ship',
@@ -115,9 +123,9 @@ export const BattleMap = ({ scale }: Props) => {
                     position={stateOfActiveShip.position}
                 />
                 {targetPoint && !stateOfActiveShip.hasFired &&
-                    <RangeCircle 
-                        type="fire" 
-                        r={50} 
+                    <RangeCircle
+                        type="fire"
+                        r={50}
                         position={limitDistance(stateOfActiveShip.remainingMovement, stateOfActiveShip.position, targetPoint)} />
                 }
             </>}
