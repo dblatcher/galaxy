@@ -1,9 +1,12 @@
 import { useEffect, useReducer } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { BattleParameters } from "../lib/model"
+import { AnimationContext } from "./animation-context"
+import { animationDispatcher, getInitialAnimationState } from "./animation-reducer"
 import { BattleStateContext } from "./battle-state-context"
 import { dispatchBattleAction, getInitialState } from "./battle-state-reducer"
 import { MainLayout } from "./components/MainLayout"
+import { ANIMATION_STEP_MS } from "./constants"
 import { startCpuPlayerAutomation } from "./cpu-automation"
 import { getActiveFaction } from "./helpers"
 
@@ -17,6 +20,20 @@ export const BattleApp = ({ params }: Props) => {
         dispatchBattleAction,
         getInitialState(params.starId, gameState)
     )
+    const [animationState, dispatchAnimationAction] = useReducer(
+        animationDispatcher,
+        getInitialAnimationState()
+    )
+
+    useEffect(() => {
+        const progressAnimations =() => {
+            dispatchAnimationAction({type: 'tick'})
+        }
+        const timer = setInterval(progressAnimations, ANIMATION_STEP_MS)
+        return () => {
+            clearInterval(timer)
+        }
+    }, [])
 
     useEffect(() => {
         const faction = getActiveFaction(battleState);
@@ -38,8 +55,10 @@ export const BattleApp = ({ params }: Props) => {
 
     return (
         <BattleStateContext.Provider value={{ battleState, dispatch }}>
-            <button onClick={conclude}>conclude</button>
-            <MainLayout />
+            <AnimationContext.Provider value={{ animationState, dispatchAnimationAction }}>
+                <button onClick={conclude}>conclude</button>
+                <MainLayout />
+            </AnimationContext.Provider>
         </BattleStateContext.Provider>
     )
 }

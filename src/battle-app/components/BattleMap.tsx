@@ -9,6 +9,8 @@ import type { ShipInstanceInfo } from "../model"
 import { RangeCircle } from "./RangeCircle"
 import { ShipOnMap } from "./ShipOnMap"
 import { TargetLine } from "./TargetLine"
+import { useAnimationState } from "../animation-context"
+import { AnimationPlotter } from "./AnimationPlotter"
 
 
 interface Props {
@@ -22,6 +24,7 @@ const height = 200
 
 export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
     const { battleState, dispatch } = useBattleState()
+    const { dispatchAnimationAction } = useAnimationState()
     const { sides, activeFaction, activeShip, targetAction } = battleState
     const [targetPoint, setTargetPoint] = useState<XY>()
 
@@ -79,12 +82,25 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
             }
             const distance = getDistance(shipInstance.state.position, stateOfActiveShip.position);
             if (distance > DEFAULT_WEAPON_RANGE) {
-                return 
+                return
             }
+            const damage = 1 // TO DO - use shipInstance.design.slots to roll damage for weapons and subtract defense
+            const beamSteps = Math.floor(distance / 2);
+            dispatchAnimationAction({
+                type: 'add',
+                effect: {
+                    type: "beam-fire",
+                    from: { ...stateOfActiveShip.position },
+                    to: { ...shipInstance.state.position },
+                    totalSteps: beamSteps,
+                    currentStep: 0
+                }
+            })
+            // TO DO - if the target will die, add explosion effect with currentStep at -beamSteps
 
             return dispatch({
                 type: 'resolve-fire',
-                damage: 1, // TO DO - use shipInstance.design.slots to roll damage for weapons
+                damage,
                 distance,
                 target: {
                     factionId: shipInstance.faction.id,
@@ -114,6 +130,7 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
                 backgroundColor: 'black',
             }}>
             <rect x={0} y={0} width={width} height={height} stroke="yellow" />
+            <AnimationPlotter />
             {sides.map(side =>
                 side.fleets.map(fleet =>
                     fleet.ships.map((ship, shipIndex) => {
@@ -153,7 +170,6 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
                         targetPoint={targetPoint}
                         range={DEFAULT_WEAPON_RANGE} />}
             </>}
-
         </svg>
     )
 }
