@@ -1,6 +1,6 @@
-import { ToggleableBox } from "../components/ToggleableBox"
-import { useBattleState } from "./battle-state-context"
-import type { ShipInstanceInfo } from "./model"
+import { ToggleableBox } from "../../components/ToggleableBox"
+import { useBattleState } from "../battle-state-context"
+import type { ShipInstanceInfo } from "../model"
 import { ShipInfo } from "./ShipInfo"
 
 

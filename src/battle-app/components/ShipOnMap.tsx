@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react"
 import { getDistance, getHeadingFrom, getXYVector, translate, xy } from "typed-geometry"
-import { FleetSymbol } from "../components/FleetSymbol"
-import type { ShipInstanceInfo } from "./model"
-import { useBattleState } from "./battle-state-context"
-import { getActiveShipState } from "./helpers"
-import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS, DEFAULT_WEAPON_RANGE } from "./constants"
+import { FleetSymbol } from "../../components/FleetSymbol"
+import type { ShipInstanceInfo } from "../model"
+import { useBattleState } from "../battle-state-context"
+import { getActiveShipState } from "../helpers"
+import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS, DEFAULT_WEAPON_RANGE } from "../constants"
 
 interface Props {
     shipInstance: ShipInstanceInfo,

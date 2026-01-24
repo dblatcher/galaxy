@@ -1,5 +1,5 @@
-import { FleetIcon } from "../components/FleetSymbol"
-import type { ShipInstanceInfo } from "./model"
+import { FleetIcon } from "../../components/FleetSymbol"
+import type { ShipInstanceInfo } from "../model"
 
 interface Props {
     shipInstance: ShipInstanceInfo
