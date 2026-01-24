@@ -1,10 +1,15 @@
-import { type ActionDispatch } from "react"
-import { getDistance, translate } from "typed-geometry"
-import { getActiveSide } from "./helpers"
-import type { BattleAction, BattleState, ShipIdent, ShipState } from "./model"
+import { type ActionDispatch } from "react";
+import { getDistance, translate } from "typed-geometry";
+import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS } from "./constants";
+import { getActiveSide } from "./helpers";
+import type { BattleAction, BattleState, ShipIdent, ShipState } from "./model";
 
 
 const delay = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const calculateAnimationTime = (greatestDistance: number): number => {
+    return ANIMATION_STEP_MS * (greatestDistance / ANIMATION_MOVE_PER_STEP)
+}
 
 export const startCpuPlayerAutomation = async (battleState: BattleState, dispatch: ActionDispatch<[action: BattleAction]>) => {
     const side = getActiveSide(battleState);
@@ -41,9 +46,7 @@ export const startCpuPlayerAutomation = async (battleState: BattleState, dispatc
             location: newLocation
         })
     })
-    const calculateAnimationTime = (greatestDistance: number): number => {
-        return 10 * (greatestDistance / .75)
-    }
+
     await delay(calculateAnimationTime(valuesForTiming.greatestDistance))
 
     dispatch(({ type: 'end-turn' }))

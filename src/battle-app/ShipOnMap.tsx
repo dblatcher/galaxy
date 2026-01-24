@@ -4,6 +4,7 @@ import { FleetSymbol } from "../components/FleetSymbol"
 import type { ShipInstanceInfo } from "./model"
 import { useBattleState } from "./battle-state-context"
 import { getActiveShipState } from "./helpers"
+import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS, DEFAULT_WEAPON_RANGE } from "./constants"
 
 interface Props {
     shipInstance: ShipInstanceInfo,
@@ -33,13 +34,13 @@ export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
                 if (distance < 1) {
                     return position
                 }
-                return translate(displayPosition, getXYVector(.75, heading))
+                return translate(displayPosition, getXYVector(ANIMATION_MOVE_PER_STEP, heading))
             })
         })
     }, [position])
 
     useEffect(() => {
-        const timer = setInterval(updateDisplayPosition, 10)
+        const timer = setInterval(updateDisplayPosition, ANIMATION_STEP_MS)
         return () => {
             clearInterval(timer)
         }
@@ -56,7 +57,7 @@ export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
 
     const isPotentialTarget = !isPlayerShip && targetAction === 'fire' && activeShipState?.hasFired === false;
     const isInRange = activeShip && isPotentialTarget
-        ? getDistance(activeShipState.position, shipInstance.state.position) <= 50
+        ? getDistance(activeShipState.position, shipInstance.state.position) <= DEFAULT_WEAPON_RANGE
         : false
 
     const cursor = isPlayerShip

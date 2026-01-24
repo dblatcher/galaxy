@@ -3,6 +3,7 @@ import { getDistance } from "typed-geometry"
 import type { XY } from "../lib/model"
 import { limitDistance } from "../lib/util"
 import { useBattleState } from "./battle-state-context"
+import { DEFAULT_WEAPON_RANGE } from "./constants"
 import { getActiveShipIdent, getActiveShipState, getInstance } from "./helpers"
 import type { ShipInstanceInfo } from "./model"
 import { RangeCircle } from "./RangeCircle"
@@ -18,7 +19,6 @@ interface Props {
 const mapMargin = 25
 const width = 200;
 const height = 200
-
 
 export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
     const { battleState, dispatch } = useBattleState()
@@ -127,20 +127,20 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
                 {targetPoint && !stateOfActiveShip.hasFired &&
                     <RangeCircle
                         type="fire"
-                        r={50}
+                        r={DEFAULT_WEAPON_RANGE}
                         position={limitDistance(stateOfActiveShip.remainingMovement, stateOfActiveShip.position, targetPoint)} />
                 }
             </>}
             {(battleState.targetAction === 'fire' && stateOfActiveShip && !stateOfActiveShip.hasFired) && <>
                 <RangeCircle
                     type="fire"
-                    r={50}
+                    r={DEFAULT_WEAPON_RANGE}
                     position={stateOfActiveShip.position} />
                 {targetPoint &&
                     <TargetLine
                         origin={stateOfActiveShip.position}
                         targetPoint={targetPoint}
-                        range={50} />}
+                        range={DEFAULT_WEAPON_RANGE} />}
             </>}
 
         </svg>

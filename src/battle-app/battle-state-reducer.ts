@@ -2,6 +2,7 @@ import { _DEG, getDistance, getHeadingFrom, xy } from "typed-geometry";
 import { populateBattleSides } from "../lib/battle-operations";
 import { getBattleAt } from "../lib/derived-state";
 import type { GameState } from "../lib/model";
+import { DEFAULT_WEAPON_RANGE } from "./constants";
 import { getShipFromIdent, getShipStateFromIdent } from "./helpers";
 import type { BattleAction, BattleState, ShipStatesByFaction, ShipStatesByFleet } from "./model";
 
@@ -94,7 +95,7 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             }
 
             const distance = getDistance(targetShipState.position, attackerShipState.position);
-            if (distance > 50) {
+            if (distance > DEFAULT_WEAPON_RANGE) {
                 return { ...state }
             }
 
