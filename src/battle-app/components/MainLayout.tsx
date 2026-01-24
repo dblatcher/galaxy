@@ -1,9 +1,8 @@
-import { Fragment } from "react"
-import { getActiveFaction, getActiveShipIdent, getInstance, identsMatch } from "../helpers"
+import { useBattleState } from "../battle-state-context"
+import { getActiveFaction, getActiveShipIdent, getInstancesForSide, identsMatch } from "../helpers"
 import { TargetModeControl } from "../TargetModeControl"
 import { BattleMap } from "./BattleMap"
 import { ShipControls } from "./ShipControls"
-import { useBattleState } from "../battle-state-context"
 
 
 export const MainLayout = () => {
@@ -23,21 +22,12 @@ export const MainLayout = () => {
                         {side.faction.name}
                         {side.faction.id === battleState.activeFaction && "*"}
                     </h3>
-
-                    {side.fleets.map(fleet =>
-                        <Fragment key={fleet.id}>
-                            {fleet.ships.map((ship, shipIndex) => {
-                                const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, battleState)
-                                if (!shipInstance) { return null }
-
-                                return <ShipControls key={shipIndex}
-                                    shipInstance={shipInstance}
-                                    isSelected={identsMatch(shipInstance.ident, getActiveShipIdent(battleState))}
-                                    isActiveFaction={battleState.activeFaction === shipInstance.faction.id}
-                                />
-
-                            })}
-                        </Fragment>
+                    {getInstancesForSide(side, battleState).map(shipInstance =>
+                        <ShipControls key={JSON.stringify(shipInstance.ident)}
+                            shipInstance={shipInstance}
+                            isSelected={identsMatch(shipInstance.ident, getActiveShipIdent(battleState))}
+                            isActiveFaction={battleState.activeFaction === shipInstance.faction.id}
+                        />
                     )}
                 </div>
             ))}

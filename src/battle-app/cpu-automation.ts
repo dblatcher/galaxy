@@ -2,8 +2,8 @@ import { type ActionDispatch } from "react";
 import { getDistance, translate } from "typed-geometry";
 import { dispatchBattleAction } from "./battle-state-reducer";
 import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS } from "./constants";
-import { getActiveSide } from "./helpers";
-import type { BattleAction, BattleState, ShipIdent, ShipState } from "./model";
+import { getActiveSide, getInstancesForSide } from "./helpers";
+import type { BattleAction, BattleState } from "./model";
 
 
 const delay = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -24,31 +24,18 @@ export const startCpuPlayerAutomation = async (battleState: BattleState, dispatc
     if (!side) {
         return
     }
-    const fleets = localCopyOfState.shipStates[side.faction.id];
-    const identAndStates: { ident: ShipIdent, shipState: ShipState }[] =
-        Object.entries(fleets).flatMap(([fleetId, shipArray]) => {
-            return shipArray.flatMap((shipState, shipIndex) => {
-                return {
-                    shipState,
-                    ident: {
-                        factionId: side.faction.id,
-                        fleetId: Number(fleetId),
-                        shipIndex,
-                    }
-                }
-            })
-        })
 
+    const ships = getInstancesForSide(side, localCopyOfState, true)
     const valuesForTiming = {
         greatestDistance: 0
     }
 
-    identAndStates.forEach(({ ident, shipState }) => {
+    ships.forEach(({ ident, state }) => {
         const y = Math.floor((Math.random() * 20) - 10)
-        const newLocation = translate(shipState.position, { x: -20, y });
-        const distance = getDistance(shipState.position, newLocation);
+        const newLocation = translate(state.position, { x: -20, y });
+        const distance = getDistance(state.position, newLocation);
         valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
-        dispatchAndUpdateLocal( {
+        dispatchAndUpdateLocal({
             type: 'move-ship',
             ident,
             location: newLocation

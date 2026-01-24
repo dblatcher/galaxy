@@ -5,13 +5,13 @@ import { limitDistance } from "../../lib/util"
 import { useAnimationState } from "../animation-context"
 import { useBattleState } from "../battle-state-context"
 import { DEFAULT_WEAPON_RANGE } from "../constants"
-import { getActiveShipIdent, getActiveShipInstance, getActiveShipState, getInstance } from "../helpers"
+import { handleFiring } from "../game-logic"
+import { getActiveShipIdent, getActiveShipInstance, getActiveShipState, getInstancesForSide } from "../helpers"
 import type { ShipInstanceInfo } from "../model"
 import { AnimationPlotter } from "./AnimationPlotter"
 import { RangeCircle } from "./RangeCircle"
 import { ShipOnMap } from "./ShipOnMap"
 import { TargetLine } from "./TargetLine"
-import { handleFiring } from "../game-logic"
 
 
 interface Props {
@@ -112,18 +112,12 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
             <rect x={0} y={0} width={width} height={height} stroke="yellow" />
             <AnimationPlotter />
             {sides.map(side =>
-                side.fleets.map(fleet =>
-                    fleet.ships.map((ship, shipIndex) => {
-                        const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, battleState)
-                        if (!shipInstance) {
-                            return null
-                        }
-                        return <ShipOnMap
-                            key={shipIndex}
-                            handleClickOnShip={handleClickOnShip}
-                            shipInstance={shipInstance}
-                        />
-                    })
+                getInstancesForSide(side, battleState, true).map(shipInstance =>
+                    <ShipOnMap
+                        key={JSON.stringify(shipInstance.ident)}
+                        handleClickOnShip={handleClickOnShip}
+                        shipInstance={shipInstance}
+                    />
                 )
             )}
             {(battleState.targetAction === 'move' && stateOfActiveShip) && <>

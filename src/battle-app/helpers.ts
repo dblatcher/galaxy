@@ -30,7 +30,7 @@ export const getShipStateFromIdent = (
     return getShipState(ident.factionId, ident.fleetId, ident.shipIndex, battleState)
 }
 
-export const getInstance = (
+const getInstance = (
     ship: Ship,
     faction: Faction,
     fleetId: number,
@@ -87,4 +87,25 @@ export const identsMatch = (identA?: ShipIdent, identB?: ShipIdent): boolean =>
     !!(identA && identB) &&
     identA.factionId === identB.factionId &&
     identA.fleetId === identB.fleetId &&
-    identA.shipIndex === identB.shipIndex
+    identA.shipIndex === identB.shipIndex;
+
+export const getInstancesForSide = (
+    side: {
+        faction: Faction;
+        fleets: Fleet[];
+    },
+    battleState: BattleState,
+    excludeDead?: boolean,
+): ShipInstanceInfo[] => {
+    return side.fleets.flatMap(fleet =>
+        fleet.ships.flatMap((ship, shipIndex) => {
+            const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, battleState)
+            if (!shipInstance) { return [] }
+            return excludeDead
+                ? shipInstance.ship.damage < shipInstance.design.hp
+                    ? shipInstance
+                    : []
+                : shipInstance;
+        })
+    )
+}
