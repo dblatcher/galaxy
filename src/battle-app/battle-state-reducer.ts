@@ -103,7 +103,7 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
                         .forEach(fleetShipStates =>
                             fleetShipStates
                                 .forEach(shipState => {
-                                    shipState.hasFired === false;
+                                    shipState.hasFired = false;
                                     shipState.remainingMovement = 100;
                                 })
                         )
