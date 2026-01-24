@@ -2,15 +2,16 @@ import { useState, type MouseEvent } from "react"
 import { getDistance } from "typed-geometry"
 import type { XY } from "../../lib/model"
 import { limitDistance } from "../../lib/util"
+import { useAnimationState } from "../animation-context"
 import { useBattleState } from "../battle-state-context"
 import { DEFAULT_WEAPON_RANGE } from "../constants"
-import { getActiveShipIdent, getActiveShipState, getInstance } from "../helpers"
+import { getActiveShipIdent, getActiveShipInstance, getActiveShipState, getInstance } from "../helpers"
 import type { ShipInstanceInfo } from "../model"
+import { AnimationPlotter } from "./AnimationPlotter"
 import { RangeCircle } from "./RangeCircle"
 import { ShipOnMap } from "./ShipOnMap"
 import { TargetLine } from "./TargetLine"
-import { useAnimationState } from "../animation-context"
-import { AnimationPlotter } from "./AnimationPlotter"
+import { handleFiring } from "../game-logic"
 
 
 interface Props {
@@ -23,11 +24,10 @@ const width = 200;
 const height = 200
 
 export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
+    const [targetPoint, setTargetPoint] = useState<XY>()
     const { battleState, dispatch } = useBattleState()
     const { dispatchAnimationAction } = useAnimationState()
-    const { sides, activeFaction, activeShip, targetAction } = battleState
-    const [targetPoint, setTargetPoint] = useState<XY>()
-
+    const { sides, activeFaction, targetAction } = battleState
     const stateOfActiveShip = getActiveShipState(battleState);
 
     const findPointOnMap = (event: MouseEvent<SVGElement>) => {
@@ -75,44 +75,28 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
                     fleetId: shipInstance.fleetId
                 },
             })
-        } else if (targetAction === 'fire' && activeShip && stateOfActiveShip) {
+        }
 
-            if (stateOfActiveShip.hasFired) {
+        if (targetAction === 'fire') {
+            const firingShipInstance = getActiveShipInstance(battleState)
+            if (!firingShipInstance) {
                 return
             }
-            const distance = getDistance(shipInstance.state.position, stateOfActiveShip.position);
-            if (distance > DEFAULT_WEAPON_RANGE) {
+
+            const firingOutcome = handleFiring(firingShipInstance, shipInstance);
+            if (!firingOutcome) {
                 return
             }
-            const damage = 1 // TO DO - use shipInstance.design.slots to roll damage for weapons and subtract defense
-            const beamSteps = Math.floor(distance / 2);
-            dispatchAnimationAction({
-                type: 'add',
-                effect: {
-                    type: "beam-fire",
-                    from: { ...stateOfActiveShip.position },
-                    to: { ...shipInstance.state.position },
-                    totalSteps: beamSteps,
-                    currentStep: 0
-                }
-            })
-            // TO DO - if the target will die, add explosion effect with currentStep at -beamSteps
+            const { animations, battleAction } = firingOutcome
 
-            return dispatch({
-                type: 'resolve-fire',
-                damage,
-                distance,
-                target: {
-                    factionId: shipInstance.faction.id,
-                    fleetId: shipInstance.fleetId,
-                    shipIndex: shipInstance.shipIndex,
-                },
-                attacker: {
-                    factionId: activeFaction,
-                    fleetId: activeShip.fleetId,
-                    shipIndex: activeShip.shipIndex
-                }
+            animations.forEach(animation => {
+                dispatchAnimationAction({
+                    type: 'add',
+                    effect: animation
+                })
             })
+
+            return dispatch(battleAction)
         }
     }
 
