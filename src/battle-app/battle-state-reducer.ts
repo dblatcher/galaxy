@@ -2,7 +2,6 @@ import { _DEG, getDistance, getHeadingFrom, xy } from "typed-geometry";
 import { populateBattleSides } from "../lib/battle-operations";
 import { getBattleAt } from "../lib/derived-state";
 import type { GameState } from "../lib/model";
-import { DEFAULT_WEAPON_RANGE } from "./constants";
 import { getShipFromIdent, getShipStateFromIdent } from "./helpers";
 import type { BattleAction, BattleState, ShipStatesByFaction, ShipStatesByFleet } from "./model";
 
@@ -37,21 +36,19 @@ export const getInitialState = (starId: number, gameState: GameState): BattleSta
 export const dispatchBattleAction = (prevState: BattleState, action: BattleAction): BattleState => {
     const state = structuredClone(prevState);
 
-
     switch (action.type) {
         case "apply-damage": {
             const ship = getShipFromIdent(action.ident, state)
             if (ship) {
                 ship.damage = ship.damage + action.amount
             }
-            return state
+            return { ...state }
         }
         case "select-ship": {
             const { factionId, fleetId, shipIndex } = action.ident;
             if (factionId !== state.activeFaction) {
-                return state
+                return { ...state }
             }
-
             return {
                 ...state,
                 activeShip: { fleetId, shipIndex }
@@ -65,8 +62,6 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
         }
         case "move-ship": {
             const shipStateToChange = getShipStateFromIdent(action.ident, state)
-
-
             if (shipStateToChange) {
                 const distance = Math.ceil(getDistance(shipStateToChange?.position, action.location))
                 shipStateToChange.heading = getHeadingFrom({ ...shipStateToChange.position }, action.location)
@@ -74,10 +69,7 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
                 shipStateToChange.position.y = action.location.y;
                 shipStateToChange.remainingMovement = shipStateToChange.remainingMovement - distance
             }
-
-            return {
-                ...state
-            }
+            return { ...state }
         }
         case "set-target-mode": {
             return {
@@ -96,9 +88,7 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
 
             targetShip.damage = targetShip.damage + action.damage
             attackerShipState.hasFired = true
-            return {
-                ...state
-            }
+            return { ...state }
         }
         case "end-turn": {
             const { activeFaction, sides, shipStates } = state
@@ -119,9 +109,7 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
                         )
                 )
 
-            return {
-                ...state,
-            }
+            return { ...state }
         }
     }
 }
