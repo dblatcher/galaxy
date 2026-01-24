@@ -85,21 +85,16 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
                 targetAction: action.mode
             }
         }
-        case "attempt-fire": {
-            // TO DO - calculating range and damage should be outside the reducer - no RNG in an action
+        case "resolve-fire": {
             const targetShipState = getShipStateFromIdent(action.target, state)
             const attackerShipState = getShipStateFromIdent(action.attacker, state)
             const targetShip = getShipFromIdent(action.target, state)
-            if (attackerShipState?.hasFired || !targetShipState || !attackerShipState || !targetShip) {
+            if (!targetShipState || !attackerShipState || !targetShip) {
+                console.error('invalid idents', action)
                 return { ...state }
             }
 
-            const distance = getDistance(targetShipState.position, attackerShipState.position);
-            if (distance > DEFAULT_WEAPON_RANGE) {
-                return { ...state }
-            }
-
-            targetShip.damage = targetShip.damage + 1
+            targetShip.damage = targetShip.damage + action.damage
             attackerShipState.hasFired = true
             return {
                 ...state

@@ -72,9 +72,20 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
                     fleetId: shipInstance.fleetId
                 },
             })
-        } else if (targetAction === 'fire' && activeShip) {
+        } else if (targetAction === 'fire' && activeShip && stateOfActiveShip) {
+
+            if (stateOfActiveShip.hasFired) {
+                return
+            }
+            const distance = getDistance(shipInstance.state.position, stateOfActiveShip.position);
+            if (distance > DEFAULT_WEAPON_RANGE) {
+                return 
+            }
+
             return dispatch({
-                type: 'attempt-fire',
+                type: 'resolve-fire',
+                damage: 1, // TO DO - use shipInstance.design.slots to roll damage for weapons
+                distance,
                 target: {
                     factionId: shipInstance.faction.id,
                     fleetId: shipInstance.fleetId,

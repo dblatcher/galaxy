@@ -40,9 +40,11 @@ export type BattleAction =
         location: XY,
         ident: ShipIdent
     } | {
-        type: 'attempt-fire',
+        type: 'resolve-fire',
         target: ShipIdent,
         attacker: ShipIdent,
+        damage: number,
+        distance: number,
     } | {
         type: 'end-turn'
     };
