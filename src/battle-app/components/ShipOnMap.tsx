@@ -17,10 +17,10 @@ export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
     const activeShipState = getActiveShipState(battleState);
     const isPlayerShip = shipInstance.faction.id === battleState.activeFaction;
     const isActiveShip = activeFaction === shipInstance.faction.id &&
-        activeShip?.fleetId == shipInstance.fleetId &&
-        activeShip.shipIndex === shipInstance.shipIndex
+        activeShip?.fleetId == shipInstance.ident.fleetId &&
+        activeShip.shipIndex === shipInstance.ident.shipIndex
 
-    const { ship, faction, fleetId, design, shipIndex } = shipInstance
+    const { ship, faction, ident, design } = shipInstance
     const { position, heading } = shipInstance.state
     const { name, hp } = design
     const [displayPosition, setDisplayPosition] = useState(position)
@@ -69,7 +69,7 @@ export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
             : 'default'
 
     return <g
-        key={`${faction.id}-${fleetId}-${shipIndex}`}
+        key={`${ident.factionId}-${ident.fleetId}-${ident.shipIndex}`}
         data-side={faction.name}
         data-ship-type={name}>
         <FleetSymbol

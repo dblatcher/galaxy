@@ -35,14 +35,10 @@ export const handleFiring = (
         damage,
         distance,
         target: {
-            factionId: targetShipInstance.faction.id,
-            fleetId: targetShipInstance.fleetId,
-            shipIndex: targetShipInstance.shipIndex,
+            ...targetShipInstance.ident
         },
         attacker: {
-            factionId: firingShipInstance.faction.id,
-            fleetId: firingShipInstance.fleetId,
-            shipIndex: firingShipInstance.shipIndex
+            ...firingShipInstance.ident
         }
     }
 

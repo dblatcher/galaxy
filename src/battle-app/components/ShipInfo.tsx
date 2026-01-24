@@ -17,7 +17,13 @@ export const ShipInfo = ({ shipInstance }: Props) => {
             <span>{hp - ship.damage}/{hp}</span>
         </div>
         <div>
-            moves: {state.remainingMovement.toFixed(0)}
+            <span>
+                moves: {state.remainingMovement.toFixed(0)}
+            </span>
+            {', '}
+            <span>
+                fired: {state.hasFired ? 'Y' : 'N'}
+            </span>
         </div>
     </div>
 }

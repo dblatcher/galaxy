@@ -48,8 +48,11 @@ export const getInstance = (
         design: enhanceShipDesign(design),
         state,
         faction,
-        fleetId,
-        shipIndex,
+        ident: {
+            factionId: faction.id,
+            fleetId,
+            shipIndex,
+        }
     }
 }
 
@@ -79,3 +82,9 @@ export const getActiveShipInstance = (battleState: BattleState): ShipInstanceInf
     if (!ship || !faction) { return undefined }
     return getInstance(ship, faction, ident.fleetId, ident.shipIndex, battleState)
 }
+
+export const identsMatch = (identA?: ShipIdent, identB?: ShipIdent): boolean =>
+    !!(identA && identB) &&
+    identA.factionId === identB.factionId &&
+    identA.fleetId === identB.fleetId &&
+    identA.shipIndex === identB.shipIndex

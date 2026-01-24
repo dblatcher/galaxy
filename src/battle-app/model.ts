@@ -54,6 +54,5 @@ export type ShipInstanceInfo = {
     state: ShipState;
     design: EnhancedShipDesign;
     faction: Faction;
-    fleetId: number;
-    shipIndex: number;
+    ident: ShipIdent
 }

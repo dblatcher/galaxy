@@ -69,11 +69,7 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
         if (shipInstance.faction.id === activeFaction) {
             return dispatch({
                 type: 'select-ship',
-                ident: {
-                    shipIndex: shipInstance.shipIndex,
-                    factionId: shipInstance.faction.id,
-                    fleetId: shipInstance.fleetId
-                },
+                ident: shipInstance.ident,
             })
         }
 

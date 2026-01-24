@@ -14,20 +14,16 @@ export const ShipControls = ({
     isSelected: boolean,
 }) => {
     const { dispatch } = useBattleState()
-    const { faction, fleetId, shipIndex } = shipInstance
+    const { ident } = shipInstance
 
-    return <ToggleableBox key={shipIndex}
+    return <ToggleableBox key={ident.shipIndex}
         disabled={!isActiveFaction}
         checked={isSelected}
         setChecked={(checked) => {
             dispatch(checked
                 ? {
                     type: 'select-ship',
-                    ident: {
-                        factionId: faction.id,
-                        fleetId,
-                        shipIndex
-                    }
+                    ident
                 }
                 : { type: 'clear-selected-ship' }
             )

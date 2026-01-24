@@ -1,5 +1,5 @@
 import { Fragment } from "react"
-import { getActiveFaction, getInstance } from "../helpers"
+import { getActiveFaction, getActiveShipIdent, getInstance, identsMatch } from "../helpers"
 import { TargetModeControl } from "../TargetModeControl"
 import { BattleMap } from "./BattleMap"
 import { ShipControls } from "./ShipControls"
@@ -32,7 +32,7 @@ export const MainLayout = () => {
 
                                 return <ShipControls key={shipIndex}
                                     shipInstance={shipInstance}
-                                    isSelected={battleState.activeShip?.fleetId === shipInstance.fleetId && battleState.activeShip?.shipIndex === shipInstance.shipIndex}
+                                    isSelected={identsMatch(shipInstance.ident, getActiveShipIdent(battleState))}
                                     isActiveFaction={battleState.activeFaction === shipInstance.faction.id}
                                 />
 
