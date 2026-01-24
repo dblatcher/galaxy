@@ -1,5 +1,6 @@
 import { type ActionDispatch } from "react";
 import { getDistance, translate } from "typed-geometry";
+import { dispatchBattleAction } from "./battle-state-reducer";
 import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS } from "./constants";
 import { getActiveSide } from "./helpers";
 import type { BattleAction, BattleState, ShipIdent, ShipState } from "./model";
@@ -12,11 +13,18 @@ const calculateAnimationTime = (greatestDistance: number): number => {
 }
 
 export const startCpuPlayerAutomation = async (battleState: BattleState, dispatch: ActionDispatch<[action: BattleAction]>) => {
-    const side = getActiveSide(battleState);
+
+    let localCopyOfState = structuredClone(battleState);
+    const dispatchAndUpdateLocal = (action: BattleAction) => {
+        dispatch(action)
+        localCopyOfState = dispatchBattleAction(localCopyOfState, action)
+    }
+
+    const side = getActiveSide(localCopyOfState);
     if (!side) {
         return
     }
-    const fleets = battleState.shipStates[side.faction.id];
+    const fleets = localCopyOfState.shipStates[side.faction.id];
     const identAndStates: { ident: ShipIdent, shipState: ShipState }[] =
         Object.entries(fleets).flatMap(([fleetId, shipArray]) => {
             return shipArray.flatMap((shipState, shipIndex) => {
@@ -40,7 +48,7 @@ export const startCpuPlayerAutomation = async (battleState: BattleState, dispatc
         const newLocation = translate(shipState.position, { x: -20, y });
         const distance = getDistance(shipState.position, newLocation);
         valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
-        dispatch({
+        dispatchAndUpdateLocal( {
             type: 'move-ship',
             ident,
             location: newLocation
@@ -48,6 +56,7 @@ export const startCpuPlayerAutomation = async (battleState: BattleState, dispatc
     })
 
     await delay(calculateAnimationTime(valuesForTiming.greatestDistance))
+
 
     dispatch(({ type: 'end-turn' }))
 }
