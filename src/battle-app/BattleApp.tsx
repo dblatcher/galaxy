@@ -8,7 +8,7 @@ import { dispatchBattleAction, getInitialState } from "./battle-state-reducer"
 import { MainLayout } from "./components/MainLayout"
 import { ANIMATION_STEP_MS } from "./constants"
 import { startCpuPlayerAutomation } from "./cpu-automation"
-import { getActiveFaction } from "./helpers"
+import { getActiveFaction, getInstancesForSide } from "./helpers"
 
 interface Props {
     params: BattleParameters
@@ -26,21 +26,14 @@ export const BattleApp = ({ params }: Props) => {
     )
 
     useEffect(() => {
-        const progressAnimations =() => {
-            dispatchAnimationAction({type: 'tick'})
+        const progressAnimations = () => {
+            dispatchAnimationAction({ type: 'tick' })
         }
         const timer = setInterval(progressAnimations, ANIMATION_STEP_MS)
         return () => {
             clearInterval(timer)
         }
     }, [])
-
-    useEffect(() => {
-        const faction = getActiveFaction(battleState);
-        if (faction?.playerType === 'CPU') {
-            startCpuPlayerAutomation(battleState, dispatch, dispatchAnimationAction)
-        }
-    }, [battleState.activeFaction])
 
     const conclude = () => {
         gameStateDispatch({
@@ -52,6 +45,24 @@ export const BattleApp = ({ params }: Props) => {
             }
         })
     }
+
+    useEffect(() => {
+
+        const sidesWithShipsLeft = battleState.sides.filter(side =>
+            getInstancesForSide(side, battleState, true).length > 0
+        )
+
+        if (sidesWithShipsLeft.length <= 1) {
+            return conclude()
+        }
+
+        const faction = getActiveFaction(battleState);
+        if (faction?.playerType === 'CPU') {
+            startCpuPlayerAutomation(battleState, dispatch, dispatchAnimationAction)
+        }
+    }, [battleState.activeFaction])
+
+
 
     return (
         <BattleStateContext.Provider value={{ battleState, dispatch }}>

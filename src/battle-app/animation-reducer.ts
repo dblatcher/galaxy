@@ -32,6 +32,9 @@ export const animationDispatcher = (prevState: AnimationState, action: Animation
 
     switch (action.type) {
         case "tick":
+            if (state.animations.length===0) {
+                return state
+            }
             state.animations.forEach(animation => {
                 animation.currentStep += 1
             })
