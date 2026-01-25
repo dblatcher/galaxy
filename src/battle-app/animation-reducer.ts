@@ -16,7 +16,7 @@ export type AnimationState = {
 export type AnimationAction =
     { type: 'tick' } |
     { type: 'clear' } |
-    { type: 'add', effect: BattleAnimation }
+    { type: 'add', effects: BattleAnimation[] }
 
 export const getInitialAnimationState = (): AnimationState => (
     { animations: [] }
@@ -35,7 +35,7 @@ export const animationDispatcher = (prevState: AnimationState, action: Animation
         case "clear":
             return getInitialAnimationState()
         case "add":
-            state.animations.push(action.effect)
+            state.animations.push(...action.effects)
             return { ...state }
     }
 }

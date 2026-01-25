@@ -61,7 +61,7 @@ export const getShipFromIdent = (ident: ShipIdent, battleState: BattleState): Sh
         ?.fleets.find(fleet => fleet.id === ident.fleetId)
         ?.ships[ident.shipIndex];
 
-export const getActiveSide = (battleState: BattleState): {
+const getActiveSide = (battleState: BattleState): {
     faction: Faction;
     fleets: Fleet[];
 } | undefined =>
@@ -108,4 +108,14 @@ export const getInstancesForSide = (
                 : shipInstance;
         })
     )
+}
+
+export const getAllActiveSideShips = (battleState: BattleState): ShipInstanceInfo[] => {
+    const side = getActiveSide(battleState);
+    return side ? getInstancesForSide(side, battleState, true) : []
+}
+
+export const getAllOtherSideShips = (battleState: BattleState): ShipInstanceInfo[] => {
+    const otherSides = battleState.sides.filter(side => side.faction.id !== battleState.activeFaction);
+    return otherSides.flatMap(side=> getInstancesForSide(side, battleState, true))
 }

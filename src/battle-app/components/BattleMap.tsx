@@ -84,12 +84,9 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
                 return
             }
             const { animations, battleAction } = firingOutcome
-
-            animations.forEach(animation => {
-                dispatchAnimationAction({
-                    type: 'add',
-                    effect: animation
-                })
+            dispatchAnimationAction({
+                type: 'add',
+                effects: animations
             })
 
             return dispatch(battleAction)

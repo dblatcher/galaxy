@@ -38,7 +38,7 @@ export const BattleApp = ({ params }: Props) => {
     useEffect(() => {
         const faction = getActiveFaction(battleState);
         if (faction?.playerType === 'CPU') {
-            startCpuPlayerAutomation(battleState, dispatch)
+            startCpuPlayerAutomation(battleState, dispatch, dispatchAnimationAction)
         }
     }, [battleState.activeFaction])
 
