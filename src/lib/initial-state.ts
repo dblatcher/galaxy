@@ -148,7 +148,7 @@ const initialFleets: Fleet[] = [
         },
         factionId: FACTION_ID.Magrathian,
         ships: [
-            { designId: 0, damage: 0 },
+            { designId: 0, damage: 2 },
             { designId: 0, damage: 0 },
             { designId: 0, damage: 0 },
         ],

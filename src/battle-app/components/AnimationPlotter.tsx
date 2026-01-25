@@ -23,7 +23,14 @@ const AnimationPlot = ({ animation }: { animation: BattleAnimation }) => {
                 />
             </g>
         }
-
+        // PROBLEM - the ship icon disapears from the map when the
+        // ship marked as dead in the battleState.
+        case "ship-explode": {
+            const { at, currentStep, totalSteps } = animation
+            return <g pointerEvents={'none'}>
+                <circle cx={at.x} cy={at.y} stroke="lime" r={10 * (currentStep/ totalSteps)} />
+            </g>
+        }
         default:
             return null
     }

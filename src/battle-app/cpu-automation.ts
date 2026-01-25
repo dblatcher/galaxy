@@ -5,7 +5,7 @@ import type { AnimationAction, BattleAnimation } from "./animation-reducer";
 import { dispatchBattleAction } from "./battle-state-reducer";
 import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS } from "./constants";
 import { handleFiring, handleMove } from "./game-logic";
-import { getAllActiveSideShips, getAllOtherSideShips } from "./helpers";
+import { getAllActiveSideShips, getAllOtherSideShips, identsMatch } from "./helpers";
 import type { BattleAction, BattleState } from "./model";
 
 
@@ -92,6 +92,25 @@ export const startCpuPlayerAutomation = async (
 
     await doActions(moveAllAtRandom(-20))
     await doActions(allFireOnTargets)
+
+    // allFireOnTargets can fail to add explosions when a ship ist destroyed
+    // with multiple simulataneou attacks 
+    const shipsThatDied = getAllOtherSideShips(battleState)
+        .filter(initialShip =>
+            !getAllOtherSideShips(localCopyOfState)
+                .some(finalShip =>
+                    identsMatch(initialShip.ident, finalShip.ident)));
+    dispatchAnimation({
+        type: 'add', effects: shipsThatDied.map((ship): BattleAnimation => {
+            return {
+                type: 'ship-explode',
+                at: ship.state.position,
+                currentStep: 0,
+                totalSteps: 50,
+            }
+        })
+    });
+
 
     dispatchAction(({ type: 'end-turn' }))
 }

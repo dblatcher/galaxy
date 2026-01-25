@@ -34,11 +34,16 @@ export const handleFiring = (
 
     const spaceVehicleWillBeDestroyed = targetShipInstance.ship.damage + damage >= targetShipInstance.design.hp;
     if (spaceVehicleWillBeDestroyed) {
-        console.log('boom')
-// PROBLEM - if many ships fire at once, do not know cumulative damage
+        animations.push({
+            type: 'ship-explode',
+            at: { ...targetShipInstance.state.position },
+            currentStep: -beamSteps,
+            totalSteps: 50
+        })
+        // PROBLEM - if many ships fire at once, do not know cumulative damage
+        // have added a work-around in cpu-automation
     }
 
-    // TO DO - if the target will die, add explosion effect with currentStep at -beamSteps
 
 
     battleActions.push({

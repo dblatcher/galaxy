@@ -7,6 +7,11 @@ export type BattleAnimation = {
     to: XY,
     totalSteps: number,
     currentStep: number
+} | {
+    type: 'ship-explode',
+    at: XY,
+    totalSteps: number,
+    currentStep: number
 }
 
 export type AnimationState = {
