@@ -1,7 +1,7 @@
-import { getDistance } from "typed-geometry";
+import { getDistance, type XY } from "typed-geometry";
 import type { BattleAnimation } from "./animation-reducer";
 import { DEFAULT_WEAPON_RANGE } from "./constants";
-import type { ShipInstanceInfo, BattleAction } from "./model";
+import type { ShipInstanceInfo, BattleAction, BattleState } from "./model";
 
 export const handleFiring = (
     firingShipInstance: ShipInstanceInfo,
@@ -44,3 +44,32 @@ export const handleFiring = (
 
     return { battleAction, animations: [beamAnimation] }
 }
+
+export const handleMove = (
+    movingShipInstance: ShipInstanceInfo,
+    destination: XY,
+    _battleState: BattleState,
+): {
+    animations: BattleAnimation[],
+    battleAction: BattleAction,
+} | undefined => {
+
+    // TO DO - prevent moving into other ships (OR ALLOW RAMMING!)
+    // TO DO - no moving out of bounds
+
+    const distance = getDistance(destination, movingShipInstance.state.position)
+
+    if (distance > movingShipInstance.state.remainingMovement) {
+        return undefined
+    }
+
+    return {
+        animations: [],
+        battleAction: {
+            type: 'move-ship',
+            location: destination,
+            ident: movingShipInstance.ident,
+        }
+    }
+}
+

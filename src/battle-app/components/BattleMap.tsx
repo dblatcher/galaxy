@@ -1,12 +1,11 @@
-import { useState, type MouseEvent } from "react"
-import { getDistance } from "typed-geometry"
+import { useCallback, useState, type MouseEvent } from "react"
 import type { XY } from "../../lib/model"
 import { limitDistance } from "../../lib/util"
 import { useAnimationState } from "../animation-context"
 import { useBattleState } from "../battle-state-context"
 import { DEFAULT_WEAPON_RANGE } from "../constants"
-import { handleFiring } from "../game-logic"
-import { getActiveShipIdent, getActiveShipInstance, getActiveShipState, getInstancesForSide } from "../helpers"
+import { handleFiring, handleMove } from "../game-logic"
+import { getActiveShipInstance, getActiveShipState, getInstancesForSide } from "../helpers"
 import type { ShipInstanceInfo } from "../model"
 import { AnimationPlotter } from "./AnimationPlotter"
 import { RangeCircle } from "./RangeCircle"
@@ -30,7 +29,7 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
     const { sides, activeFaction, targetAction } = battleState
     const stateOfActiveShip = getActiveShipState(battleState);
 
-    const findPointOnMap = (event: MouseEvent<SVGElement>) => {
+    const findPointOnMap = useCallback((event: MouseEvent<SVGElement>) => {
         const rect = event.currentTarget.getBoundingClientRect()
         const raw = { x: event.clientX - rect.x, y: event.clientY - rect.y }
         const adjust = (v: number) => Math.round((v / scale) - mapMargin)
@@ -38,28 +37,25 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
             x: adjust(raw.x),
             y: adjust(raw.y)
         }
-    }
+    }, [scale]);
+
     const handleClickOnMap = (event: MouseEvent<SVGElement>) => {
-        if (isNotLocalPlayerTurn) {
+        if (!stateOfActiveShip || isNotLocalPlayerTurn || targetAction !== 'move') {
             return
         }
-        const pointOnMap = findPointOnMap(event)
-        const ident = getActiveShipIdent(battleState)
-        if (!stateOfActiveShip || !ident) {
-            return
-        }
-        const distance = getDistance(pointOnMap, stateOfActiveShip?.position)
-        if (distance <= stateOfActiveShip.remainingMovement) {
-            dispatch({
-                type: 'move-ship',
-                location: pointOnMap,
-                ident,
-            })
-        }
+        const instance = getActiveShipInstance(battleState)
+        if (!instance) { return }
+        const moveOutcome = handleMove(instance, findPointOnMap(event), battleState);
+        if (!moveOutcome) { return }
+        dispatchAnimationAction({
+            type: 'add',
+            effects: moveOutcome.animations
+        })
+        dispatch(moveOutcome.battleAction)
     }
+
     const handleMoveOnMap = (event: MouseEvent<SVGElement>) => {
-        const pointOnMap = findPointOnMap(event)
-        setTargetPoint(pointOnMap)
+        setTargetPoint(findPointOnMap(event))
     }
 
     const handleClickOnShip = (shipInstance: ShipInstanceInfo) => {

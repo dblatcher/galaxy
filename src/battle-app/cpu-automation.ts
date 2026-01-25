@@ -4,7 +4,7 @@ import { limitDistance } from "../lib/util";
 import type { AnimationAction, BattleAnimation } from "./animation-reducer";
 import { dispatchBattleAction } from "./battle-state-reducer";
 import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS } from "./constants";
-import { handleFiring } from "./game-logic";
+import { handleFiring, handleMove } from "./game-logic";
 import { getAllActiveSideShips, getAllOtherSideShips } from "./helpers";
 import type { BattleAction, BattleState } from "./model";
 
@@ -29,17 +29,17 @@ const moveAllAtRandom = (xd: number): ActionGenerator => (battleState) => {
     const ships = getAllActiveSideShips(battleState);
     const valuesForTiming = { greatestDistance: 0 }
 
-    ships.forEach(({ ident, state }) => {
-        const y = Math.floor((Math.random() * 30) - 20)
-        const newDestination = translate(state.position, { x: xd, y });
+    ships.forEach((ship) => {
+        const { state } = ship
+        const newDestination = translate(state.position, { x: xd, y: Math.floor((Math.random() * 30) - 20) });
         const newLocation = limitDistance(state.remainingMovement, state.position, newDestination);
         const distance = getDistance(state.position, newLocation);
-        valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
-        battleActions.push({
-            type: 'move-ship',
-            ident,
-            location: newLocation
-        })
+
+        const outcome = handleMove(ship, newLocation, battleState);
+        if (outcome) {
+            battleActions.push(outcome.battleAction)
+            valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
+        }
     })
 
     return {
