@@ -46,12 +46,11 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
         const instance = getActiveShipInstance(battleState)
         if (!instance) { return }
         const moveOutcome = handleMove(instance, findPointOnMap(event), battleState);
-        if (!moveOutcome) { return }
         dispatchAnimationAction({
             type: 'add',
             effects: moveOutcome.animations
         })
-        dispatch(moveOutcome.battleAction)
+        moveOutcome.battleActions.forEach(dispatch)
     }
 
     const handleMoveOnMap = (event: MouseEvent<SVGElement>) => {
@@ -76,16 +75,13 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
             }
 
             const firingOutcome = handleFiring(firingShipInstance, shipInstance);
-            if (!firingOutcome) {
-                return
-            }
-            const { animations, battleAction } = firingOutcome
+            const { animations, battleActions } = firingOutcome
             dispatchAnimationAction({
                 type: 'add',
                 effects: animations
             })
 
-            return dispatch(battleAction)
+            battleActions.forEach(dispatch)
         }
     }
 

@@ -36,10 +36,8 @@ const moveAllAtRandom = (xd: number): ActionGenerator => (battleState) => {
         const distance = getDistance(state.position, newLocation);
 
         const outcome = handleMove(ship, newLocation, battleState);
-        if (outcome) {
-            battleActions.push(outcome.battleAction)
-            valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
-        }
+        battleActions.push(...outcome.battleActions)
+        valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
     })
 
     return {
@@ -59,9 +57,8 @@ const allFireOnTargets: ActionGenerator = (battleState) => {
     ships.forEach((ship) => {
         const targetShip = targets[0]; // TO DO - select from ships in range
         const outcome = handleFiring(ship, targetShip)
-        if (!outcome) { return }
         animations.push(...outcome.animations);
-        battleActions.push(outcome.battleAction)
+        battleActions.push(...outcome.battleActions)
     })
 
     return {

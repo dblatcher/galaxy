@@ -1,36 +1,47 @@
 import { getDistance, type XY } from "typed-geometry";
 import type { BattleAnimation } from "./animation-reducer";
 import { DEFAULT_WEAPON_RANGE } from "./constants";
-import type { ShipInstanceInfo, BattleAction, BattleState } from "./model";
+import { isAlive } from "./helpers";
+import type { BattleAction, BattleState, ShipInstanceInfo } from "./model";
 
 export const handleFiring = (
     firingShipInstance: ShipInstanceInfo,
     targetShipInstance: ShipInstanceInfo
 ): {
     animations: BattleAnimation[],
-    battleAction: BattleAction,
-} | undefined => {
+    battleActions: BattleAction[],
+} => {
+    const animations: BattleAnimation[] = []
+    const battleActions: BattleAction[] = []
 
-    if (firingShipInstance.state.hasFired) {
-        return undefined
+    if (firingShipInstance.state.hasFired || !isAlive(firingShipInstance) || !isAlive(targetShipInstance)) {
+        return { animations, battleActions }
     }
 
     const distance = getDistance(targetShipInstance.state.position, firingShipInstance.state.position);
     if (distance > DEFAULT_WEAPON_RANGE) {
-        return undefined
+        return { animations, battleActions }
     }
     const damage = 1 // TO DO - use shipInstance.design.slots to roll damage for weapons and subtract defense
     const beamSteps = Math.floor(distance / 2);
-    const beamAnimation: BattleAnimation = {
+    animations.push({
         type: "beam-fire",
         from: { ...firingShipInstance.state.position },
         to: { ...targetShipInstance.state.position },
         totalSteps: beamSteps,
         currentStep: 0
+    })
+
+    const spaceVehicleWillBeDestroyed = targetShipInstance.ship.damage + damage >= targetShipInstance.design.hp;
+    if (spaceVehicleWillBeDestroyed) {
+        console.log('boom')
+// PROBLEM - if many ships fire at once, do not know cumulative damage
     }
+
     // TO DO - if the target will die, add explosion effect with currentStep at -beamSteps
 
-    const battleAction: BattleAction = {
+
+    battleActions.push({
         type: 'resolve-fire',
         damage,
         distance,
@@ -40,36 +51,42 @@ export const handleFiring = (
         attacker: {
             ...firingShipInstance.ident
         }
-    }
+    })
 
-    return { battleAction, animations: [beamAnimation] }
+    return { battleActions, animations }
 }
 
 export const handleMove = (
     movingShipInstance: ShipInstanceInfo,
-    destination: XY,
+    location: XY,
     _battleState: BattleState,
 ): {
     animations: BattleAnimation[],
-    battleAction: BattleAction,
-} | undefined => {
+    battleActions: BattleAction[],
+} => {
 
+    if (!isAlive(movingShipInstance)) {
+        return {
+            animations: [],
+            battleActions: [],
+        }
+    }
     // TO DO - prevent moving into other ships (OR ALLOW RAMMING!)
     // TO DO - no moving out of bounds
 
-    const distance = getDistance(destination, movingShipInstance.state.position)
-
+    const distance = getDistance(location, movingShipInstance.state.position)
     if (distance > movingShipInstance.state.remainingMovement) {
-        return undefined
+        return {
+            animations: [],
+            battleActions: [],
+        }
     }
 
     return {
         animations: [],
-        battleAction: {
-            type: 'move-ship',
-            location: destination,
-            ident: movingShipInstance.ident,
-        }
+        battleActions: [
+            { type: 'move-ship', location, ident: movingShipInstance.ident, }
+        ]
     }
 }
 

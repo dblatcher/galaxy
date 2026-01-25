@@ -109,6 +109,8 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
                         )
                 )
 
+            // annoying? only need to clear if the active ship is now dead
+            state.activeShip = undefined;
             return { ...state }
         }
     }

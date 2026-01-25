@@ -78,7 +78,7 @@ export const getActiveShipState = (battleState: BattleState): ShipState | undefi
 export const getActiveShipInstance = (battleState: BattleState): ShipInstanceInfo | undefined => {
     const ident = getActiveShipIdent(battleState);
     const ship = ident && getShipFromIdent(ident, battleState)
-    const faction = battleState.sides.find(side=>side.faction.id===battleState.activeFaction)?.faction
+    const faction = battleState.sides.find(side => side.faction.id === battleState.activeFaction)?.faction
     if (!ship || !faction) { return undefined }
     return getInstance(ship, faction, ident.fleetId, ident.shipIndex, battleState)
 }
@@ -88,6 +88,8 @@ export const identsMatch = (identA?: ShipIdent, identB?: ShipIdent): boolean =>
     identA.factionId === identB.factionId &&
     identA.fleetId === identB.fleetId &&
     identA.shipIndex === identB.shipIndex;
+
+export const isAlive = (shipInstance: ShipInstanceInfo): boolean => shipInstance.ship.damage < shipInstance.design.hp;
 
 export const getInstancesForSide = (
     side: {
@@ -101,11 +103,9 @@ export const getInstancesForSide = (
         fleet.ships.flatMap((ship, shipIndex) => {
             const shipInstance = getInstance(ship, side.faction, fleet.id, shipIndex, battleState)
             if (!shipInstance) { return [] }
-            return excludeDead
-                ? shipInstance.ship.damage < shipInstance.design.hp
-                    ? shipInstance
-                    : []
-                : shipInstance;
+            return (!excludeDead || isAlive(shipInstance))
+                ? shipInstance
+                : []
         })
     )
 }
@@ -117,5 +117,5 @@ export const getAllActiveSideShips = (battleState: BattleState): ShipInstanceInf
 
 export const getAllOtherSideShips = (battleState: BattleState): ShipInstanceInfo[] => {
     const otherSides = battleState.sides.filter(side => side.faction.id !== battleState.activeFaction);
-    return otherSides.flatMap(side=> getInstancesForSide(side, battleState, true))
+    return otherSides.flatMap(side => getInstancesForSide(side, battleState, true))
 }

@@ -1,5 +1,6 @@
 import { ToggleableBox } from "../../components/ToggleableBox"
 import { useBattleState } from "../battle-state-context"
+import { isAlive } from "../helpers"
 import type { ShipInstanceInfo } from "../model"
 import { ShipInfo } from "./ShipInfo"
 
@@ -17,7 +18,7 @@ export const ShipControls = ({
     const { ident } = shipInstance
 
     return <ToggleableBox key={ident.shipIndex}
-        disabled={!isActiveFaction}
+        disabled={!isActiveFaction || !isAlive(shipInstance)}
         checked={isSelected}
         setChecked={(checked) => {
             dispatch(checked
