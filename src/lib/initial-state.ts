@@ -48,8 +48,8 @@ const nextIdFor = (list: string): number => {
 }
 
 const FACTION_ID = {
-    Zorblaxian: 0,
-    Magrathian: 1,
+    Zorblaxian: 7,
+    Magrathian: 0,
     Martian: 2,
     Uraninian: 3,
 } as const
@@ -134,7 +134,7 @@ const initialFleets: Fleet[] = [
         },
         factionId: FACTION_ID.Zorblaxian,
         ships: [
-            { designId: 2, damage: 0 },
+            { designId: 0, damage: 0 },
             { designId: 2, damage: 1 },
         ],
     },

@@ -78,7 +78,7 @@ export const getActiveShipState = (battleState: BattleState): ShipState | undefi
 export const getActiveShipInstance = (battleState: BattleState): ShipInstanceInfo | undefined => {
     const ident = getActiveShipIdent(battleState);
     const ship = ident && getShipFromIdent(ident, battleState)
-    const faction = battleState.sides[battleState.activeFaction]?.faction
+    const faction = battleState.sides.find(side=>side.faction.id===battleState.activeFaction)?.faction
     if (!ship || !faction) { return undefined }
     return getInstance(ship, faction, ident.fleetId, ident.shipIndex, battleState)
 }
