@@ -66,6 +66,8 @@ export const gameStateReducer = (state: GameState, action: Action): GameState =>
             }
             case 'fleets:transfer-ships':
             case 'fleets:transfer-to-new-fleet':
+            case 'faction:clear-breakthrough-announcement':
+            case 'faction:pick-tech-goal':
             case 'battles:auto-resolve':
             case 'battles:launch':
             case 'battles:result':
