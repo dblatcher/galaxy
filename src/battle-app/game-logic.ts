@@ -32,6 +32,14 @@ export const handleFiring = (
         currentStep: 0
     })
 
+    animations.push({
+        type: 'show-damage',
+        at: { ...targetShipInstance.state.position },
+        value: damage,
+        totalSteps: 100,
+        currentStep: 0
+    })
+
     const spaceVehicleWillBeDestroyed = targetShipInstance.ship.damage + damage >= targetShipInstance.design.hp;
     if (spaceVehicleWillBeDestroyed) {
         animations.push({

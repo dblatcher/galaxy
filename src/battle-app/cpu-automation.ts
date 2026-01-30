@@ -1,5 +1,5 @@
 import { type ActionDispatch } from "react";
-import { getDistance, translate } from "typed-geometry";
+import { getDistance, translate, type XY } from "typed-geometry";
 import { limitDistance } from "../lib/util";
 import type { AnimationAction, BattleAnimation } from "./animation-reducer";
 import { dispatchBattleAction } from "./battle-state-reducer";
@@ -83,6 +83,15 @@ export const startCpuPlayerAutomation = async (
     const doActions = async (generate: ActionGenerator) => {
         const { battleActions, animationTime, animations } = generate(localCopyOfState)
         battleActions.forEach(dispatchAndUpdateLocal)
+
+        const placesWithDamage = new Map<string, number>()
+        const stingifyXy = ({ x, y }: XY) => `${x},${y}`
+        animations.filter(a => a.type === 'show-damage').forEach((a) => {
+            const damageEffectsCountAtPlaceSoFar = placesWithDamage.get(stingifyXy(a.at)) ?? 0
+            a.currentStep -= damageEffectsCountAtPlaceSoFar * 40
+            placesWithDamage.set(stingifyXy(a.at), (damageEffectsCountAtPlaceSoFar + 1))
+        })
+
         dispatchAnimation({
             type: 'add',
             effects: animations

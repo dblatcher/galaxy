@@ -12,6 +12,12 @@ export type BattleAnimation = {
     at: XY,
     totalSteps: number,
     currentStep: number
+} | {
+    type: 'show-damage',
+    at: XY,
+    totalSteps: number,
+    currentStep: number,
+    value: number,
 }
 
 export type AnimationState = {
@@ -32,7 +38,7 @@ export const animationDispatcher = (prevState: AnimationState, action: Animation
 
     switch (action.type) {
         case "tick":
-            if (state.animations.length===0) {
+            if (state.animations.length === 0) {
                 return state
             }
             state.animations.forEach(animation => {

@@ -28,7 +28,15 @@ const AnimationPlot = ({ animation }: { animation: BattleAnimation }) => {
         case "ship-explode": {
             const { at, currentStep, totalSteps } = animation
             return <g pointerEvents={'none'}>
-                <circle cx={at.x} cy={at.y} stroke="lime" r={10 * (currentStep/ totalSteps)} />
+                <circle cx={at.x} cy={at.y} stroke="lime" r={10 * (currentStep / totalSteps)} />
+            </g>
+        }
+        case "show-damage": {
+            const { at, currentStep, totalSteps, value } = animation
+            const shift = Math.floor(25 * (currentStep / totalSteps));
+            const opacity = (Math.min(1, 1.4 - (currentStep / totalSteps))).toFixed(2);
+            return <g pointerEvents={'none'}>
+                <text style={{opacity}} fontSize={8} x={at.x} y={at.y - shift} stroke="lime" >{value}</text>
             </g>
         }
         default:
