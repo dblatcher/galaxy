@@ -1,5 +1,5 @@
 import { FleetIcon } from "../../components/FleetSymbol"
-import { isAlive } from "../helpers"
+import { checkCanFire, isAlive } from "../helpers"
 import type { ShipInstanceInfo } from "../model"
 
 interface Props {
@@ -11,6 +11,7 @@ export const ShipInfo = ({ shipInstance }: Props) => {
     const { faction, ship, state } = shipInstance
     const { hp, name } = shipInstance.design;
     const isDead = !isAlive(shipInstance)
+    const canFire = checkCanFire(shipInstance);
 
     return <div>
         <div>
@@ -24,7 +25,7 @@ export const ShipInfo = ({ shipInstance }: Props) => {
             </span>
             {', '}
             <span>
-                fired: {state.hasFired ? 'Y' : 'N'}
+                Can fire: {canFire ? '*' : '-'}
             </span>
         </div>
     </div>

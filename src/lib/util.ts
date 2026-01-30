@@ -1,5 +1,7 @@
 import { getDistance, getHeadingFrom, getXYVector, translate, type XY } from "typed-geometry"
 
+export const sum = (numbers: number[]) => numbers.reduce((p, c) => p + c, 0);
+
 export function findById<T extends { id: number }>(id: number | undefined, list: T[]): (T | undefined) {
     if (typeof id === 'undefined') { return undefined }
     return list.find(_ => _.id === id)

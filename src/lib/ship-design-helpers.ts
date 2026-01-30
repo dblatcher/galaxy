@@ -6,6 +6,7 @@ export type EnhancedShipDesign = ShipDesign & {
     constructionCost: number;
     hp: number;
     hasBombs: boolean;
+    hasWeapons: boolean;
     canColonise: boolean;
 }
 
@@ -20,8 +21,9 @@ const enhanceShipDesign = (design: ShipDesign): EnhancedShipDesign => {
         ...design,
         constructionCost: getConstructionCost(design),
         hp: getHp(design),
-        hasBombs: design.slots.some(equipmentId => equipmentId && getEquipment(equipmentId).info.type==='bomb'),
-        canColonise: design.slots.some(equipmentId => equipmentId && getEquipment(equipmentId).info.type==='colonise')
+        hasWeapons: design.slots.some(equipmentId => equipmentId && getEquipment(equipmentId).info.type === 'beam'),
+        hasBombs: design.slots.some(equipmentId => equipmentId && getEquipment(equipmentId).info.type === 'bomb'),
+        canColonise: design.slots.some(equipmentId => equipmentId && getEquipment(equipmentId).info.type === 'colonise')
     }
 }
 

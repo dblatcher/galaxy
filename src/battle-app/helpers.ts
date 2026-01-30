@@ -90,6 +90,8 @@ export const identsMatch = (identA?: ShipIdent, identB?: ShipIdent): boolean =>
     identA.shipIndex === identB.shipIndex;
 
 export const isAlive = (shipInstance: ShipInstanceInfo): boolean => shipInstance.ship.damage < shipInstance.design.hp;
+export const checkCanFire = (shipInstance?: ShipInstanceInfo): boolean => !!shipInstance && shipInstance?.design.hasWeapons && !shipInstance.state.hasFired;;
+
 
 export const getInstancesForSide = (
     side: {

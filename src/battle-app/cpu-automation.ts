@@ -56,7 +56,7 @@ const allFireOnTargets: ActionGenerator = (battleState) => {
 
     ships.forEach((ship) => {
         const targetShip = targets[0]; // TO DO - select from ships in range
-        const outcome = handleFiring(ship, targetShip)
+        const outcome =  handleFiring(ship, targetShip)
         animations.push(...outcome.animations);
         battleActions.push(...outcome.battleActions)
     })

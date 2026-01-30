@@ -1,8 +1,25 @@
 import { getDistance, type XY } from "typed-geometry";
+import { getMaybeEquipment } from "../data/ship-equipment";
 import type { BattleAnimation } from "./animation-reducer";
 import { DEFAULT_WEAPON_RANGE } from "./constants";
-import { isAlive } from "./helpers";
+import { checkCanFire, isAlive } from "./helpers";
 import type { BattleAction, BattleState, ShipInstanceInfo } from "./model";
+import { diceRoll, sum } from "../lib/util";
+
+const rollDamage = (
+    firingShipInstance: ShipInstanceInfo,
+): number => {
+
+    const weapons = firingShipInstance.design.slots
+        .map(getMaybeEquipment)
+        .flatMap(e => e?.info.type == 'beam' ? e.info : [])
+
+    const rolls = weapons.map(beam =>
+        sum(beam.damage.map(die => diceRoll(die)))
+    )
+    console.log(rolls)
+    return sum(rolls)
+}
 
 export const handleFiring = (
     firingShipInstance: ShipInstanceInfo,
@@ -14,7 +31,7 @@ export const handleFiring = (
     const animations: BattleAnimation[] = []
     const battleActions: BattleAction[] = []
 
-    if (firingShipInstance.state.hasFired || !isAlive(firingShipInstance) || !isAlive(targetShipInstance)) {
+    if (!checkCanFire(firingShipInstance) || !isAlive(firingShipInstance) || !isAlive(targetShipInstance)) {
         return { animations, battleActions }
     }
 
@@ -22,7 +39,7 @@ export const handleFiring = (
     if (distance > DEFAULT_WEAPON_RANGE) {
         return { animations, battleActions }
     }
-    const damage = 1 // TO DO - use shipInstance.design.slots to roll damage for weapons and subtract defense
+    const damage = rollDamage(firingShipInstance) // TO DO - use shipInstance.design.slots to roll damage for weapons and subtract defense
     const beamSteps = Math.floor(distance / 2);
     animations.push({
         type: "beam-fire",

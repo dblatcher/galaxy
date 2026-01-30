@@ -2,13 +2,13 @@ import { FleetIcon } from "../components/FleetSymbol";
 import { getMaybeEquipment } from "../data/ship-equipment";
 import type { ShipDesign, Faction } from "../lib/model";
 import { enhanceShipDesign } from "../lib/ship-design-helpers";
+import { sum } from "../lib/util";
 
 interface Props {
   design: Omit<ShipDesign, "id">;
   faction?: Faction;
 }
 
-const sum = (numbers: number[]) => numbers.reduce((p, c) => p + c, 0);
 
 const DamageOutput = ({ dice }: { dice: number[] }) => {
   return dice.length > 0 ? (

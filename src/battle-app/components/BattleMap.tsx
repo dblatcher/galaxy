@@ -5,7 +5,7 @@ import { useAnimationState } from "../animation-context"
 import { useBattleState } from "../battle-state-context"
 import { DEFAULT_WEAPON_RANGE } from "../constants"
 import { handleFiring, handleMove } from "../game-logic"
-import { getActiveShipInstance, getActiveShipState, getInstancesForSide } from "../helpers"
+import { checkCanFire, getActiveShipInstance, getInstancesForSide } from "../helpers"
 import type { ShipInstanceInfo } from "../model"
 import { AnimationPlotter } from "./AnimationPlotter"
 import { RangeCircle } from "./RangeCircle"
@@ -27,7 +27,8 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
     const { battleState, dispatch } = useBattleState()
     const { dispatchAnimationAction } = useAnimationState()
     const { sides, activeFaction, targetAction } = battleState
-    const stateOfActiveShip = getActiveShipState(battleState);
+    const activeShip = getActiveShipInstance(battleState)
+    const canFire = checkCanFire(activeShip);
 
     const findPointOnMap = useCallback((event: MouseEvent<SVGElement>) => {
         const rect = event.currentTarget.getBoundingClientRect()
@@ -40,7 +41,7 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
     }, [scale]);
 
     const handleClickOnMap = (event: MouseEvent<SVGElement>) => {
-        if (!stateOfActiveShip || isNotLocalPlayerTurn || targetAction !== 'move') {
+        if (!activeShip?.state || isNotLocalPlayerTurn || targetAction !== 'move') {
             return
         }
         const instance = getActiveShipInstance(battleState)
@@ -68,13 +69,12 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
             })
         }
 
-        if (targetAction === 'fire') {
-            const firingShipInstance = getActiveShipInstance(battleState)
-            if (!firingShipInstance) {
+        if (targetAction === 'fire' && canFire) {
+            if (!activeShip) {
                 return
             }
 
-            const firingOutcome = handleFiring(firingShipInstance, shipInstance);
+            const firingOutcome = handleFiring(activeShip, shipInstance);
             const { animations, battleActions } = firingOutcome
             dispatchAnimationAction({
                 type: 'add',
@@ -109,27 +109,27 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
                     />
                 )
             )}
-            {(battleState.targetAction === 'move' && stateOfActiveShip) && <>
+            {(battleState.targetAction === 'move' && activeShip?.state) && <>
                 <RangeCircle
                     type="move"
-                    r={stateOfActiveShip.remainingMovement}
-                    position={stateOfActiveShip.position}
+                    r={activeShip?.state.remainingMovement}
+                    position={activeShip?.state.position}
                 />
-                {targetPoint && !stateOfActiveShip.hasFired &&
+                {targetPoint && activeShip.design.hasWeapons &&
                     <RangeCircle
                         type="fire"
                         r={DEFAULT_WEAPON_RANGE}
-                        position={limitDistance(stateOfActiveShip.remainingMovement, stateOfActiveShip.position, targetPoint)} />
+                        position={limitDistance(activeShip?.state.remainingMovement, activeShip?.state.position, targetPoint)} />
                 }
             </>}
-            {(battleState.targetAction === 'fire' && stateOfActiveShip && !stateOfActiveShip.hasFired) && <>
+            {(battleState.targetAction === 'fire' && activeShip && canFire) && <>
                 <RangeCircle
                     type="fire"
                     r={DEFAULT_WEAPON_RANGE}
-                    position={stateOfActiveShip.position} />
+                    position={activeShip?.state.position} />
                 {targetPoint &&
                     <TargetLine
-                        origin={stateOfActiveShip.position}
+                        origin={activeShip?.state.position}
                         targetPoint={targetPoint}
                         range={DEFAULT_WEAPON_RANGE} />}
             </>}
