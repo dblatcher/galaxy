@@ -3,7 +3,7 @@ import type { XY } from "../../lib/model"
 import { limitDistance } from "../../lib/util"
 import { useAnimationState } from "../animation-context"
 import { useBattleState } from "../battle-state-context"
-import { DEFAULT_WEAPON_RANGE } from "../constants"
+import { DEFAULT_WEAPON_RANGE, MAP_HEIGHT, MAP_WIDTH } from "../constants"
 import { handleFiring, handleMove } from "../game-logic"
 import { checkCanFire, getActiveShipInstance, getInstancesForSide } from "../helpers"
 import type { ShipInstanceInfo } from "../model"
@@ -19,8 +19,6 @@ interface Props {
 }
 
 const mapMargin = 25
-const width = 200;
-const height = 200
 
 export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
     const [targetPoint, setTargetPoint] = useState<XY>()
@@ -89,16 +87,16 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
         <svg
             onClick={handleClickOnMap}
             onMouseMove={handleMoveOnMap}
-            viewBox={`${-mapMargin} ${-mapMargin} ${width + 2 * mapMargin} ${height + 2 * mapMargin}`}
+            viewBox={`${-mapMargin} ${-mapMargin} ${MAP_WIDTH + 2 * mapMargin} ${MAP_HEIGHT + 2 * mapMargin}`}
             style={{
-                width: (width + (mapMargin * 2)) * scale,
-                height: (height + (mapMargin * 2)) * scale,
+                width: (MAP_WIDTH + (mapMargin * 2)) * scale,
+                height: (MAP_HEIGHT + (mapMargin * 2)) * scale,
                 borderColor: 'red',
                 borderStyle: 'dotted',
                 borderWidth: 1,
                 backgroundColor: 'black',
             }}>
-            <rect x={0} y={0} width={width} height={height} stroke="yellow" />
+            <rect x={0} y={0} width={MAP_WIDTH} height={MAP_HEIGHT} stroke="yellow" />
             <AnimationPlotter />
             {sides.map(side =>
                 getInstancesForSide(side, battleState, true).map(shipInstance =>

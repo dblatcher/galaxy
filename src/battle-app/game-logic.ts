@@ -1,15 +1,14 @@
 import { getDistance, type XY } from "typed-geometry";
 import { getMaybeEquipment } from "../data/ship-equipment";
-import type { BattleAnimation } from "./animation-reducer";
-import { DEFAULT_WEAPON_RANGE } from "./constants";
-import { checkCanFire, isAlive } from "./helpers";
-import type { BattleAction, BattleState, ShipInstanceInfo } from "./model";
 import { diceRoll, sum } from "../lib/util";
+import type { BattleAnimation } from "./animation-reducer";
+import { DEFAULT_WEAPON_RANGE, MAP_HEIGHT, MAP_WIDTH, SHIP_RADIUS } from "./constants";
+import { checkCanFire, getAllActiveSideShips, getAllOtherSideShips, identsMatch, isAlive } from "./helpers";
+import type { BattleAction, BattleState, ShipInstanceInfo } from "./model";
 
 const rollDamage = (
     firingShipInstance: ShipInstanceInfo,
 ): number => {
-
     const weapons = firingShipInstance.design.slots
         .map(getMaybeEquipment)
         .flatMap(e => e?.info.type == 'beam' ? e.info : [])
@@ -17,9 +16,13 @@ const rollDamage = (
     const rolls = weapons.map(beam =>
         sum(beam.damage.map(die => diceRoll(die)))
     )
-    console.log(rolls)
     return sum(rolls)
 }
+
+const doNothing = () => ({
+    animations: [],
+    battleActions: [],
+})
 
 export const handleFiring = (
     firingShipInstance: ShipInstanceInfo,
@@ -32,12 +35,12 @@ export const handleFiring = (
     const battleActions: BattleAction[] = []
 
     if (!checkCanFire(firingShipInstance) || !isAlive(firingShipInstance) || !isAlive(targetShipInstance)) {
-        return { animations, battleActions }
+        return doNothing();
     }
 
     const distance = getDistance(targetShipInstance.state.position, firingShipInstance.state.position);
     if (distance > DEFAULT_WEAPON_RANGE) {
-        return { animations, battleActions }
+        return doNothing();
     }
     const damage = rollDamage(firingShipInstance) // TO DO - use shipInstance.design.slots to roll damage for weapons and subtract defense
     const beamSteps = Math.floor(distance / 2);
@@ -65,11 +68,7 @@ export const handleFiring = (
             currentStep: -beamSteps,
             totalSteps: 50
         })
-        // PROBLEM - if many ships fire at once, do not know cumulative damage
-        // have added a work-around in cpu-automation
     }
-
-
 
     battleActions.push({
         type: 'resolve-fire',
@@ -86,31 +85,58 @@ export const handleFiring = (
     return { battleActions, animations }
 }
 
+const getCannotMoveReason = (
+    movingShipInstance: ShipInstanceInfo,
+    location: XY,
+    battleState: BattleState,
+) => {
+
+    if (!isAlive(movingShipInstance)) {
+        return 'dead'
+    }
+
+    if (
+        location.x < 0 ||
+        location.y < 0 ||
+        location.x > MAP_WIDTH ||
+        location.y > MAP_HEIGHT
+    ) {
+        return 'out-of-bounds'
+    }
+
+    const distance = getDistance(location, movingShipInstance.state.position)
+    if (distance > movingShipInstance.state.remainingMovement) {
+        return 'too-far'
+    }
+
+    const otherShips = [
+        ...getAllActiveSideShips(battleState),
+        ...getAllOtherSideShips(battleState)
+    ]
+        .filter(ship => !identsMatch(ship.ident, movingShipInstance.ident))
+
+    const tooClose = otherShips.find(ship => getDistance(ship.state.position, location) < SHIP_RADIUS)
+    if (tooClose) {
+        return 'too-close-to-other'
+    }
+
+    return undefined
+}
+
 export const handleMove = (
     movingShipInstance: ShipInstanceInfo,
     location: XY,
-    _battleState: BattleState,
+    battleState: BattleState,
 ): {
     animations: BattleAnimation[],
     battleActions: BattleAction[],
 } => {
 
-    if (!isAlive(movingShipInstance)) {
-        return {
-            animations: [],
-            battleActions: [],
-        }
+    const cannotMove = getCannotMoveReason(movingShipInstance, location, battleState)
+    if (cannotMove) {
+        return doNothing();
     }
-    // TO DO - prevent moving into other ships (OR ALLOW RAMMING!)
-    // TO DO - no moving out of bounds
-
-    const distance = getDistance(location, movingShipInstance.state.position)
-    if (distance > movingShipInstance.state.remainingMovement) {
-        return {
-            animations: [],
-            battleActions: [],
-        }
-    }
+    // TO DO - prevent passing through  other ships (OR ALLOW RAMMING!)
 
     return {
         animations: [],
