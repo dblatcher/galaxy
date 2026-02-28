@@ -33,22 +33,20 @@ const decidePlace = (ident: ShipIdent, state: Readonly<BattleState>): XY | undef
 }
 
 const moveEachInTurn = (): ActionGenerator => (battleState) => {
-    let anticipatedState = structuredClone(battleState);
+    let localState = structuredClone(battleState);
     const battleActions: BattleAction[] = []
     const animations: BattleAnimation[] = []
     const valuesForTiming = { greatestDistance: 0 }
 
-    const ships = getAllActiveSideShips(anticipatedState);
-
-    ships.forEach(ship => {
-        const place = decidePlace(ship.ident, anticipatedState)
+    getAllActiveSideShips(localState).forEach(ship => {
+        const place = decidePlace(ship.ident, localState)
         if (place) {
             const distance = getDistance(place, ship.state.position)
             const outcome = handleMove(ship, place, battleState);
             battleActions.push(...outcome.battleActions)
             animations.push(...outcome.animations)
             outcome.battleActions.forEach(action => {
-                anticipatedState = dispatchBattleAction(anticipatedState, action)
+                localState = dispatchBattleAction(localState, action)
             })
 
             valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
@@ -69,26 +67,24 @@ const decideTarget = (ident: ShipIdent, state: Readonly<BattleState>): ShipInsta
     }
     const targets =
         getAllOtherSideShips(state)
-            .filter(t => getDistance(t.state.position, ship.position) <= DEFAULT_WEAPON_RANGE) 
-            
+            .filter(t => getDistance(t.state.position, ship.position) <= DEFAULT_WEAPON_RANGE)
+
     //  TO DO - select from ships in range based on threat, value, damage etc
     return targets[0]
 }
 
-const allFireOnTargets: ActionGenerator = (battleState) => {
-    let anticipatedState = structuredClone(battleState);
+const allFireOnTargets = (): ActionGenerator => (battleState) => {
+    let localState = structuredClone(battleState);
     const battleActions: BattleAction[] = []
     const animations: BattleAnimation[] = []
 
-    const ships = getAllActiveSideShips(battleState);
-
-    ships.forEach((ship) => {
-        const targetShip = decideTarget(ship.ident, anticipatedState)
+    getAllActiveSideShips(battleState).forEach((ship) => {
+        const targetShip = decideTarget(ship.ident, localState)
 
         if (targetShip) {
             const outcome = handleFiring(ship, targetShip)
             outcome.battleActions.forEach(action => {
-                anticipatedState = dispatchBattleAction(anticipatedState, action)
+                localState = dispatchBattleAction(localState, action)
             })
             animations.push(...outcome.animations);
             battleActions.push(...outcome.battleActions)
@@ -107,23 +103,20 @@ export const startCpuPlayerAutomation = async (
     dispatchAction: ActionDispatch<[action: BattleAction]>,
     dispatchAnimation: ActionDispatch<[action: AnimationAction]>
 ) => {
-
-    let localCopyOfState = structuredClone(battleState);
-    const dispatchAndUpdateLocal = (action: BattleAction) => {
-        dispatchAction(action)
-        localCopyOfState = dispatchBattleAction(localCopyOfState, action)
-    }
-
+    let localState = structuredClone(battleState);
     const doActions = async (generate: ActionGenerator) => {
-        const { battleActions, animationTime, animations } = generate(localCopyOfState)
-        battleActions.forEach(dispatchAndUpdateLocal)
+        const { battleActions, animationTime, animations } = generate(localState)
+        battleActions.forEach((action) => {
+            dispatchAction(action)
+            localState = dispatchBattleAction(localState, action)
+        })
 
         const placesWithDamage = new Map<string, number>()
-        const stingifyXy = ({ x, y }: XY) => `${x},${y}`
+        const stringifyXy = ({ x, y }: XY) => `${x},${y}`
         animations.filter(a => a.type === 'show-damage').forEach((a) => {
-            const damageEffectsCountAtPlaceSoFar = placesWithDamage.get(stingifyXy(a.at)) ?? 0
+            const damageEffectsCountAtPlaceSoFar = placesWithDamage.get(stringifyXy(a.at)) ?? 0
             a.currentStep -= damageEffectsCountAtPlaceSoFar * 40
-            placesWithDamage.set(stingifyXy(a.at), (damageEffectsCountAtPlaceSoFar + 1))
+            placesWithDamage.set(stringifyXy(a.at), (damageEffectsCountAtPlaceSoFar + 1))
         })
 
         dispatchAnimation({
@@ -134,13 +127,13 @@ export const startCpuPlayerAutomation = async (
     }
 
     await doActions(moveEachInTurn())
-    await doActions(allFireOnTargets)
+    await doActions(allFireOnTargets())
 
     // allFireOnTargets can fail to add explosions when a ship ist destroyed
     // with multiple simulataneou attacks 
     const shipsThatDied = getAllOtherSideShips(battleState)
         .filter(initialShip =>
-            !getAllOtherSideShips(localCopyOfState)
+            !getAllOtherSideShips(localState)
                 .some(finalShip =>
                     identsMatch(initialShip.ident, finalShip.ident)));
     dispatchAnimation({
