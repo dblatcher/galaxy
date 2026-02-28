@@ -148,8 +148,8 @@ const initialFleets: Fleet[] = [
         },
         factionId: FACTION_ID.Magrathian,
         ships: [
-            { designId: 0, damage: 2 },
-            { designId: 0, damage: 0 },
+            { designId: 2, damage: 2 },
+            { designId: 2, damage: 0 },
             { designId: 0, damage: 0 },
         ],
     },
@@ -163,7 +163,7 @@ const initialFleets: Fleet[] = [
         },
         factionId: FACTION_ID.Zorblaxian,
         ships: [
-            { designId: 0, damage: 0 },
+            { designId: 0, damage: 1 },
             { designId: 0, damage: 0 },
             { designId: 3, damage: 0 },
         ],

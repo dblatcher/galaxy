@@ -3,10 +3,10 @@ import { getDistance, translate, type XY } from "typed-geometry";
 import { limitDistance } from "../lib/util";
 import type { AnimationAction, BattleAnimation } from "./animation-reducer";
 import { dispatchBattleAction } from "./battle-state-reducer";
-import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS } from "./constants";
+import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS, DEFAULT_WEAPON_RANGE } from "./constants";
 import { handleFiring, handleMove } from "./game-logic";
-import { getAllActiveSideShips, getAllOtherSideShips, identsMatch } from "./helpers";
-import type { BattleAction, BattleState } from "./model";
+import { getAllActiveSideShips, getAllOtherSideShips, getShipStateFromIdent, identsMatch } from "./helpers";
+import type { BattleAction, BattleState, ShipIdent, ShipInstanceInfo } from "./model";
 
 
 const delay = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -16,28 +16,43 @@ const calculateMovementAnimationTime = (greatestDistance: number): number => {
 }
 
 type ActionGenerator = {
-    (battleState: BattleState): {
+    (battleState: Readonly<BattleState>): {
         battleActions: BattleAction[],
         animations: BattleAnimation[]
         animationTime: number
     }
 }
 
-const moveAllAtRandom = (xd: number): ActionGenerator => (battleState) => {
+const decidePlace = (ident: ShipIdent, state: Readonly<BattleState>): XY | undefined => {
+    const ship = getShipStateFromIdent(ident, state)
+    if (!ship) { return }
+    // const others = getAllActiveSideShips(state).filter(otherShip => !identsMatch(ident, otherShip.ident))
+    const newDestination = translate(ship.position, { x: -10, y: Math.floor((Math.random() * 30) - 20) });
+    const newLocation = limitDistance(ship.remainingMovement, ship.position, newDestination);
+    return newLocation
+}
+
+const moveEachInTurn = (): ActionGenerator => (battleState) => {
+    let anticipatedState = structuredClone(battleState);
     const battleActions: BattleAction[] = []
     const animations: BattleAnimation[] = []
-    const ships = getAllActiveSideShips(battleState);
     const valuesForTiming = { greatestDistance: 0 }
 
-    ships.forEach((ship) => {
-        const { state } = ship
-        const newDestination = translate(state.position, { x: xd, y: Math.floor((Math.random() * 30) - 20) });
-        const newLocation = limitDistance(state.remainingMovement, state.position, newDestination);
-        const distance = getDistance(state.position, newLocation);
+    const ships = getAllActiveSideShips(anticipatedState);
 
-        const outcome = handleMove(ship, newLocation, battleState);
-        battleActions.push(...outcome.battleActions)
-        valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
+    ships.forEach(ship => {
+        const place = decidePlace(ship.ident, anticipatedState)
+        if (place) {
+            const distance = getDistance(place, ship.state.position)
+            const outcome = handleMove(ship, place, battleState);
+            battleActions.push(...outcome.battleActions)
+            animations.push(...outcome.animations)
+            outcome.battleActions.forEach(action => {
+                anticipatedState = dispatchBattleAction(anticipatedState, action)
+            })
+
+            valuesForTiming.greatestDistance = Math.max(distance, valuesForTiming.greatestDistance)
+        }
     })
 
     return {
@@ -47,18 +62,37 @@ const moveAllAtRandom = (xd: number): ActionGenerator => (battleState) => {
     }
 }
 
+const decideTarget = (ident: ShipIdent, state: Readonly<BattleState>): ShipInstanceInfo | undefined => {
+    const ship = getShipStateFromIdent(ident, state)
+    if (!ship) {
+        return undefined
+    }
+    const targets =
+        getAllOtherSideShips(state)
+            .filter(t => getDistance(t.state.position, ship.position) <= DEFAULT_WEAPON_RANGE) 
+            
+    //  TO DO - select from ships in range based on threat, value, damage etc
+    return targets[0]
+}
 
 const allFireOnTargets: ActionGenerator = (battleState) => {
+    let anticipatedState = structuredClone(battleState);
     const battleActions: BattleAction[] = []
     const animations: BattleAnimation[] = []
+
     const ships = getAllActiveSideShips(battleState);
-    const targets = getAllOtherSideShips(battleState)
 
     ships.forEach((ship) => {
-        const targetShip = targets[0]; // TO DO - select from ships in range
-        const outcome =  handleFiring(ship, targetShip)
-        animations.push(...outcome.animations);
-        battleActions.push(...outcome.battleActions)
+        const targetShip = decideTarget(ship.ident, anticipatedState)
+
+        if (targetShip) {
+            const outcome = handleFiring(ship, targetShip)
+            outcome.battleActions.forEach(action => {
+                anticipatedState = dispatchBattleAction(anticipatedState, action)
+            })
+            animations.push(...outcome.animations);
+            battleActions.push(...outcome.battleActions)
+        }
     })
 
     return {
@@ -99,7 +133,7 @@ export const startCpuPlayerAutomation = async (
         await delay(animationTime)
     }
 
-    await doActions(moveAllAtRandom(-20))
+    await doActions(moveEachInTurn())
     await doActions(allFireOnTargets)
 
     // allFireOnTargets can fail to add explosions when a ship ist destroyed
