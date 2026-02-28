@@ -1,11 +1,10 @@
 import { type ActionDispatch } from "react";
-import { getDistance, translate, type XY } from "typed-geometry";
-import { limitDistance } from "../lib/util";
+import { getDistance, translate, xy, type XY } from "typed-geometry";
 import type { AnimationAction, BattleAnimation } from "./animation-reducer";
 import { dispatchBattleAction } from "./battle-state-reducer";
 import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS, DEFAULT_WEAPON_RANGE } from "./constants";
-import { handleFiring, handleMove } from "./game-logic";
-import { getAllActiveSideShips, getAllOtherSideShips, getShipStateFromIdent, identsMatch } from "./helpers";
+import { getCannotMoveReason, handleFiring, handleMove } from "./game-logic";
+import { getAllActiveSideShips, getAllOtherSideShips, getInstanceFromIdent, getShipStateFromIdent, identsMatch } from "./helpers";
 import type { BattleAction, BattleState, ShipIdent, ShipInstanceInfo } from "./model";
 
 
@@ -23,13 +22,35 @@ type ActionGenerator = {
     }
 }
 
+const getPossibleLocations = (ship: ShipInstanceInfo, state: Readonly<BattleState>, moveGranularity = 20): XY[] => {
+    const { position, remainingMovement } = ship.state;
+
+    const possibleDistances = [
+        ...Array(Math.floor(remainingMovement / moveGranularity)).fill(0).map((_v, i) => i * moveGranularity),
+        remainingMovement
+    ]
+    const possibleDistancesWithNegatives = [
+        ...possibleDistances,
+        ...possibleDistances.filter(v => v > 0).map(v => -v)
+    ]
+    const locations: XY[] = possibleDistancesWithNegatives
+        .flatMap(xd => possibleDistancesWithNegatives
+            .map(yd => xy(xd, yd)))
+        .map(displacement => translate(position, displacement))
+
+    return locations.filter(location => !getCannotMoveReason(ship, location, state))
+}
+
 const decidePlace = (ident: ShipIdent, state: Readonly<BattleState>): XY | undefined => {
-    const ship = getShipStateFromIdent(ident, state)
+    const ship = getInstanceFromIdent(ident, state)
     if (!ship) { return }
-    // const others = getAllActiveSideShips(state).filter(otherShip => !identsMatch(ident, otherShip.ident))
-    const newDestination = translate(ship.position, { x: -10, y: Math.floor((Math.random() * 30) - 20) });
-    const newLocation = limitDistance(ship.remainingMovement, ship.position, newDestination);
-    return newLocation
+
+    const options = getPossibleLocations(ship, state);
+    if (!options.length) {
+        return undefined
+    }
+
+    return options[Math.floor(Math.random() * options.length)]
 }
 
 const moveEachInTurn = (): ActionGenerator => (battleState) => {

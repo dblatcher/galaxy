@@ -85,7 +85,7 @@ export const handleFiring = (
     return { battleActions, animations }
 }
 
-const getCannotMoveReason = (
+export const getCannotMoveReason = (
     movingShipInstance: ShipInstanceInfo,
     location: XY,
     battleState: BattleState,

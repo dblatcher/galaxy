@@ -56,6 +56,19 @@ const getInstance = (
     }
 }
 
+export const getInstanceFromIdent = (ident:ShipIdent, battleState:BattleState):ShipInstanceInfo |undefined => {
+    const ship = getShipFromIdent(ident, battleState)
+    const faction = battleState.sides.find(side => side.faction.id === ident.factionId)?.faction
+
+    if (!ship || !faction) {
+        return undefined
+    }
+
+
+    return getInstance(ship, faction, ident.fleetId, ident.shipIndex, battleState)
+    
+}
+
 export const getShipFromIdent = (ident: ShipIdent, battleState: BattleState): Ship | undefined =>
     battleState.sides.find(side => side.faction.id === ident.factionId)
         ?.fleets.find(fleet => fleet.id === ident.fleetId)
