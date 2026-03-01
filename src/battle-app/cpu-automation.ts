@@ -17,7 +17,8 @@ const calculateMovementAnimationTime = (greatestDistance: number): number => {
 type ActionGenerator = {
     (battleState: Readonly<BattleState>): {
         battleActions: BattleAction[],
-        animations: BattleAnimation[]
+        animations: BattleAnimation[],
+        animationActions: AnimationAction[],
         animationTime: number
     }
 }
@@ -57,6 +58,7 @@ const moveEachInTurn = (): ActionGenerator => (battleState) => {
     let localState = structuredClone(battleState);
     const battleActions: BattleAction[] = []
     const animations: BattleAnimation[] = []
+    const animationActions: AnimationAction[] = []
     const valuesForTiming = { greatestDistance: 0 }
 
     getAllActiveSideShips(localState).forEach(ship => {
@@ -65,6 +67,7 @@ const moveEachInTurn = (): ActionGenerator => (battleState) => {
             const distance = getDistance(place, ship.state.position)
             const outcome = handleMove(ship, place, battleState);
             battleActions.push(...outcome.battleActions)
+            animationActions.push(...outcome.animationActions)
             animations.push(...outcome.animations)
             outcome.battleActions.forEach(action => {
                 localState = dispatchBattleAction(localState, action)
@@ -77,6 +80,7 @@ const moveEachInTurn = (): ActionGenerator => (battleState) => {
     return {
         battleActions,
         animations,
+        animationActions,
         animationTime: calculateMovementAnimationTime(valuesForTiming.greatestDistance)
     }
 }
@@ -115,6 +119,7 @@ const allFireOnTargets = (): ActionGenerator => (battleState) => {
     return {
         battleActions,
         animations,
+        animationActions: [],
         animationTime: Math.max(...animations.map(animation => animation.totalSteps)) * ANIMATION_STEP_MS
     }
 }
@@ -126,7 +131,7 @@ export const startCpuPlayerAutomation = async (
 ) => {
     let localState = structuredClone(battleState);
     const doActions = async (generate: ActionGenerator) => {
-        const { battleActions, animationTime, animations } = generate(localState)
+        const { battleActions, animationTime, animations, animationActions } = generate(localState)
         battleActions.forEach((action) => {
             dispatchAction(action)
             localState = dispatchBattleAction(localState, action)
@@ -144,6 +149,7 @@ export const startCpuPlayerAutomation = async (
             type: 'add',
             effects: animations
         })
+        animationActions.forEach(dispatchAnimation)
         await delay(animationTime)
     }
 

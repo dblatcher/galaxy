@@ -27,13 +27,13 @@ export const BattleApp = ({ params }: Props) => {
 
     useEffect(() => {
         const progressAnimations = () => {
-            dispatchAnimationAction({ type: 'tick' })
+            dispatchAnimationAction({ type: 'tick', battleState })
         }
         const timer = setInterval(progressAnimations, ANIMATION_STEP_MS)
         return () => {
             clearInterval(timer)
         }
-    }, [])
+    }, [battleState])
 
     const conclude = () => {
         gameStateDispatch({

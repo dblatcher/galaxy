@@ -56,17 +56,13 @@ const getInstance = (
     }
 }
 
-export const getInstanceFromIdent = (ident:ShipIdent, battleState:BattleState):ShipInstanceInfo |undefined => {
+export const getInstanceFromIdent = (ident: ShipIdent, battleState: BattleState): ShipInstanceInfo | undefined => {
     const ship = getShipFromIdent(ident, battleState)
     const faction = battleState.sides.find(side => side.faction.id === ident.factionId)?.faction
-
     if (!ship || !faction) {
         return undefined
     }
-
-
     return getInstance(ship, faction, ident.fleetId, ident.shipIndex, battleState)
-    
 }
 
 export const getShipFromIdent = (ident: ShipIdent, battleState: BattleState): Ship | undefined =>
@@ -133,4 +129,10 @@ export const getAllActiveSideShips = (battleState: BattleState): ShipInstanceInf
 export const getAllOtherSideShips = (battleState: BattleState): ShipInstanceInfo[] => {
     const otherSides = battleState.sides.filter(side => side.faction.id !== battleState.activeFaction);
     return otherSides.flatMap(side => getInstancesForSide(side, battleState, true))
+}
+
+export const stringifyIdent = ({ factionId, fleetId, shipIndex }: ShipIdent) => [factionId, fleetId, shipIndex].join('/');
+export const destringifyIdent = (value: string): ShipIdent => {
+    const [factionId, fleetId, shipIndex] = value.split("/").map(Number)
+    return { factionId, fleetId, shipIndex }
 }

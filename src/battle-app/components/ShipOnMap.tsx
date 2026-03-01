@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react"
-import { getDistance, getHeadingFrom, getXYVector, translate, xy } from "typed-geometry"
+import { getDistance, translate, xy, type XY } from "typed-geometry"
 import { FleetSymbol } from "../../components/FleetSymbol"
-import type { ShipInstanceInfo } from "../model"
+import { useAnimationState } from "../animation-context"
 import { useBattleState } from "../battle-state-context"
-import { getActiveShipState } from "../helpers"
-import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS, DEFAULT_WEAPON_RANGE } from "../constants"
+import { DEFAULT_WEAPON_RANGE } from "../constants"
+import { getActiveShipState, stringifyIdent } from "../helpers"
+import type { ShipInstanceInfo } from "../model"
 
 interface Props {
     shipInstance: ShipInstanceInfo,
@@ -13,6 +13,7 @@ interface Props {
 
 export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
     const { battleState } = useBattleState();
+    const { animationState: { shipMoves } } = useAnimationState()
     const { activeShip, activeFaction, targetAction } = battleState;
     const activeShipState = getActiveShipState(battleState);
     const isPlayerShip = shipInstance.faction.id === battleState.activeFaction;
@@ -23,29 +24,8 @@ export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
     const { ship, faction, ident, design } = shipInstance
     const { position, heading } = shipInstance.state
     const { name, hp } = design
-    const [displayPosition, setDisplayPosition] = useState(position)
 
-    const updateDisplayPosition = useCallback(() => {
-        requestAnimationFrame(() => {
-            setDisplayPosition(displayPosition => {
-                if (position.x === displayPosition.x && position.y === displayPosition.y) { return displayPosition }
-                const distance = getDistance(displayPosition, position)
-                const heading = getHeadingFrom(displayPosition, position)
-                if (distance < 1) {
-                    return position
-                }
-                return translate(displayPosition, getXYVector(ANIMATION_MOVE_PER_STEP, heading))
-            })
-        })
-    }, [position])
-
-    useEffect(() => {
-        const timer = setInterval(updateDisplayPosition, ANIMATION_STEP_MS)
-        return () => {
-            clearInterval(timer)
-        }
-    }, [updateDisplayPosition])
-
+    const displayPosition = shipMoves[stringifyIdent(ident)]?.displayPosition as XY | undefined;
 
     if (ship.damage >= hp) {
         return null

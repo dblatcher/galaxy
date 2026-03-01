@@ -45,10 +45,7 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
         const instance = getActiveShipInstance(battleState)
         if (!instance) { return }
         const moveOutcome = handleMove(instance, findPointOnMap(event), battleState);
-        dispatchAnimationAction({
-            type: 'add',
-            effects: moveOutcome.animations
-        })
+        moveOutcome.animationActions.forEach(dispatchAnimationAction)
         moveOutcome.battleActions.forEach(dispatch)
     }
 

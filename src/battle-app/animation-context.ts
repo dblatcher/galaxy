@@ -6,7 +6,8 @@ export const AnimationContext = createContext<{
     dispatchAnimationAction: ActionDispatch<[action: AnimationAction]>
 }>({
     animationState: {
-        animations: []
+        animations: [],
+        shipMoves: {},
     },
     dispatchAnimationAction: () => { }
 })

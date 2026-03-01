@@ -1,7 +1,7 @@
 import { getDistance, type XY } from "typed-geometry";
 import { getMaybeEquipment } from "../data/ship-equipment";
 import { diceRoll, sum } from "../lib/util";
-import type { BattleAnimation } from "./animation-reducer";
+import type { AnimationAction, BattleAnimation } from "./animation-reducer";
 import { DEFAULT_WEAPON_RANGE, MAP_HEIGHT, MAP_WIDTH, SHIP_RADIUS } from "./constants";
 import { checkCanFire, getAllActiveSideShips, getAllOtherSideShips, identsMatch, isAlive } from "./helpers";
 import type { BattleAction, BattleState, ShipInstanceInfo } from "./model";
@@ -22,6 +22,7 @@ const rollDamage = (
 const doNothing = () => ({
     animations: [],
     battleActions: [],
+    animationActions: [],
 })
 
 export const handleFiring = (
@@ -130,6 +131,7 @@ export const handleMove = (
 ): {
     animations: BattleAnimation[],
     battleActions: BattleAction[],
+    animationActions: AnimationAction[],
 } => {
 
     const cannotMove = getCannotMoveReason(movingShipInstance, location, battleState)
@@ -142,6 +144,9 @@ export const handleMove = (
         animations: [],
         battleActions: [
             { type: 'move-ship', location, ident: movingShipInstance.ident, }
+        ],
+        animationActions: [
+            { type: 'set-display-location', ident: movingShipInstance.ident, location: { ...movingShipInstance.state.position } },
         ]
     }
 }
