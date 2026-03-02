@@ -70,7 +70,7 @@ export const getShipFromIdent = (ident: ShipIdent, battleState: BattleState): Sh
         ?.fleets.find(fleet => fleet.id === ident.fleetId)
         ?.ships[ident.shipIndex];
 
-const getActiveSide = (battleState: BattleState): {
+export const getActiveSide = (battleState: BattleState): {
     faction: Faction;
     fleets: Fleet[];
 } | undefined =>
