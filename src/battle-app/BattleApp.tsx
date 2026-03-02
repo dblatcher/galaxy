@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react"
+import { useEffect, useReducer, useState } from "react"
 import { useGameStateContext } from "../hooks/useGameStateContext"
 import type { BattleParameters } from "../lib/model"
 import { AnimationContext } from "./animation-context"
@@ -15,6 +15,7 @@ interface Props {
 }
 
 export const BattleApp = ({ params }: Props) => {
+    const [eventTarget] = useState(new EventTarget())
     const { gameState, dispatch: gameStateDispatch } = useGameStateContext()
     const [battleState, dispatch] = useReducer(
         dispatchBattleAction,
@@ -24,6 +25,10 @@ export const BattleApp = ({ params }: Props) => {
         animationDispatcher,
         getInitialAnimationState()
     )
+
+    useEffect(()=>{
+        eventTarget.dispatchEvent(new MessageEvent('ship-moves', {data: animationState.shipMoves} ))
+    },[eventTarget, animationState])
 
     useEffect(() => {
         const progressAnimations = () => {
@@ -47,7 +52,6 @@ export const BattleApp = ({ params }: Props) => {
     }
 
     useEffect(() => {
-
         const sidesWithShipsLeft = battleState.sides.filter(side =>
             getInstancesForSide(side, battleState, true).length > 0
         )
@@ -58,10 +62,9 @@ export const BattleApp = ({ params }: Props) => {
 
         const faction = getActiveFaction(battleState);
         if (faction?.playerType === 'CPU') {
-            startCpuPlayerAutomation(battleState, dispatch, dispatchAnimationAction)
+            startCpuPlayerAutomation(battleState, dispatch, dispatchAnimationAction, eventTarget)
         }
-    }, [battleState.activeFaction])
-
+    }, [battleState.activeFaction, eventTarget])
 
 
     return (

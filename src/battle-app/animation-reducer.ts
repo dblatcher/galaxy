@@ -43,13 +43,15 @@ export const animationDispatcher = (prevState: AnimationState, action: Animation
 
     switch (action.type) {
         case "tick":
-            if (state.animations.length > 0) {
-                state.animations.forEach(animation => {
-                    animation.currentStep += 1
-                })
-                filterInPlace(state.animations, (animation => animation.currentStep < animation.totalSteps))
+            const movingShipKeys = Object.keys(state.shipMoves)
+            if (state.animations.length === 0 && movingShipKeys.length === 0) {
+                return prevState
             }
-            Object.keys(state.shipMoves).forEach(key => {
+            state.animations.forEach(animation => {
+                animation.currentStep += 1
+            })
+            filterInPlace(state.animations, (animation => animation.currentStep < animation.totalSteps))
+            movingShipKeys.forEach(key => {
                 const { displayPosition } = state.shipMoves[key];
                 const ident = destringifyIdent(key)
                 const shipState = getShipStateFromIdent(ident, action.battleState)

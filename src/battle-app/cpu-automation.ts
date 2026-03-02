@@ -1,18 +1,13 @@
 import { type ActionDispatch } from "react";
 import { getDistance, translate, xy, type XY } from "typed-geometry";
-import type { AnimationAction, BattleAnimation } from "./animation-reducer";
+import type { AnimationAction, AnimationState, BattleAnimation } from "./animation-reducer";
 import { dispatchBattleAction } from "./battle-state-reducer";
-import { ANIMATION_MOVE_PER_STEP, ANIMATION_STEP_MS, DEFAULT_WEAPON_RANGE } from "./constants";
+import { ANIMATION_STEP_MS, DEFAULT_WEAPON_RANGE } from "./constants";
 import { getCannotMoveReason, handleFiring, handleMove } from "./game-logic";
-import { getAllActiveSideShips, getAllOtherSideShips, getInstanceFromIdent, getShipStateFromIdent, identsMatch } from "./helpers";
+import { getAllActiveSideShips, getAllOtherSideShips, getInstanceFromIdent, getShipStateFromIdent } from "./helpers";
 import type { BattleAction, BattleState, ShipIdent, ShipInstanceInfo } from "./model";
 
-
 const delay = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-const calculateMovementAnimationTime = (greatestDistance: number): number => {
-    return ANIMATION_STEP_MS * (greatestDistance / ANIMATION_MOVE_PER_STEP)
-}
 
 type ActionGenerator = {
     (battleState: Readonly<BattleState>): {
@@ -81,7 +76,7 @@ const moveEachInTurn = (): ActionGenerator => (battleState) => {
         battleActions,
         animations,
         animationActions,
-        animationTime: calculateMovementAnimationTime(valuesForTiming.greatestDistance)
+        animationTime: 0,
     }
 }
 
@@ -124,14 +119,31 @@ const allFireOnTargets = (): ActionGenerator => (battleState) => {
     }
 }
 
+const waitForShipsToFinishMoving = (eventTarget: EventTarget): Promise<boolean> => {
+    return new Promise(resolve => {
+        const handleUpdate = (event: Event) => {
+            if (event instanceof MessageEvent) {
+                const data = event.data as AnimationState['shipMoves']
+                if (Object.keys(data).length === 0) {
+                    eventTarget.removeEventListener('ship-moves', handleUpdate);
+                    resolve(true)
+                }
+            }
+        }
+        eventTarget.addEventListener('ship-moves', handleUpdate)
+    })
+}
+
 export const startCpuPlayerAutomation = async (
     battleState: BattleState,
     dispatchAction: ActionDispatch<[action: BattleAction]>,
-    dispatchAnimation: ActionDispatch<[action: AnimationAction]>
+    dispatchAnimation: ActionDispatch<[action: AnimationAction]>,
+    eventTarget: EventTarget
 ) => {
     let localState = structuredClone(battleState);
+
     const doActions = async (generate: ActionGenerator) => {
-        const { battleActions, animationTime, animations, animationActions } = generate(localState)
+        const { battleActions, animations, animationActions, animationTime } = generate(localState)
         battleActions.forEach((action) => {
             dispatchAction(action)
             localState = dispatchBattleAction(localState, action)
@@ -154,25 +166,8 @@ export const startCpuPlayerAutomation = async (
     }
 
     await doActions(moveEachInTurn())
+    await waitForShipsToFinishMoving(eventTarget)
     await doActions(allFireOnTargets())
-
-    // allFireOnTargets can fail to add explosions when a ship ist destroyed
-    // with multiple simulataneou attacks 
-    const shipsThatDied = getAllOtherSideShips(battleState)
-        .filter(initialShip =>
-            !getAllOtherSideShips(localState)
-                .some(finalShip =>
-                    identsMatch(initialShip.ident, finalShip.ident)));
-    dispatchAnimation({
-        type: 'add', effects: shipsThatDied.map((ship): BattleAnimation => {
-            return {
-                type: 'ship-explode',
-                at: ship.state.position,
-                currentStep: 0,
-                totalSteps: 50,
-            }
-        })
-    });
 
 
     dispatchAction(({ type: 'end-turn' }))
