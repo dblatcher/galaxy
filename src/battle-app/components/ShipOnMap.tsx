@@ -5,14 +5,15 @@ import { useAnimationState } from "../animation-context"
 import { useBattleState } from "../battle-state-context"
 import { DEFAULT_WEAPON_RANGE } from "../constants"
 import { getActiveShipState, stringifyIdent } from "../helpers"
-import type { ShipInstanceInfo } from "../model"
+import type { ShipIdent, ShipInstanceInfo } from "../model"
 
 interface Props {
     shipInstance: ShipInstanceInfo,
     handleClickOnShip: { (shipInstance: ShipInstanceInfo, event: MouseEvent): void }
+    setHoveredIdent: { (ident?: ShipIdent): void }
 }
 
-export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
+export const ShipOnMap = ({ shipInstance, handleClickOnShip, setHoveredIdent }: Props) => {
     const { battleState } = useBattleState();
     const { animationState: { shipMoves } } = useAnimationState()
     const { activeShip, activeFaction, targetAction } = battleState;
@@ -50,7 +51,15 @@ export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
     return <g
         key={`${ident.factionId}-${ident.fleetId}-${ident.shipIndex}`}
         data-side={faction.name}
-        data-ship-type={name}>
+        data-ship-type={name}
+        onPointerEnter={() => {
+            setHoveredIdent(ident)
+        }}
+        onPointerLeave={() => {
+            setHoveredIdent(undefined)
+        }}
+    >
+        
         <FleetSymbol
             color={faction.color}
             location={displayPosition ?? position}
@@ -60,6 +69,7 @@ export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
         />
         <text {...translate(position, xy(-4, 8))}
             fontSize={5}
+            fontWeight={isActiveShip? 700 :300}
             fill="white"
             style={{ cursor: 'default' }}
         >{name}</text>

@@ -6,7 +6,7 @@ import { useBattleState } from "../battle-state-context"
 import { DEFAULT_WEAPON_RANGE, MAP_HEIGHT, MAP_WIDTH } from "../constants"
 import { handleFiring, handleMove } from "../game-logic"
 import { checkCanFire, getActiveShipInstance, getInstancesForSide, stringifyIdent } from "../helpers"
-import type { ShipInstanceInfo } from "../model"
+import type { ShipIdent, ShipInstanceInfo } from "../model"
 import { AnimationPlotter } from "./AnimationPlotter"
 import { RangeCircle } from "./RangeCircle"
 import { ShipOnMap } from "./ShipOnMap"
@@ -16,11 +16,12 @@ import { TargetLine } from "./TargetLine"
 interface Props {
     scale: number
     isNotLocalPlayerTurn: boolean
+    setHoveredIdent: { (ident?: ShipIdent): void }
 }
 
 const mapMargin = 25
 
-export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
+export const BattleMap = ({ scale, isNotLocalPlayerTurn, setHoveredIdent }: Props) => {
     const [targetPoint, setTargetPoint] = useState<XY>()
     const { battleState, dispatch } = useBattleState()
     const { dispatchAnimationAction } = useAnimationState()
@@ -110,6 +111,7 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
                         key={stringifyIdent(shipInstance.ident)}
                         handleClickOnShip={handleClickOnShip}
                         shipInstance={shipInstance}
+                        setHoveredIdent={setHoveredIdent}
                     />
                 )
             )}
