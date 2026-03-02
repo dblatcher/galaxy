@@ -44,16 +44,6 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             }
             return { ...state }
         }
-        case "select-ship": {
-            const { factionId, fleetId, shipIndex } = action.ident;
-            if (factionId !== state.activeFaction) {
-                return { ...state }
-            }
-            return {
-                ...state,
-                activeShip: { fleetId, shipIndex }
-            }
-        }
         case "clear-selected-ship": {
             return {
                 ...state,
@@ -70,12 +60,6 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
                 shipStateToChange.remainingMovement = shipStateToChange.remainingMovement - distance
             }
             return { ...state }
-        }
-        case "set-target-mode": {
-            return {
-                ...state,
-                targetAction: action.mode
-            }
         }
         case "resolve-fire": {
             const targetShipState = getShipStateFromIdent(action.target, state)
@@ -112,6 +96,20 @@ export const dispatchBattleAction = (prevState: BattleState, action: BattleActio
             // annoying? only need to clear if the active ship is now dead
             state.activeShip = undefined;
             return { ...state }
+        }
+        case "select-ship-and-mode": {
+
+            const newActiveShip = action.ident
+                ? action.ident.factionId === state.activeFaction
+                    ? { fleetId: action.ident.fleetId, shipIndex: action.ident.shipIndex }
+                    : undefined
+                : undefined
+
+            return {
+                ...state,
+                activeShip: newActiveShip ?? state.activeShip,
+                targetAction: action.mode ?? state.targetAction,
+            }
         }
     }
 }

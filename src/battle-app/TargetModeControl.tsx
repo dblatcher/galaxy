@@ -14,7 +14,7 @@ export const TargetModeControl = () => {
                     checked={targetAction === mode}
                     name="targetAction"
                     value={mode}
-                    onChange={() => dispatch({ type: 'set-target-mode', mode })}
+                    onChange={() => dispatch({ type: 'select-ship-and-mode', mode })}
                 />
             </label>
         ))}

@@ -10,6 +10,7 @@ export type ShipState = {
 
 export type ShipStatesByFleet = Record<number, ShipState[]>;
 export type ShipStatesByFaction = Record<number, ShipStatesByFleet>;
+export type TargetMode = 'move' | 'fire'
 
 export type BattleState = {
     sides: {
@@ -19,7 +20,7 @@ export type BattleState = {
     shipStates: ShipStatesByFaction;
     activeFaction: number;
     activeShip?: { fleetId: number, shipIndex: number };
-    targetAction?: 'move' | 'fire'
+    targetAction?: TargetMode;
 }
 
 export type ShipIdent = {
@@ -30,12 +31,9 @@ export type ShipIdent = {
 
 export type BattleAction =
     { type: 'apply-damage', ident: ShipIdent, amount: number } |
-    { type: 'select-ship', ident: ShipIdent } |
+    { type: 'select-ship-and-mode', ident?: ShipIdent, mode?: TargetMode } |
     { type: 'clear-selected-ship' } |
     {
-        type: 'set-target-mode',
-        mode: 'move' | 'fire'
-    } | {
         type: 'move-ship',
         location: XY,
         ident: ShipIdent

@@ -23,7 +23,7 @@ export const ShipControls = ({
         setChecked={(checked) => {
             dispatch(checked
                 ? {
-                    type: 'select-ship',
+                    type: 'select-ship-and-mode',
                     ident
                 }
                 : { type: 'clear-selected-ship' }

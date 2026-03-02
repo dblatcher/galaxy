@@ -61,15 +61,10 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn, setHoveredIdent }: Prop
         }
         if (shipInstance.faction.id === activeFaction) {
             dispatch({
-                type: 'select-ship',
+                type: 'select-ship-and-mode',
                 ident: shipInstance.ident,
+                mode: event.ctrlKey ? targetAction === 'move' && clickedShipCanFire ? 'fire' : 'move' : undefined
             })
-            if (event.ctrlKey) {
-                dispatch({
-                    type: 'set-target-mode',
-                    mode: targetAction === 'move' && clickedShipCanFire ? 'fire' : 'move'
-                })
-            }
             return
         }
 
@@ -86,7 +81,7 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn, setHoveredIdent }: Prop
             })
 
             battleActions.forEach(dispatch)
-            dispatch({ type: 'set-target-mode', mode: 'move' })
+            dispatch({ type: 'select-ship-and-mode', mode: 'move' })
         }
     }
 

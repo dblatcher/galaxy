@@ -1,12 +1,13 @@
 import type { XY } from "typed-geometry";
+import type { TargetMode } from "../model";
 
 interface Props {
     position: XY;
     r: number;
-    type: 'move' | 'fire';
+    type: TargetMode;
 }
 
-const getAttributes = (type: 'move' | 'fire') => {
+const getAttributes = (type: TargetMode) => {
 
     switch (type) {
         case "move":
