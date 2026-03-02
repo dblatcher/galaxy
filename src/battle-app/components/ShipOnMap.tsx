@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react"
 import { getDistance, translate, xy, type XY } from "typed-geometry"
 import { FleetSymbol } from "../../components/FleetSymbol"
 import { useAnimationState } from "../animation-context"
@@ -8,7 +9,7 @@ import type { ShipInstanceInfo } from "../model"
 
 interface Props {
     shipInstance: ShipInstanceInfo,
-    handleClickOnShip: { (shipInstance: ShipInstanceInfo): void }
+    handleClickOnShip: { (shipInstance: ShipInstanceInfo, event: MouseEvent): void }
 }
 
 export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
@@ -31,9 +32,7 @@ export const ShipOnMap = ({ shipInstance, handleClickOnShip }: Props) => {
         return null
     }
 
-    const onClick = (!isActiveShip)
-        ? () => handleClickOnShip(shipInstance)
-        : undefined;
+    const onClick = (event: MouseEvent) => handleClickOnShip(shipInstance, event)
 
     const isPotentialTarget = !isPlayerShip && targetAction === 'fire' && activeShipState?.hasFired === false;
     const isInRange = activeShip && isPotentialTarget

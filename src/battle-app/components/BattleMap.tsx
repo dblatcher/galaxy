@@ -5,7 +5,7 @@ import { useAnimationState } from "../animation-context"
 import { useBattleState } from "../battle-state-context"
 import { DEFAULT_WEAPON_RANGE, MAP_HEIGHT, MAP_WIDTH } from "../constants"
 import { handleFiring, handleMove } from "../game-logic"
-import { checkCanFire, getActiveShipInstance, getInstancesForSide } from "../helpers"
+import { checkCanFire, getActiveShipInstance, getInstancesForSide, stringifyIdent } from "../helpers"
 import type { ShipInstanceInfo } from "../model"
 import { AnimationPlotter } from "./AnimationPlotter"
 import { RangeCircle } from "./RangeCircle"
@@ -53,15 +53,23 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
         setTargetPoint(findPointOnMap(event))
     }
 
-    const handleClickOnShip = (shipInstance: ShipInstanceInfo) => {
+    const handleClickOnShip = (shipInstance: ShipInstanceInfo, event: MouseEvent) => {
+        const clickedShipCanFire = checkCanFire(shipInstance)
         if (isNotLocalPlayerTurn) {
             return
         }
         if (shipInstance.faction.id === activeFaction) {
-            return dispatch({
+            dispatch({
                 type: 'select-ship',
                 ident: shipInstance.ident,
             })
+            if (event.ctrlKey) {
+                dispatch({
+                    type: 'set-target-mode',
+                    mode: targetAction === 'move' && clickedShipCanFire ? 'fire' : 'move'
+                })
+            }
+            return
         }
 
         if (targetAction === 'fire' && canFire) {
@@ -77,6 +85,7 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
             })
 
             battleActions.forEach(dispatch)
+            dispatch({ type: 'set-target-mode', mode: 'move' })
         }
     }
 
@@ -98,7 +107,7 @@ export const BattleMap = ({ scale, isNotLocalPlayerTurn }: Props) => {
             {sides.map(side =>
                 getInstancesForSide(side, battleState, true).map(shipInstance =>
                     <ShipOnMap
-                        key={JSON.stringify(shipInstance.ident)}
+                        key={stringifyIdent(shipInstance.ident)}
                         handleClickOnShip={handleClickOnShip}
                         shipInstance={shipInstance}
                     />

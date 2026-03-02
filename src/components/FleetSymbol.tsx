@@ -1,24 +1,25 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 import type { XY } from "../lib/model";
 
 interface Props {
     color?: string;
     location?: XY;
     h?: number
-    onClick?: { (): void }
+    onClick?: { (event: MouseEvent): void }
     scale?: number
     cursor?: CSSProperties['cursor']
 }
 
 const getPoints = (x: number, y: number, scale = 1) => `${x},${y - (3 * scale)} ${x + (3 * scale)},${y + (3 * scale)} ${x},${y + (2 * scale)} ${x - (3 * scale)},${y + (3 * scale)}`
 
-export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h, onClick, scale = 1, cursor='pointer' }: Props) => {
+export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h, onClick, scale = 1, cursor = 'pointer' }: Props) => {
     return <polygon
         style={{
             transformBox: 'border-box',
             transformOrigin: 'center',
             transform: h ? `rotate(${180 - (h * 180 / Math.PI)}deg)` : undefined,
             cursor: onClick ? cursor : undefined,
+            pointerEvents: 'all'
         }}
         points={getPoints(location.x, location.y, scale)}
         fill={color}
@@ -27,7 +28,7 @@ export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h, onClick, scal
         pointerEvents={onClick ? undefined : 'none'}
         onClick={onClick ? event => {
             event.stopPropagation()
-            onClick()
+            onClick(event)
         } : undefined}
     />
 }

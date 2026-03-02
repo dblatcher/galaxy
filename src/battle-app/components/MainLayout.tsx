@@ -17,7 +17,7 @@ export const MainLayout = () => {
         <TargetModeControl />
         <div style={{ display: 'flex', gap: 20 }}>
             {battleState.sides.map(side => (
-                <div key={side.faction.id} style={{ minWidth: 150 }}>
+                <div key={side.faction.id} style={{ minWidth: 170 }}>
                     <h3>
                         {side.faction.name}
                         {side.faction.id === battleState.activeFaction && "*"}
