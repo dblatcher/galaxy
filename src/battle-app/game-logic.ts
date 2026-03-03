@@ -57,7 +57,7 @@ export const handleFiring = (
         type: 'show-damage',
         at: { ...targetShipInstance.state.position },
         value: damage,
-        totalSteps: 100,
+        totalSteps: 30,
         currentStep: 0
     })
 
@@ -67,7 +67,7 @@ export const handleFiring = (
             type: 'ship-explode',
             at: { ...targetShipInstance.state.position },
             currentStep: -beamSteps,
-            totalSteps: 50
+            totalSteps: 20
         })
     }
 
