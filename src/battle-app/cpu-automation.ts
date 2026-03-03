@@ -162,7 +162,9 @@ export const startCpuPlayerAutomation = async (
             effects: animations
         })
         animationActions.forEach(dispatchAnimation)
-        await delay(animationTime)
+        if (animationTime > 0) {
+            await delay(animationTime)
+        }
     }
 
     await doActions(moveEachInTurn())

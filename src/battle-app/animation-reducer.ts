@@ -1,8 +1,8 @@
 import { getDistance, getHeadingFrom, getXYVector, translate, type XY } from "typed-geometry"
 import { filterInPlace } from "../lib/util"
-import type { BattleState, ShipIdent } from "./model"
-import { destringifyIdent, getShipStateFromIdent, stringifyIdent } from "./helpers"
 import { ANIMATION_MOVE_PER_STEP } from "./constants"
+import { stringifyIdent } from "./helpers"
+import type { ShipIdent } from "./model"
 
 export type BattleAnimation = {
     type: 'beam-fire',
@@ -23,16 +23,18 @@ export type BattleAnimation = {
     value: number,
 }
 
+export type MovementAnimation = { displayPosition: XY, waypoints: XY[] };
+
 export type AnimationState = {
     animations: BattleAnimation[]
-    shipMoves: Record<string, { displayPosition: XY }>
+    shipMoves: Partial<Record<string, MovementAnimation>>
 }
 
 export type AnimationAction =
-    { type: 'tick', battleState: BattleState } |
+    { type: 'tick' } |
     { type: 'clear' } |
     { type: 'add', effects: BattleAnimation[] } |
-    { type: 'set-display-location', ident: ShipIdent, location: XY | undefined }
+    { type: 'set-display-location', ident: ShipIdent, location: XY, destination: XY }
 
 export const getInitialAnimationState = (): AnimationState => (
     { animations: [], shipMoves: {} }
@@ -52,18 +54,27 @@ export const animationDispatcher = (prevState: AnimationState, action: Animation
             })
             filterInPlace(state.animations, (animation => animation.currentStep < animation.totalSteps))
             movingShipKeys.forEach(key => {
-                const { displayPosition } = state.shipMoves[key];
-                const ident = destringifyIdent(key)
-                const shipState = getShipStateFromIdent(ident, action.battleState)
-                if (shipState) {
-                    const distance = getDistance(displayPosition, shipState.position)
-                    const heading = getHeadingFrom(displayPosition, shipState.position)
-                    if (distance < 1) {
-                        delete state.shipMoves[key]
-                    } else {
-                        state.shipMoves[key] = { displayPosition: translate(displayPosition, getXYVector(ANIMATION_MOVE_PER_STEP, heading)) };
-                    }
+                const { displayPosition, waypoints } = state.shipMoves[key]!;
+                const [nextPoint] = waypoints;
+
+                if (!nextPoint) {
+                    delete state.shipMoves[key]
+                    return
                 }
+                const distance = getDistance(displayPosition, nextPoint)
+                const heading = getHeadingFrom(displayPosition, nextPoint)
+                if (distance < 1) {
+                    waypoints.shift();
+                    state.shipMoves[key] = {
+                        displayPosition: nextPoint,
+                        waypoints
+                    }
+                    return
+                }
+                state.shipMoves[key] = {
+                    displayPosition: translate(displayPosition, getXYVector(ANIMATION_MOVE_PER_STEP, heading)),
+                    waypoints
+                };
             })
             return { ...state }
         case "clear":
@@ -72,13 +83,20 @@ export const animationDispatcher = (prevState: AnimationState, action: Animation
             state.animations.push(...action.effects)
             return { ...state }
         case "set-display-location":
-            const { location, ident } = action
+            const { location, ident, destination } = action
             const key = stringifyIdent(ident)
-            if (location) {
-                state.shipMoves[key] = { displayPosition: location }
+
+            const existingAnimation = state.shipMoves[key];
+
+            if (existingAnimation) {
+                existingAnimation.waypoints.push(destination)
             } else {
-                delete state.shipMoves[key]
+                state.shipMoves[key] = {
+                    displayPosition: location,
+                    waypoints: [destination]
+                }
             }
+
             return { ...state }
     }
 }

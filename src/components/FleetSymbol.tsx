@@ -1,7 +1,7 @@
-import type { CSSProperties, MouseEvent } from "react";
+import type { CSSProperties, JSX, MouseEvent } from "react";
 import type { XY } from "../lib/model";
 
-interface Props {
+type Props = JSX.IntrinsicElements['polygon'] & {
     color?: string;
     location?: XY;
     h?: number
@@ -12,8 +12,9 @@ interface Props {
 
 const getPoints = (x: number, y: number, scale = 1) => `${x},${y - (3 * scale)} ${x + (3 * scale)},${y + (3 * scale)} ${x},${y + (2 * scale)} ${x - (3 * scale)},${y + (3 * scale)}`
 
-export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h, onClick, scale = 1, cursor = 'pointer' }: Props) => {
+export const FleetSymbol = ({ color, location = { x: 3, y: 3 }, h, onClick, scale = 1, cursor = 'pointer', ...rest }: Props) => {
     return <polygon
+        {...rest}
         style={{
             transformBox: 'border-box',
             transformOrigin: 'center',

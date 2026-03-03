@@ -146,7 +146,12 @@ export const handleMove = (
             { type: 'move-ship', location, ident: movingShipInstance.ident, }
         ],
         animationActions: [
-            { type: 'set-display-location', ident: movingShipInstance.ident, location: { ...movingShipInstance.state.position } },
+            {
+                type: 'set-display-location',
+                ident: movingShipInstance.ident,
+                location: { ...movingShipInstance.state.position },
+                destination: { ...location }
+            },
         ]
     }
 }
