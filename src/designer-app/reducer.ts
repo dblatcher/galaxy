@@ -21,9 +21,12 @@ export type DesignState = {
     design: Omit<ShipDesign, "id">;
 };
 
+const MARK_NUMBER_PREFIX = "-#"
 const determineCloneName = (clonedName: string, usedNames: string[]): string => {
-    // to do - naming convention
-    return `${clonedName}-#${usedNames.length}`
+    const markPrefixIndex = clonedName.indexOf(MARK_NUMBER_PREFIX);
+    const nameWithoutMark = markPrefixIndex === -1 ? clonedName : clonedName.substring(0, markPrefixIndex);
+    const newNumber = usedNames.filter(n => n.startsWith(nameWithoutMark)).length + 1
+    return `${nameWithoutMark}${MARK_NUMBER_PREFIX}${newNumber}`
 }
 
 export const reduceDesignAction: Reducer<DesignState, DesignAction> = (prevState: DesignState, action: DesignAction) => {
@@ -62,8 +65,13 @@ export const reduceDesignAction: Reducer<DesignState, DesignAction> = (prevState
             return state;
         }
         case "copy-design": {
-            const clone = structuredClone(action.design)
+            const clone = structuredClone(action.design) as DesignState['design'] & { id?: number }
             clone.name = determineCloneName(action.design.name, action.usedNames)
+            const {slotCount} = getPattern(clone.pattern)
+            while (clone.slots.length < slotCount) {
+                clone.slots.push(undefined)
+            }
+            delete clone.id
             return {
                 ...state,
                 design: clone
