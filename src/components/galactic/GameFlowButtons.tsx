@@ -1,4 +1,4 @@
-import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { useGameStateContext } from "../../main-state/useGameStateContext"
 import { findFleetsReadyToBomb } from "../../lib/fleet-operations";
 import { getCurrentGoalTech } from "../../lib/tech-checks";
 import { ProgressBar } from "../ProgressBar";

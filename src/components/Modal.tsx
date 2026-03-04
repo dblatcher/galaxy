@@ -1,5 +1,5 @@
 import type { ReactEventHandler, ReactNode } from "react"
-import { useGameStateContext } from "../hooks/useGameStateContext"
+import { useGameStateContext } from "../main-state/useGameStateContext"
 import "./modal.css"
 import { FleetsControl } from "./FleetsControl"
 import { BattleControl } from "./galactic/BattlesControl"

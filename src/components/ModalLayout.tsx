@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { useGameStateContext } from "../hooks/useGameStateContext"
+import { useGameStateContext } from "../main-state/useGameStateContext"
 
 interface Props {
     title: ReactNode

@@ -1,5 +1,5 @@
 import { getTech, type TechId } from "../../data/tech-list"
-import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { useGameStateContext } from "../../main-state/useGameStateContext"
 import { FactionName } from "../display-values"
 import { DismissableModal } from "../Modal"
 import { ModalLayout } from "../ModalLayout"

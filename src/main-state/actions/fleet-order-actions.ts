@@ -1,7 +1,7 @@
-import { bombColony, createColony, removeOneColonyShip } from "../lib/colony-operations";
-import { getBattleAt } from "../lib/derived-state";
-import type { GameState, Star } from "../lib/model";
-import { findById } from "../lib/util";
+import { bombColony, createColony, removeOneColonyShip } from "../../lib/colony-operations";
+import type { GameState, Star } from "../../lib/model";
+import { findById } from "../../lib/util";
+import { getBattleAt } from "../derived-state";
 
 export type FleetOrderAction = {
     type: 'pick-destination',

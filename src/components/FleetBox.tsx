@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react"
-import { useGameStateContext } from "../hooks/useGameStateContext"
+import { useGameStateContext } from "../main-state/useGameStateContext"
 import { couldFleetColoniseStar, getShipsThatCouldBomb } from "../lib/colony-operations"
 import type { Faction, Fleet } from "../lib/model"
 import { findById, lookUpName } from "../lib/util"

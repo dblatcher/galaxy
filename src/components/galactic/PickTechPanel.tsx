@@ -1,5 +1,5 @@
 import { getTech } from "../../data/tech-list"
-import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { useGameStateContext } from "../../main-state/useGameStateContext"
 import { getAvailableResearchGoals, getKnownTechIds } from "../../lib/tech-checks"
 import { FactionName } from "../display-values"
 import { ModalLayout } from "../ModalLayout"

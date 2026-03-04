@@ -1,4 +1,4 @@
-import { useGameStateContext } from "../../hooks/useGameStateContext";
+import { useGameStateContext } from "../../main-state/useGameStateContext";
 import { findById, splitArray } from "../../lib/util";
 import { SubHeading } from "../SubHeading";
 import { ColonyOverview } from "./ColonyOverview";

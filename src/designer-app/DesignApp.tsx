@@ -2,7 +2,7 @@ import { useReducer } from "react";
 import { TypedSelect } from "../components/TypedSelect";
 import { type EquipmentId, getMaybeEquipment } from "../data/ship-equipment";
 import { getPattern, type PatternId } from "../data/ship-patterns";
-import { useGameStateContext } from "../hooks/useGameStateContext";
+import { useGameStateContext } from "../main-state/useGameStateContext";
 import type { ShipDesign } from "../lib/model";
 import { getAvailableEquipment, getAvailablePatterns } from "../lib/tech-checks";
 import { nextId } from "../lib/util";

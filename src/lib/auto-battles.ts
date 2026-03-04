@@ -1,5 +1,5 @@
 import { populateBattleSides, removeDead } from "./battle-operations";
-import { getAllBattles } from "./derived-state";
+import { getAllBattles } from "../main-state/derived-state";
 import type { Battle, BattleReport, GameState } from "./model";
 
 

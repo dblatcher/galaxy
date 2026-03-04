@@ -1,6 +1,6 @@
-import type { GameState } from "../lib/model";
-import type { TechId } from "../data/tech-list";
-import { findById } from "../lib/util";
+import type { GameState } from "../../lib/model";
+import type { TechId } from "../../data/tech-list";
+import { findById } from "../../lib/util";
 
 export type FactionAction = {
     type: 'faction:pick-tech-goal',

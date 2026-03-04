@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react"
-import { useGameStateContext } from "../hooks/useGameStateContext"
+import { useGameStateContext } from "../main-state/useGameStateContext"
 import type { BattleParameters } from "../lib/model"
 import { AnimationContext } from "./animation-context"
 import { animationDispatcher, getInitialAnimationState } from "./animation-reducer"

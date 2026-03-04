@@ -1,4 +1,4 @@
-import { useGameStateContext } from '../../hooks/useGameStateContext'
+import { useGameStateContext } from '../../main-state/useGameStateContext'
 import { BreakthroughModal } from './BreakthroughModal'
 import { DialogsModal, NondismissableModal } from '../Modal'
 import { FactionName } from '../display-values'

@@ -1,6 +1,6 @@
-import { addNewFleet, transferShips } from "../lib/fleet-operations";
-import type { GameState } from "../lib/model";
-import { findById } from "../lib/util";
+import { addNewFleet, transferShips } from "../../lib/fleet-operations";
+import type { GameState } from "../../lib/model";
+import { findById } from "../../lib/util";
 
 export type FleetDialogAction = {
     type: 'fleets:transfer-ships',

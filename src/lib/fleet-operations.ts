@@ -1,5 +1,5 @@
-import { getAllBattles } from "./derived-state"
-import type { Star, Ship, Fleet, GameState, Faction } from "./model"
+import { getAllBattles } from "../main-state/derived-state"
+import type { Faction, Fleet, GameState, Ship, Star } from "./model"
 import { enhanceShipDesign, type EnhancedShipDesign } from "./ship-design-helpers"
 import { filterInPlace, findById, isSet, nextId, splitArray } from "./util"
 

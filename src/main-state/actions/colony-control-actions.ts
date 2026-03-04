@@ -1,7 +1,7 @@
-import { setBudgetAmount } from "../lib/budget";
-import { createBalancedColonyBudget, type ColonyBudgetItem } from "../lib/colony-budget";
-import type { GameState } from "../lib/model";
-import { findById } from "../lib/util";
+import { setBudgetAmount } from "../../lib/budget";
+import { createBalancedColonyBudget, type ColonyBudgetItem } from "../../lib/colony-budget";
+import type { GameState } from "../../lib/model";
+import { findById } from "../../lib/util";
 
 export type ColonyControlAction = {
     type: 'set-star-construction-design',

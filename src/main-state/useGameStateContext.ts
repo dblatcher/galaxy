@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { GameStateContext } from "../context/gameStateContext";
-import { getDerivedState } from "../lib/derived-state";
+import { GameStateContext } from "./gameStateContext";
+import { getDerivedState } from "./derived-state";
 
 
 export const useGameStateContext = () => {

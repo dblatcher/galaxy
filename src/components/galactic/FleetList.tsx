@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import type { Battle, Fleet } from "../../lib/model";
 import { FleetBox } from "../FleetBox";
-import { useGameStateContext } from "../../hooks/useGameStateContext";
+import { useGameStateContext } from "../../main-state/useGameStateContext";
 import { SubHeading } from "../SubHeading";
 
 interface Props {

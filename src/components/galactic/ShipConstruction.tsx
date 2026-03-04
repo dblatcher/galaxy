@@ -1,4 +1,4 @@
-import { useGameStateContext } from "../../hooks/useGameStateContext";
+import { useGameStateContext } from "../../main-state/useGameStateContext";
 import type { Star } from "../../lib/model";
 import { getConstructionCost } from "../../lib/ship-design-helpers";
 import { findById } from "../../lib/util";

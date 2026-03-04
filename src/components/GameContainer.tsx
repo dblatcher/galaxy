@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import { GameStateContext } from '../context/gameStateContext'
-import { useGameStateReducer } from '../hooks/useGameStateReducer'
-import { initalState } from '../lib/initial-state'
-import { findById } from '../lib/util'
 import { BattleApp } from '../battle-app/BattleApp'
-import { GalaticView } from './galactic/GalaticView'
 import { DesignApp } from '../designer-app/DesignApp'
+import { initalState } from '../main-state/initial-state'
+import { findById } from '../lib/util'
+import { GameStateContext } from '../main-state/gameStateContext'
+import { useGameStateReducer } from '../main-state/useGameStateReducer'
+import { GalaticView } from './galactic/GalaticView'
 
 
 export const GameContainer = () => {

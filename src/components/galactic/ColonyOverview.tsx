@@ -1,4 +1,4 @@
-import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { useGameStateContext } from "../../main-state/useGameStateContext"
 import { calculateConstructionPoints, calculateMaxFactoryUsage } from "../../lib/colony-operations"
 import { Population } from "../display-values"
 import type { Faction, Star } from "../../lib/model"

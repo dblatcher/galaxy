@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import type { GameState } from "../lib/model";
-import type { Action } from "../hooks/useGameStateReducer";
+import type { Action } from "./useGameStateReducer";
 
 export const GameStateContext = createContext<{ gameState: GameState, dispatch: { (action: Action): void } }>({
     gameState: {

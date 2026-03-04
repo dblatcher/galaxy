@@ -1,4 +1,4 @@
-import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { useGameStateContext } from "../../main-state/useGameStateContext"
 import { FactionName, Population } from "../display-values"
 import { getDesignMap } from "../../lib/fleet-operations"
 import type { Report } from "../../lib/model"

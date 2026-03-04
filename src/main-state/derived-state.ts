@@ -1,6 +1,6 @@
-import type { Battle, Faction, Fleet, GameState } from "./model";
-import { getAvailableResearchGoals } from "./tech-checks";
-import { findById, isSet, removeDuplicates, splitArray } from "./util";
+import type { Battle, Faction, Fleet, GameState } from "../lib/model";
+import { getAvailableResearchGoals } from "../lib/tech-checks";
+import { findById, isSet, removeDuplicates, splitArray } from "../lib/util";
 
 
 export const getBattleAt = (starId: number, gameState: GameState, fleetsHereAlreadyFound?: Fleet[]) => {

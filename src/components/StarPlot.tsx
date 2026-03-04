@@ -1,4 +1,4 @@
-import { useGameStateContext } from "../hooks/useGameStateContext";
+import { useGameStateContext } from "../main-state/useGameStateContext";
 import type { Fleet, Star } from "../lib/model";
 import { findById } from "../lib/util";
 import { FleetSymbol } from "./FleetSymbol";

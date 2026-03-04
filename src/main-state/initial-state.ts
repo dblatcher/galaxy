@@ -1,5 +1,5 @@
-import { createBalancedColonyBudget, createBudgetWithAllIn } from "./colony-budget";
-import type { Faction, Fleet, Galaxy, GameState, Ship, ShipDesign } from "./model";
+import { createBalancedColonyBudget, createBudgetWithAllIn } from "../lib/colony-budget";
+import type { Faction, Fleet, Galaxy, GameState, Ship, ShipDesign } from "../lib/model";
 
 
 const baseShips = (): Ship[] => [{

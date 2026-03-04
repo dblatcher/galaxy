@@ -1,4 +1,4 @@
-import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { useGameStateContext } from "../../main-state/useGameStateContext"
 import { handleStarClickFunction } from "../../lib/ui-interactions"
 import { FleetPlot } from "../FleetPlot"
 import { StarPlot } from "../StarPlot"

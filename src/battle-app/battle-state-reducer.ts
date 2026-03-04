@@ -1,7 +1,7 @@
 import { _DEG, getDistance, getHeadingFrom, xy } from "typed-geometry";
 import { populateBattleSides } from "../lib/battle-operations";
-import { getBattleAt } from "../lib/derived-state";
 import type { GameState } from "../lib/model";
+import { getBattleAt } from "../main-state/derived-state";
 import { getShipFromIdent, getShipStateFromIdent } from "./helpers";
 import type { BattleAction, BattleState, ShipStatesByFaction, ShipStatesByFleet } from "./model";
 

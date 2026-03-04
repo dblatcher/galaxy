@@ -1,4 +1,4 @@
-import { useGameStateContext } from "../../hooks/useGameStateContext"
+import { useGameStateContext } from "../../main-state/useGameStateContext"
 import type { BudgetItem } from "../../lib/budget"
 import type { ColonyBudgetItem } from "../../lib/colony-budget"
 import type { Star } from "../../lib/model"

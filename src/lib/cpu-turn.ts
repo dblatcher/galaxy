@@ -1,7 +1,7 @@
-import { gameStateReducer, type Action } from "../hooks/useGameStateReducer";
+import type { TechId } from "../data/tech-list";
+import { gameStateReducer, type Action } from "../main-state/useGameStateReducer";
 import type { Faction, GameState } from "./model";
 import { getAvailableResearchGoals } from "./tech-checks";
-import type { TechId } from "../data/tech-list";
 import { findById, isSet } from "./util";
 
 
