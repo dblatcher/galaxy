@@ -19,12 +19,9 @@ export const ShipControls = ({
 
     const ModeButton = ({ children, mode, disabled }: { children: ReactNode, mode: TargetMode, disabled?: boolean }) => <button
         style={{
-            borderWidth: 1,
-            padding: 4,
             minWidth: 50,
-            borderColor: (isSelected && battleState.targetAction === mode) ? 'white' : 'black',
-            borderStyle: 'solid',
         }}
+        className={(isSelected && battleState.targetAction === mode) ? "small active" : 'small'}
         disabled={!isAlive(shipInstance) || disabled}
         onClick={() => {
             dispatch(

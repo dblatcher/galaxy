@@ -78,6 +78,11 @@ button.small {
   font-size: small;
 }
 
+button.active {
+  background-image: linear-gradient(red, black 12px);
+}
+
+
 button[disabled] {
   background-color: #6a6a6a;
 }
