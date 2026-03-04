@@ -8,6 +8,7 @@ import type { BattleAction, BattleState, ShipInstanceInfo } from "./model";
 
 const rollDamage = (
     firingShipInstance: ShipInstanceInfo,
+    targetShipInstance: ShipInstanceInfo,
 ): number => {
     const weapons = firingShipInstance.design.slots
         .map(getMaybeEquipment)
@@ -15,7 +16,7 @@ const rollDamage = (
 
     const rolls = weapons.map(beam =>
         sum(beam.damage.map(die => diceRoll(die)))
-    )
+    ).map(value => Math.max(value - targetShipInstance.design.shieldLevel, 0))
     return sum(rolls)
 }
 
@@ -43,7 +44,7 @@ export const handleFiring = (
     if (distance > DEFAULT_WEAPON_RANGE) {
         return doNothing();
     }
-    const damage = rollDamage(firingShipInstance) // TO DO - use shipInstance.design.slots to roll damage for weapons and subtract defense
+    const damage = rollDamage(firingShipInstance, targetShipInstance) // TO DO - use shipInstance.design.slots to roll damage for weapons and subtract defense
     const beamSteps = Math.floor(distance / 2);
     animations.push({
         type: "beam-fire",

@@ -1,17 +1,21 @@
 import type { TechId } from "./tech-list";
 
-type EquipmentInfo = {
-    type: 'beam',
-    damage: number[],
-    range: number
-} | {
-    type: 'bomb',
-    damage: number[],
-} | {
-    type: 'colonise'
-} | {
-    type: 'other'
-}
+type EquipmentInfo =
+    {
+        type: 'beam',
+        damage: number[],
+        range: number
+    } | {
+        type: 'bomb',
+        damage: number[],
+    } | {
+        type: 'colonise'
+    } | {
+        type: 'shield',
+        level: number,
+    } | {
+        type: 'other'
+    }
 
 export type ShipEquipment = {
     name: string;
@@ -75,7 +79,24 @@ const ALL_EQUIPMENT = {
             type: 'colonise'
         },
         isBig: true
-    }
+    },
+    magneticBarrier: {
+        name: 'magnetic barrier',
+        baseCost: 20,
+        info: {
+            type:'shield',
+            level: 1,
+        }
+    },
+    forceShield: {
+        name: 'force shields',
+        baseCost: 30,
+        info: {
+            type:'shield',
+            level: 2,
+        },
+        prerequisite: 'energyFields'
+    },
 } satisfies Record<string, ShipEquipment>;
 
 
@@ -89,6 +110,6 @@ export const getMaybeEquipment = (id: EquipmentId | undefined): ShipEquipment | 
     return ALL_EQUIPMENT[id]
 }
 
-export const getEquipment = (id: EquipmentId): ShipEquipment  => {
+export const getEquipment = (id: EquipmentId): ShipEquipment => {
     return ALL_EQUIPMENT[id]
 }

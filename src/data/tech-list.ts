@@ -24,6 +24,11 @@ const ALL_TECHS = {
         name: 'photon bombardment',
         cost: 30,
         prerequisites: ['solarSails', 'lasers']
+    },
+    energyFields: {
+        name: 'energy fields',
+        cost: 20,
+        prerequisites: [],
     }
 } satisfies Record<string, Tech>;
 
@@ -39,6 +44,6 @@ export const getMaybeTech = (id: TechId | undefined): Tech | undefined => {
     return ALL_TECHS[id]
 }
 
-export const getTech = (id: TechId): Tech  => {
+export const getTech = (id: TechId): Tech => {
     return ALL_TECHS[id]
 }

@@ -21,7 +21,7 @@ const DamageOutput = ({ dice }: { dice: number[] }) => {
 };
 
 export const DesignStats = ({ design, faction }: Props) => {
-  const { name, hp, pattern, constructionCost, slots } = enhanceShipDesign({
+  const { name, hp, pattern, constructionCost, slots, shieldLevel } = enhanceShipDesign({
     ...design,
     id: -1,
   });
@@ -55,6 +55,9 @@ export const DesignStats = ({ design, faction }: Props) => {
 
         <div>
           Beam Damage: <DamageOutput dice={beamDamageDice} />
+        </div>
+        <div>
+          Shields: {shieldLevel}
         </div>
       </section>
     </article>

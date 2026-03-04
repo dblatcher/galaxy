@@ -31,7 +31,7 @@ const baseDesigns = (): ShipDesign[] => {
             id: 3,
             name: 'destroyer',
             pattern: 'medium',
-            slots: ['projectileGun', 'projectileGun', 'projectileGun'],
+            slots: ['projectileGun', 'projectileGun', 'magneticBarrier'],
         },
     ]
 };
