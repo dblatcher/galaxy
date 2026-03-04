@@ -30,10 +30,10 @@ export const MainLayout = () => {
             <BattleMap scale={2} isNotLocalPlayerTurn={isNotLocalPlayerTurn} setHoveredIdent={setHoveredIdent} />
 
             {side && (
-                <div>
-                    <h3>
+                <div className="semantic-box" style={{ minWidth: 300 }}>
+                    <header>
                         {side.faction.name}
-                    </h3>
+                    </header>
                     {getInstancesForSide(side, battleState).map(shipInstance =>
                         <ShipControls key={JSON.stringify(shipInstance.ident)}
                             shipInstance={shipInstance}
