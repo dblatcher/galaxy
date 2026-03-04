@@ -15,10 +15,15 @@ export type DesignAction =
         type: "copy-design";
         design: ShipDesign;
         usedNames: string[];
+    }
+    | {
+        type: "view-design";
+        designId: number;
     };
 
 export type DesignState = {
     design: Omit<ShipDesign, "id">;
+    viewedDesignId?: number
 };
 
 const MARK_NUMBER_PREFIX = "-#"
@@ -67,7 +72,7 @@ export const reduceDesignAction: Reducer<DesignState, DesignAction> = (prevState
         case "copy-design": {
             const clone = structuredClone(action.design) as DesignState['design'] & { id?: number }
             clone.name = determineCloneName(action.design.name, action.usedNames)
-            const {slotCount} = getPattern(clone.pattern)
+            const { slotCount } = getPattern(clone.pattern)
             while (clone.slots.length < slotCount) {
                 clone.slots.push(undefined)
             }
@@ -75,6 +80,12 @@ export const reduceDesignAction: Reducer<DesignState, DesignAction> = (prevState
             return {
                 ...state,
                 design: clone
+            }
+        }
+        case "view-design": {
+            return {
+                ...state,
+                viewedDesignId: action.designId
             }
         }
     }

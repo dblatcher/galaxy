@@ -21,3 +21,13 @@
     flex-direction: column;
     gap: 5px;
 }
+
+.button-set {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4;
+}
+.button-set>span {
+    margin-right: auto;
+}

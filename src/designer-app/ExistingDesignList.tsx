@@ -4,9 +4,10 @@ import { enhanceShipDesign } from "../lib/ship-design-helpers"
 interface Props {
     faction: Faction;
     copyDesign: { (design: ShipDesign): void }
+    viewDesign: { (design: ShipDesign): void }
 }
 
-export const ExistingDesignList = ({ faction, copyDesign }: Props) => {
+export const ExistingDesignList = ({ faction, copyDesign, viewDesign }: Props) => {
 
     const designs = faction.shipDesigns.map(enhanceShipDesign)
 
@@ -16,11 +17,12 @@ export const ExistingDesignList = ({ faction, copyDesign }: Props) => {
 
             <ul>
                 {designs.map((design) => (
-                    <li key={design.id}>
+                    <li key={design.id} className="button-set">
                         <span>
                             {design.name}
                         </span>
                         <button onClick={() => copyDesign(design)}>copy</button>
+                        <button onClick={() => viewDesign(design)}>view</button>
                     </li>
                 ))}
             </ul>

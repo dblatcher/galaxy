@@ -1,13 +1,10 @@
 import { useReducer } from "react";
-import { TypedSelect } from "../components/TypedSelect";
-import { getPattern } from "../data/ship-patterns";
 import type { ShipDesign } from "../lib/model";
-import { getAvailableEquipment, getAvailablePatterns } from "../lib/tech-checks";
-import { nextId } from "../lib/util";
+import { findById, nextId } from "../lib/util";
 import { useGameStateContext } from "../main-state/useGameStateContext";
 import "./designApp.css";
+import { DesignForm } from "./DesignForm";
 import { DesignStats } from "./DesignStats";
-import { EquipmentSelect } from "./EquipmentSelect";
 import { ExistingDesignList } from "./ExistingDesignList";
 import { reduceDesignAction } from "./reducer";
 
@@ -24,6 +21,7 @@ export const DesignApp = () => {
         pattern: "small",
         slots: [undefined],
       },
+      viewedDesignId: activeFaction.shipDesigns[0]?.id
     }
   );
 
@@ -55,62 +53,25 @@ export const DesignApp = () => {
     });
   };
 
-  const availableEquipment = getAvailableEquipment(activeFaction);
-  const availablePatterns = getAvailablePatterns(activeFaction);
-  const canUseBigEquipment = getPattern(
-    state.design.pattern
-  ).canHaveBigEquipment;
 
+
+  const viewedDesign = findById(state.viewedDesignId, activeFaction.shipDesigns)
   return (
     <main className="design-app">
       <header>
         <h2>Designer</h2>
+
       </header>
 
       <div className="row">
-        <div className="design-inputs">
-          <label>
-            <span>name</span>
-            <input
-              type="text"
-              value={state.design.name}
-              placeholder="design name"
-              onChange={({ target }) =>
-                dispatch({ type: "set-name", name: target.value })
-              }
-            />
-          </label>
-          <TypedSelect
-            label="size"
-            optionIds={availablePatterns}
-            value={state.design.pattern}
-            setValue={(pattern) => dispatch({ type: "set-pattern", pattern })}
-            getName={(id) => getPattern(id).name}
-          />
-
-          <fieldset>
-            <legend>equipment</legend>
-
-            {state.design.slots.map((equipmentInSlot, slotIndex) => (
-              <EquipmentSelect
-                key={slotIndex}
-                canUseBigEquipment={!!canUseBigEquipment}
-                availableEquipment={availableEquipment}
-                value={equipmentInSlot}
-                setValue={(equipment) =>
-                  dispatch({ type: "fill-slot", slotIndex, equipment })
-                }
-              />
-            ))}
-          </fieldset>
-          <div>
-            <button disabled={!maybeDesign} onClick={conclude}>
-              conclude
-            </button>
-            <button onClick={cancel}>cancel</button>
-          </div>
-        </div>
+        <DesignForm design={state.design} faction={activeFaction} dispatch={dispatch} />
         <DesignStats design={state.design} faction={activeFaction} />
+      </div>
+      <div className="row">
+        <button disabled={!maybeDesign} onClick={conclude}>
+          Add new design
+        </button>
+        <button onClick={cancel}>cancel</button>
       </div>
       <div className="row">
         <ExistingDesignList
@@ -119,7 +80,15 @@ export const DesignApp = () => {
             type: 'copy-design',
             design,
             usedNames: activeFaction.shipDesigns.map(d => d.name)
-          })} />
+          })}
+          viewDesign={(design) => dispatch({
+            type: 'view-design',
+            designId: design.id
+          })}
+        />
+        {viewedDesign && (
+          <DesignStats design={viewedDesign} faction={activeFaction} />
+        )}
       </div>
     </main>
   );
