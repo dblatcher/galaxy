@@ -60,11 +60,11 @@
   margin-bottom: .5rem;
 }
 
-.ship-profile {
+.semantic-box {
   border: 1px solid red;
   text-align: left;
 }
-.ship-profile>header {
+.semantic-box>header {
   border-bottom: 1px dotted red;
   padding: .5rem;
   margin-bottom: .5rem;
@@ -73,8 +73,15 @@
   gap: 10px;
 }
 
-.ship-profile>section {
+.semantic-box>section {
   padding: .25rem .5rem;
+}
+
+.semantic-box ul {
+  list-style: none;
+  text-align: left;
+  padding: 0;
+  margin: 0;
 }
 
 .panel-content {

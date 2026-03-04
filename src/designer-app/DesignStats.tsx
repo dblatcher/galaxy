@@ -38,7 +38,7 @@ export const DesignStats = ({ design, faction }: Props) => {
     );
 
   return (
-    <article className="ship-profile">
+    <article className="semantic-box">
       <header>
         <FleetIcon color={faction?.color} />
         <div style={{ color: faction?.color }}>{name || "[no name]"}</div>

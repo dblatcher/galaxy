@@ -1,6 +1,7 @@
 .design-app .row {
     display: flex;
-    gap: 5px;
+    gap: 20px;
+    padding-bottom: 10px;
 }
 
 .design-inputs {

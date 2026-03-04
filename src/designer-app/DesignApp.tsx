@@ -1,69 +1,23 @@
 import { useReducer } from "react";
 import { TypedSelect } from "../components/TypedSelect";
-import { type EquipmentId, getMaybeEquipment } from "../data/ship-equipment";
-import { getPattern, type PatternId } from "../data/ship-patterns";
-import { useGameStateContext } from "../main-state/useGameStateContext";
+import { getPattern } from "../data/ship-patterns";
 import type { ShipDesign } from "../lib/model";
 import { getAvailableEquipment, getAvailablePatterns } from "../lib/tech-checks";
 import { nextId } from "../lib/util";
+import { useGameStateContext } from "../main-state/useGameStateContext";
 import "./designApp.css";
 import { DesignStats } from "./DesignStats";
 import { EquipmentSelect } from "./EquipmentSelect";
+import { ExistingDesignList } from "./ExistingDesignList";
+import { reduceDesignAction } from "./reducer";
 
-type DesignAction =
-  | { type: "set-name"; name: string }
-  | { type: "set-pattern"; pattern: PatternId }
-  | {
-      type: "fill-slot";
-      slotIndex: number;
-      equipment: EquipmentId | undefined;
-    };
 
-type DesignState = {
-  design: Omit<ShipDesign, "id">;
-};
 
 export const DesignApp = () => {
   const { dispatch: dispatchGameState, activeFaction } = useGameStateContext();
 
   const [state, dispatch] = useReducer(
-    (prevState: DesignState, action: DesignAction) => {
-      const state = structuredClone(prevState);
-      switch (action.type) {
-        case "set-name": {
-          state.design.name = action.name;
-          return state;
-        }
-        case "set-pattern": {
-          const { slots: oldSlots } = state.design;
-          state.design.pattern = action.pattern;
-          const newPattern = getPattern(action.pattern);
-
-          const newSlots: ShipDesign["slots"] = new Array(newPattern.slotCount);
-          newSlots.fill(undefined);
-          newSlots.splice(
-            0,
-            oldSlots.length,
-            ...oldSlots.slice(0, newSlots.length)
-          );
-
-          if (!newPattern.canHaveBigEquipment) {
-            for (let i = 0; i < newSlots.length; i++) {
-              const equip = getMaybeEquipment(newSlots[i]);
-              if (equip?.isBig) {
-                newSlots[i] = undefined;
-              }
-            }
-          }
-          state.design.slots = newSlots;
-          return state;
-        }
-        case "fill-slot": {
-          state.design.slots[action.slotIndex] = action.equipment;
-          return state;
-        }
-      }
-    },
+    reduceDesignAction,
     {
       design: {
         name: "",
@@ -157,6 +111,15 @@ export const DesignApp = () => {
           </div>
         </div>
         <DesignStats design={state.design} faction={activeFaction} />
+      </div>
+      <div className="row">
+        <ExistingDesignList
+          faction={activeFaction}
+          copyDesign={(design) => dispatch({
+            type: 'copy-design',
+            design,
+            usedNames: activeFaction.shipDesigns.map(d => d.name)
+          })} />
       </div>
     </main>
   );
